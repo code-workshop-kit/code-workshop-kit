@@ -40,7 +40,9 @@ class AppShell extends LitElement {
       .split(';')
       .map(cookie => ({ [cookie.split('=')[0]]: cookie.split('=')[1] }));
 
-    const participantCookie = allCookies.find(cookie => cookie.participant_name);
+    const participantCookie = allCookies.find(
+      cookie => cookie.participant_name,
+    );
 
     if (participantCookie) {
       this.currentParticipantName = participantCookie.participant_name;
@@ -53,7 +55,8 @@ class AppShell extends LitElement {
   }
 
   changeName() {
-    document.cookie = 'participant_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    document.cookie =
+      'participant_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
 
     this.currentParticipantName = null;
   }

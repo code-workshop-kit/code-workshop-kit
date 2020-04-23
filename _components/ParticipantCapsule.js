@@ -45,7 +45,11 @@ class ParticipantCapsule extends LitElement {
   render() {
     return html`
       <h2>${this.name.charAt(0).toUpperCase() + this.name.slice(1)}</h2>
-      <iframe id="${this.name}" allow="fullscreen" src="${this.participantIndexHtmlPath}"></iframe>
+      <iframe
+        id="${this.name}"
+        allow="fullscreen"
+        src="${this.participantIndexHtmlPath}"
+      ></iframe>
       <a href="${this.participantIndexHtmlPath}">
         <button @click=${this.goFullscreen} class="button__fullscreen">
           View
