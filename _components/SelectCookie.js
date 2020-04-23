@@ -1,9 +1,5 @@
 import { html, LitElement } from 'lit-element';
 
-const setCookie = e => {
-  document.cookie = `participant_name=${e.target.innerText}`;
-};
-
 class SelectCookie extends LitElement {
   static get properties() {
     return {
@@ -23,12 +19,18 @@ class SelectCookie extends LitElement {
     this.participants = participants;
   }
 
+  setCookie(e) {
+    document.cookie = `participant_name=${e.target.innerText}`;
+  }
+
   render() {
     return html`
       ${this.participants.map(
         name =>
           html`
-            <a href="./index.html"><button @click=${setCookie}>${name}</button></a>
+            <a href="./index.html"
+              ><button @click=${this.setCookie}>${name}</button></a
+            >
           `,
       )}
     `;

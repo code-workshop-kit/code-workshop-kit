@@ -21,7 +21,9 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
             const processed = processTemplate(fileContent, data);
 
             // find path write to (force / also on windows)
-            const replace = path.join(fromGlob.replace(/\*/g, '')).replace(/\\(?! )/g, '/');
+            const replace = path
+              .join(fromGlob.replace(/\*/g, ''))
+              .replace(/\\(?! )/g, '/');
             const toPath = filePath.replace(replace, `${toDir}/`);
 
             // write file to path?
@@ -36,9 +38,11 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 
 function createParticipantFiles(participants, opts) {
   participants.forEach(name => {
-    copyTemplates('templates/**/*', path.resolve(process.cwd(), `./participants/${name}`), {
-      participantName: name,
-    }).then(files => {
+    copyTemplates(
+      'templates/**/*',
+      path.resolve(process.cwd(), `./participants/${name}`),
+      { participantName: name },
+    ).then(files => {
       files.forEach(file => {
         writeFileToPathOnDisk(file.toPath, file.processed, {
           override: opts.override,
