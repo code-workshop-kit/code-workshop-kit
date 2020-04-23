@@ -1,0 +1,80 @@
+import { css, html, LitElement } from 'lit-element';
+import './ParticipantCapsule.js';
+import './SelectCookie.js';
+
+class AppShell extends LitElement {
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+      }
+
+      .participants-container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+    `;
+  }
+
+  static get properties() {
+    return {
+      participants: {
+        type: Array,
+      },
+      currentParticipantName: {
+        type: String,
+      },
+    };
+  }
+
+  connectedCallback() {
+    if (super.connectedCallback) {
+      super.connectedCallback();
+    }
+    this.getParticipants();
+    this.getParticipantName();
+  }
+
+  getParticipantName() {
+    const allCookies = document.cookie
+      .split(';')
+      .map(cookie => ({ [cookie.split('=')[0]]: cookie.split('=')[1] }));
+
+    const participantCookie = allCookies.find(cookie => cookie.participant_name);
+
+    if (participantCookie) {
+      this.currentParticipantName = participantCookie.participant_name;
+    }
+  }
+
+  async getParticipants() {
+    const { participants } = await (await fetch(`../participants.json`)).json();
+    this.participants = participants;
+  }
+
+  changeName() {
+    document.cookie = 'participant_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+
+    this.currentParticipantName = null;
+  }
+
+  render() {
+    return html`
+      ${this.currentParticipantName
+        ? html`
+            <button @click=${this.changeName}>Change your name</button>
+            <div class="participants-container">
+              ${this.participants.map(
+                name => html`
+                  <participant-capsule .name="${name}"></participant-capsule>
+                `,
+              )}
+            </div>
+          `
+        : html`
+            <select-cookie></select-cookie>
+          `}
+    `;
+  }
+}
+customElements.define('app-shell', AppShell);
