@@ -1,9 +1,11 @@
+import commandLineArgs from 'command-line-args';
 import fs from 'fs';
 import glob from 'glob';
 import { createRequire } from 'module';
 import path from 'path';
 
 const require = createRequire(import.meta.url);
+const { commandLineOptions } = require('es-dev-server');
 const { readFileFromPath, writeFileToPathOnDisk } = require('@open-wc/create/dist/core.js');
 
 // Fork from @open-wc/create to allow functions that return strings inside data obj
@@ -46,7 +48,7 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
   });
 }
 
-export const participantCreateFiles = async opts => {
+export const scaffold = async opts => {
   const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootFolder}workshop.js`));
   const { participants, templateData } = workshop;
 
@@ -66,5 +68,24 @@ export const participantCreateFiles = async opts => {
         });
       });
     });
+  });
+};
+
+export const scaffoldFiles = (argv, rootFolder) => {
+  const scaffoldDefinitions = [
+    ...commandLineOptions,
+    {
+      name: 'force',
+      alias: 'f',
+      type: Boolean,
+      description:
+        'If set, it will (re-)scaffold for the participants and overwrite the current files without warning',
+    },
+  ];
+
+  scaffold({
+    force: false,
+    ...commandLineArgs(scaffoldDefinitions, { argv }),
+    rootFolder,
   });
 };

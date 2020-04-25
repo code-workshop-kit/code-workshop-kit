@@ -1,4 +1,4 @@
-export function createWorkshopImportReplaceMiddleware(rootPath) {
+export function createWorkshopImportReplaceMiddleware(rootFolder) {
   return async function workshopImportReplaceMiddleware(ctx, next) {
     await next();
 
@@ -6,7 +6,10 @@ export function createWorkshopImportReplaceMiddleware(rootPath) {
       ctx.url.indexOf('/components/SelectCookie.js') !== -1 ||
       ctx.url.indexOf('/components/AppShell.js') !== -1
     ) {
-      ctx.body = ctx.body.replace(new RegExp('./workshopImport.js', 'g'), `${rootPath}workshop.js`);
+      ctx.body = ctx.body.replace(
+        new RegExp('./workshopImport.js', 'g'),
+        `${rootFolder}workshop.js`
+      );
     }
   };
 }

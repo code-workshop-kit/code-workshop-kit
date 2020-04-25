@@ -5,16 +5,15 @@
   "type": "module",
   "main": "index.js",
   "bin": {
-    "cwk": "./dist/cli.js"
+    "cwk": "./src/cli.js"
   },
   "engines": {
     "node": ">=13.0.0"
   },
   "scripts": {
-    "build": "babel src --out-dir dist --copy-files --include-dotfiles",
-    "start": "yarn build && node dist/cli.js run --open --watch --app-index ./demo/index.html",
-    "start:scaffold": "yarn build && node dist/cli.js scaffold --app-index ./demo/index.html",
-    "start:scaffold:force": "yarn build && node dist/cli.js scaffold --force --app-index ./demo/index.html",
+    "start": "node src/cli.js run --watch --app-index ./demo/index.html",
+    "start:scaffold": "node src/cli.js scaffold --app-index ./demo/index.html",
+    "start:scaffold:force": "node src/cli.js scaffold --force --app-index ./demo/index.html",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
@@ -30,23 +29,19 @@
   "author": "Joren Broekema <joren.broekema@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/plugin-syntax-import-meta": "^7.8.3",
-    "@babel/preset-env": "^7.9.5",
     "@open-wc/eslint-config": "^2.0.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.11.0",
     "husky": "^1.0.0",
-    "lint-staged": "^8.0.0"
+    "lint-staged": "^8.0.0",
+    "prettier": "^2.0.5"
   },
   "dependencies": {
-    "@babel/core": "^7.9.0",
     "@open-wc/create": "^0.28.1",
     "command-line-args": "^5.1.1",
     "es-dev-server": "^1.45.1",
     "glob": "^7.1.6",
-    "lit-element": "^2.2.1",
-    "prettier": "^2.0.5"
+    "lit-element": "^2.2.1"
   },
   "eslintConfig": {
     "extends": [
