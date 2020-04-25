@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 import commandLineArgs from 'command-line-args';
 import { createRequire } from 'module';
-import { createBabelWorkshopMiddleware } from './dev-server/babel-middleware.js';
+import path from 'path';
 import { createFileControlMiddleware } from './dev-server/file-control-middleware.js';
 import { noCacheMiddleware } from './dev-server/no-cache-middleware.js';
+import { createWorkshopImportReplaceMiddleware } from './dev-server/workshop-import-replace-middleware.js';
 import { participantCreateFiles } from './participant-create-files.js';
 
 const require = createRequire(import.meta.url);
 const { createConfig, readCommandLineArgs, startServer } = require('es-dev-server');
 
-const runWorkshopServer = (argv, rootPath) => {
+const runWorkshopServer = (argv, rootFolder) => {
   const _config = {
     open: true,
     babel: true,
@@ -17,8 +18,8 @@ const runWorkshopServer = (argv, rootPath) => {
     moduleDirs: ['node_modules'],
     nodeResolve: true,
     middlewares: [
+      createWorkshopImportReplaceMiddleware(rootFolder), // rewrite frontend components references to the workshop.js
       noCacheMiddleware, // ensures that we never give back cached response
-      createBabelWorkshopMiddleware(rootPath), // rewrite frontend components references to the workshop.js
       createFileControlMiddleware('js', { admin: true }),
       createFileControlMiddleware('html', { admin: true }),
     ],
@@ -39,7 +40,7 @@ const runWorkshopServer = (argv, rootPath) => {
   });
 };
 
-const scaffoldParticipantFiles = (argv, rootPath) => {
+const scaffoldParticipantFiles = (argv, rootFolder) => {
   const scaffoldDefinitions = [
     {
       name: 'force',
@@ -49,7 +50,7 @@ const scaffoldParticipantFiles = (argv, rootPath) => {
         'If set, it will (re-)scaffold for the participants and overwrite the current files without warning',
     },
 
-    // Used for es-dev-server run, but also for getting rootPath for scaffold, so we "redefine" it here as well
+    // Used for es-dev-server run, but also for getting rootFolder for scaffold, so we "redefine" it here as well
     // otherwise it throws for unknown option
     {
       name: 'app-index',
@@ -63,7 +64,7 @@ const scaffoldParticipantFiles = (argv, rootPath) => {
   participantCreateFiles({
     force: false,
     ...commandLineArgs(scaffoldDefinitions, { argv }),
-    rootPath,
+    rootFolder,
   });
 };
 
@@ -73,18 +74,21 @@ const argv = mainOptions._unknown || [];
 
 // Find the user supplied root path where they run cwk from.
 // Here we need to look for template folder and workshop.js
-let rootPath = '/';
+let rootFolder = '/';
 const suppliedIndex = readCommandLineArgs(argv).appIndex;
 if (suppliedIndex && suppliedIndex.indexOf('/') !== -1) {
-  rootPath += suppliedIndex.slice(0, suppliedIndex.lastIndexOf('/') + 1);
+  const suppliedFolder = suppliedIndex.slice(0, suppliedIndex.lastIndexOf('/') + 1);
+
+  // actual root path that we will use is the root of the server + the folder of the supplied app index
+  rootFolder = `${path.resolve('/', suppliedFolder)}/`;
 }
 
 switch (mainOptions.command) {
   case 'run':
-    runWorkshopServer(argv, rootPath);
+    runWorkshopServer(argv, rootFolder);
     break;
   case 'scaffold':
-    scaffoldParticipantFiles(argv, rootPath);
+    scaffoldParticipantFiles(argv, rootFolder);
     break;
   // no default
 }

@@ -1,12 +1,10 @@
 import { css, html, LitElement } from 'lit-element';
-
+import './ParticipantCapsule.js';
+import './SelectCookie.js';
 // Placeholder here, babel plugin will transform this to resolve to the workshop.js
 // in the same folder that the appIndex file is inside of. This is a user-provided file
 // eslint-disable-next-line import/no-unresolved
-import { workshop } from './workshop.js';
-
-import './ParticipantCapsule.js';
-import './SelectCookie.js';
+import { workshop } from './workshopImport.js';
 
 class AppShell extends LitElement {
   static get styles() {
@@ -69,15 +67,11 @@ class AppShell extends LitElement {
             <button @click=${this.changeName}>Change your name</button>
             <div class="participants-container">
               ${this.participants.map(
-                name => html`
-                  <participant-capsule .name="${name}"></participant-capsule>
-                `,
+                name => html` <participant-capsule .name="${name}"></participant-capsule> `
               )}
             </div>
           `
-        : html`
-            <select-cookie></select-cookie>
-          `}
+        : html` <select-cookie></select-cookie> `}
     `;
   }
 }

@@ -47,17 +47,17 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 }
 
 export const participantCreateFiles = async opts => {
-  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootPath}workshop.js`));
+  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootFolder}workshop.js`));
   const { participants, templateData } = workshop;
 
   participants.forEach(name => {
     copyTemplates(
-      path.resolve(process.cwd(), `.${opts.rootPath}/template/**/*`),
-      path.resolve(process.cwd(), `.${opts.rootPath}/participants/${name}`),
+      path.resolve(process.cwd(), `.${opts.rootFolder}/template/**/*`),
+      path.resolve(process.cwd(), `.${opts.rootFolder}/participants/${name}`),
       {
         participantName: name,
         ...templateData,
-      },
+      }
     ).then(files => {
       files.forEach(file => {
         writeFileToPathOnDisk(file.toPath, file.processed, {

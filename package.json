@@ -34,8 +34,8 @@
     "@babel/plugin-syntax-import-meta": "^7.8.3",
     "@babel/preset-env": "^7.9.5",
     "@open-wc/eslint-config": "^2.0.0",
-    "@open-wc/prettier-config": "^0.1.10",
     "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.11.0",
     "husky": "^1.0.0",
     "lint-staged": "^8.0.0"
   },
@@ -45,7 +45,8 @@
     "command-line-args": "^5.1.1",
     "es-dev-server": "^1.45.1",
     "glob": "^7.1.6",
-    "lit-element": "^2.2.1"
+    "lit-element": "^2.2.1",
+    "prettier": "^2.0.5"
   },
   "eslintConfig": {
     "extends": [
@@ -53,7 +54,11 @@
       "eslint-config-prettier"
     ]
   },
-  "prettier": "@open-wc/prettier-config",
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
