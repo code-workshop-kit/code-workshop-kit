@@ -1,27 +1,43 @@
+import { createRequire } from 'module';
 import path from 'path';
+
+const require = createRequire(import.meta.url);
+
+const findBrowserPath = appIndex => {
+  const absolutePath = require.resolve('code-workshop-kit/components/AppShell.js');
+
+  // Subtract working directory and resolve to root of the es-dev-server
+  const componentPath = path.resolve('/', path.relative(process.cwd(), absolutePath));
+
+  // Relative to the appIndex folder (usually root, but can be nested somewhere as well)
+  const relativeComponentPath = path.relative(
+    path.resolve('/', path.dirname(appIndex)),
+    componentPath
+  );
+
+  // Normalize for Windows
+  const normalizedForWindows = relativeComponentPath.replace(
+    new RegExp(path.sep === '\\' ? '\\\\' : path.sep, 'g'),
+    '/'
+  );
+
+  return normalizedForWindows;
+};
 
 export function createInsertAppShellMiddleware(appIndex, cwkShell = false) {
   return async function insertAppShellMiddleware(ctx, next) {
     await next();
 
-    const pathRelativeToServer = path.resolve('/', appIndex);
-    // Extra check because the url could be ending with / and then we should be serving /index.html
-    if (ctx.url === pathRelativeToServer || `${ctx.url}index.html` === pathRelativeToServer) {
-      // When in local development, there will not be an install of code-workshop-kit in node modules
-      // so we should not insert this script. It will error with status code 500... and crash the app
-      // Inserting the app index is handled in the demo folder index file manually.
-      if (cwkShell) {
-        // Find how deep we are compared to root, -1 to exclude root '/'
-        const indexFolderDepth = [...pathRelativeToServer.match(new RegExp('/', 'g'))].length - 1;
-        const appShellPath = path.normalize(
-          `${'../'.repeat(indexFolderDepth)}./node_modules/code-workshop-kit/components/AppShell.js`
-        );
+    if (cwkShell) {
+      const pathRelativeToServer = path.resolve('/', appIndex);
 
-        console.log('appShellPath', appShellPath);
+      // Extra check because the url could be ending with / and then we should be serving /index.html
+      if (ctx.url === pathRelativeToServer || `${ctx.url}index.html` === pathRelativeToServer) {
+        const browserPath = findBrowserPath(appIndex);
 
         const appShellScript = `
           <script type="module">
-            import '${appShellPath}';
+            import '${browserPath}';
             document.querySelector('body').appendChild(document.createElement('cwk-app-shell'));
           </script>
         `;

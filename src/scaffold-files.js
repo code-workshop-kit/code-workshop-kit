@@ -49,7 +49,7 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 }
 
 export const scaffold = async opts => {
-  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootFolder}workshop.js`));
+  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootFolder}/workshop.js`));
   const { participants, templateData } = workshop;
 
   participants.forEach(name => {

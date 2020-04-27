@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import commandLineArgs from 'command-line-args';
 import { createRequire } from 'module';
+import path from 'path';
 import { scaffoldFiles } from './scaffold-files.js';
-import { getRootFolder } from './utils/getRootFolder.js';
 import { workshopServer } from './workshop-server.js';
 
 const require = createRequire(import.meta.url);
@@ -15,7 +15,7 @@ const argv = mainOptions._unknown || [];
 
 // Find the user supplied root path where they run cwk from.
 // Here we need to look for template folder and workshop.js
-const rootFolder = getRootFolder(readCommandLineArgs(argv).appIndex);
+const rootFolder = path.resolve('/', path.dirname(readCommandLineArgs(argv).appIndex));
 
 switch (mainOptions.command) {
   case 'run':

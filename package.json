@@ -5,13 +5,13 @@
   "type": "module",
   "main": "index.js",
   "bin": {
-    "cwk": "./cli.js"
+    "cwk.mjs": "./src/cli.js"
   },
   "engines": {
     "node": ">=13.0.0"
   },
   "scripts": {
-    "start": "node src/cli.js run --watch --app-index ./demo/index.html",
+    "start": "./copy-components.sh && node src/cli.js run --cwk-shell --watch --app-index ./demo/index.html --port 8081",
     "start:scaffold": "node src/cli.js scaffold --app-index ./demo/index.html",
     "start:scaffold:force": "node src/cli.js scaffold --force --app-index ./demo/index.html",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
@@ -19,7 +19,8 @@
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
     "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
     "lint": "npm run lint:eslint && npm run lint:prettier",
-    "format": "npm run format:eslint && npm run format:prettier"
+    "format": "npm run format:eslint && npm run format:prettier",
+    "bin:start": "cwk.mjs run --app-index ./demo/index.html"
   },
   "keywords": [
     "workshop",
