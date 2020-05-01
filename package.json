@@ -19,7 +19,8 @@
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
     "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
     "lint": "npm run lint:eslint && npm run lint:prettier",
-    "format": "npm run format:eslint && npm run format:prettier"
+    "format": "npm run format:eslint && npm run format:prettier",
+    "release": "standard-version"
   },
   "keywords": [
     "workshop",
@@ -34,7 +35,8 @@
     "eslint-config-prettier": "^6.11.0",
     "husky": "^1.0.0",
     "lint-staged": "^8.0.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "standard-version": "^7.1.0"
   },
   "dependencies": {
     "@open-wc/create": "^0.28.1",
