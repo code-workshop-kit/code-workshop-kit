@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "bin": {
-    "cwk.mjs": "./src/cli.js"
+    "cwk": "./src/cli.js"
   },
   "engines": {
     "node": ">=13.0.0"
