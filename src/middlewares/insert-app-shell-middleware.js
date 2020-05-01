@@ -24,26 +24,24 @@ const findBrowserPath = appIndex => {
   return normalizedForWindows;
 };
 
-export function createInsertAppShellMiddleware(appIndex, cwkShell = false) {
+export function createInsertAppShellMiddleware(appIndex) {
   return async function insertAppShellMiddleware(ctx, next) {
     await next();
 
-    if (cwkShell) {
-      const pathRelativeToServer = path.resolve('/', appIndex);
+    const pathRelativeToServer = path.resolve('/', appIndex);
 
-      // Extra check because the url could be ending with / and then we should be serving /index.html
-      if (ctx.url === pathRelativeToServer || `${ctx.url}index.html` === pathRelativeToServer) {
-        const browserPath = findBrowserPath(appIndex);
+    // Extra check because the url could be ending with / and then we should be serving /index.html
+    if (ctx.url === pathRelativeToServer || `${ctx.url}index.html` === pathRelativeToServer) {
+      const browserPath = findBrowserPath(appIndex);
 
-        const appShellScript = `
+      const appShellScript = `
           <script type="module">
             import '${browserPath}';
             document.querySelector('body').appendChild(document.createElement('cwk-app-shell'));
           </script>
         `;
 
-        ctx.body = ctx.body.replace('</body>', `${appShellScript}</body>`);
-      }
+      ctx.body = ctx.body.replace('</body>', `${appShellScript}</body>`);
     }
   };
 }

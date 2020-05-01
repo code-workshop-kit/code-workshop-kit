@@ -71,7 +71,7 @@ export const scaffold = async opts => {
   });
 };
 
-export const scaffoldFiles = (argv, rootFolder) => {
+export const scaffoldFiles = (opts = {}) => {
   const scaffoldDefinitions = [
     ...commandLineOptions,
     {
@@ -83,9 +83,14 @@ export const scaffoldFiles = (argv, rootFolder) => {
     },
   ];
 
+  let parsedArgv = {};
+  if (opts.argv) {
+    parsedArgv = commandLineArgs(scaffoldDefinitions, { argv: opts.argv });
+  }
+
   scaffold({
     force: false,
-    ...commandLineArgs(scaffoldDefinitions, { argv }),
-    rootFolder,
+    ...opts,
+    ...parsedArgv,
   });
 };

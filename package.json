@@ -11,7 +11,7 @@
     "node": ">=13.0.0"
   },
   "scripts": {
-    "start": "./copy-components && node src/cli.js run --cwk-shell --watch --app-index ./demo/index.html",
+    "start": "./copy-components && node src/cli.js run --cwk-shell --watch --app-index ./demo/index.html --port 8081",
     "start:scaffold": "node src/cli.js scaffold --app-index ./demo/index.html",
     "start:scaffold:force": "node src/cli.js scaffold --force --app-index ./demo/index.html",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
