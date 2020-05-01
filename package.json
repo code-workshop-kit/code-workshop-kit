@@ -20,7 +20,7 @@
     "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "format": "npm run format:eslint && npm run format:prettier",
-    "release": "standard-version"
+    "release": "standard-version -t"
   },
   "keywords": [
     "workshop",

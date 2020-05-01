@@ -21,18 +21,18 @@ export const startServer = (opts = {}) => {
     ...opts,
   };
 
-  const cwkServerDefinitions = [
-    ...commandLineOptions,
-    {
-      name: 'cwk-shell',
-      type: Boolean,
-      description: `If set, inject a cwk-app-shell component into your app index html file,
-which gives you a bunch of visual tools for your workshop in the browser`,
-    },
-  ];
-
   // If cli was used, read flags, both for cwk and eds flags
   if (opts.argv) {
+    const cwkServerDefinitions = [
+      ...commandLineOptions,
+      {
+        name: 'cwk-shell',
+        type: Boolean,
+        description: `If set, inject a cwk-app-shell component into your app index html file,
+  which gives you a bunch of visual tools for your workshop in the browser`,
+      },
+    ];
+
     cwkConfig = {
       ...cwkConfig,
       ...commandLineArgs(cwkServerDefinitions, { argv: opts.argv }),
@@ -41,8 +41,8 @@ which gives you a bunch of visual tools for your workshop in the browser`,
     cwkConfig.rootFolder = path.resolve('/', path.dirname(cwkConfig.appIndex));
 
     // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
-    cwkConfig.appIndex = cwkConfig['app-index'];
-    cwkConfig.cwkShell = cwkConfig['cwk-shell'];
+    cwkConfig.appIndex = cwkConfig['app-index'] || cwkConfig.appIndex;
+    cwkConfig.cwkShell = cwkConfig['cwk-shell'] || cwkConfig.cwkShell;
   }
 
   // eds defaults & middlewares

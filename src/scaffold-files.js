@@ -5,7 +5,7 @@ import { createRequire } from 'module';
 import path from 'path';
 
 const require = createRequire(import.meta.url);
-const { commandLineOptions } = require('es-dev-server');
+const { commandLineOptions, readCommandLineArgs } = require('es-dev-server');
 const { readFileFromPath, writeFileToPathOnDisk } = require('@open-wc/create/dist/core.js');
 
 // Fork from @open-wc/create to allow functions that return strings inside data obj
@@ -72,25 +72,35 @@ export const scaffold = async opts => {
 };
 
 export const scaffoldFiles = (opts = {}) => {
-  const scaffoldDefinitions = [
-    ...commandLineOptions,
-    {
-      name: 'force',
-      alias: 'f',
-      type: Boolean,
-      description:
-        'If set, it will (re-)scaffold for the participants and overwrite the current files without warning',
-    },
-  ];
-
-  let parsedArgv = {};
-  if (opts.argv) {
-    parsedArgv = commandLineArgs(scaffoldDefinitions, { argv: opts.argv });
-  }
-
-  scaffold({
+  let scaffoldConfig = {
+    rootFolder: '/',
+    appIndex: './index.html',
     force: false,
     ...opts,
-    ...parsedArgv,
-  });
+  };
+
+  if (opts.argv) {
+    const scaffoldDefinitions = [
+      ...commandLineOptions,
+      {
+        name: 'force',
+        alias: 'f',
+        type: Boolean,
+        description:
+          'If set, it will (re-)scaffold for the participants and overwrite the current files without warning',
+      },
+    ];
+
+    scaffoldConfig = {
+      ...scaffoldConfig,
+      ...commandLineArgs(scaffoldDefinitions, { argv: opts.argv }),
+      ...readCommandLineArgs(opts.argv),
+    };
+    scaffoldConfig.rootFolder = path.resolve('/', path.dirname(scaffoldConfig.appIndex));
+
+    // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
+    scaffoldConfig.appIndex = scaffoldConfig['app-index'] || scaffoldConfig.appIndex;
+  }
+
+  scaffold(scaffoldConfig);
 };

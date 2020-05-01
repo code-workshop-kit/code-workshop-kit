@@ -4,17 +4,22 @@ import path from 'path';
 const require = createRequire(import.meta.url);
 
 const findBrowserPath = appIndex => {
-  const absolutePath = require.resolve('code-workshop-kit/components/AppShell.js');
+  const absolutePath = require.resolve('code-workshop-kit/src/components/AppShell.js');
 
   // Subtract working directory and resolve to root of the es-dev-server
   const componentPath = path.resolve('/', path.relative(process.cwd(), absolutePath));
 
-  // Relative to the appIndex folder (usually root, but can be nested somewhere as well)
-  const relativeComponentPath = path.relative(
+  // Relative to the appIndex folder (usually root, but can be nested somewhere as well) and resolved again
+  let relativeComponentPath = path.relative(
     path.resolve('/', path.dirname(appIndex)),
     componentPath,
   );
 
+  // Check if the relative component path is bare... this can happen with path.relative
+  // Then we just assume we can resolve it to root
+  if (!relativeComponentPath.startsWith('.') && !relativeComponentPath.startsWith('/')) {
+    relativeComponentPath = path.resolve('/', relativeComponentPath);
+  }
   // Normalize for Windows
   const normalizedForWindows = relativeComponentPath.replace(
     new RegExp(path.sep === '\\' ? '\\\\' : path.sep, 'g'),

@@ -11,7 +11,7 @@ Make sure the server (by default localhost:8000) is shared with your participant
 
 ## Usage
 
-Have NodeJS version 13 or higher installed.
+> NodeJS version 13 or higher is required. This means that you have to make sure you put `"type":"module"`, in your `package.json` of your module!
 
 Install the package
 
@@ -25,7 +25,7 @@ Or with npm
 npm install code-workshop-kit
 ```
 
-Run the cwk.mjs executable that is installed in your node_modules .bin folder
+Run the cwk executable that is installed in your node_modules .bin folder
 
 ### Running the server
 
@@ -68,10 +68,12 @@ export const workshop = {
 };
 ```
 
-You can either run the cwk dev server or scaffold files
+You can either run the cwk dev server or scaffold files.
+
+> Note that you either need to do this through package.json `scripts` or by globally installing code-workshop-kit so that the binary is available to your command line everywhere.
 
 ```sh
-cwk.mjs run
+cwk run --cwk-shell
 ```
 
 Which accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) accepts, and additionally:

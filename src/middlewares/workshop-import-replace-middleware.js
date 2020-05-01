@@ -1,3 +1,5 @@
+import path from 'path';
+
 export function createWorkshopImportReplaceMiddleware(rootFolder) {
   return async function workshopImportReplaceMiddleware(ctx, next) {
     await next();
@@ -8,7 +10,7 @@ export function createWorkshopImportReplaceMiddleware(rootFolder) {
     ) {
       ctx.body = ctx.body.replace(
         new RegExp('./workshopImport.js', 'g'),
-        `${rootFolder}/workshop.js`,
+        path.resolve('/', `${rootFolder}/workshop.js`),
       );
     }
   };
