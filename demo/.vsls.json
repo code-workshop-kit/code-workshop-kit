@@ -2,17 +2,8 @@
   "$schema": "http://json.schemastore.org/vsls",
   "gitignore": "none",
   "excludeFiles": [
-    "_components",
-    "dev-server",
-    "node_modules",
-    "template",
-    ".gitignore",
-    "es-dev-server.config.js",
     "index.html",
-    "package.json",
     "workshop.js",
-    "yarn.lock",
-    "package-lock.json",
-    "README.md"
+    "template"
   ]
 }
