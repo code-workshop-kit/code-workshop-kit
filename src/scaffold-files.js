@@ -73,7 +73,7 @@ export const scaffold = async opts => {
 
 export const scaffoldFiles = (opts = {}) => {
   let scaffoldConfig = {
-    rootFolder: '/',
+    rootFolder: '/', // TODO: use EDS rootDir instead
     appIndex: './index.html',
     force: false,
     ...opts,
@@ -96,10 +96,10 @@ export const scaffoldFiles = (opts = {}) => {
       ...commandLineArgs(scaffoldDefinitions, { argv: opts.argv }),
       ...readCommandLineArgs(opts.argv),
     };
-    scaffoldConfig.rootFolder = path.resolve('/', path.dirname(scaffoldConfig.appIndex));
 
-    // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
+    // TODO: use root-dir instead, app index is only important for cwk server to insert app shell
     scaffoldConfig.appIndex = scaffoldConfig['app-index'] || scaffoldConfig.appIndex;
+    scaffoldConfig.rootFolder = path.resolve('/', path.dirname(scaffoldConfig.appIndex));
   }
 
   scaffold(scaffoldConfig);

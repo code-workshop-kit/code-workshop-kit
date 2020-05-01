@@ -38,10 +38,12 @@ export const startServer = (opts = {}) => {
       ...commandLineArgs(cwkServerDefinitions, { argv: opts.argv }),
       ...readCommandLineArgs(opts.argv),
     };
+    // TODO: use rootDir
     cwkConfig.rootFolder = path.resolve('/', path.dirname(cwkConfig.appIndex));
 
-    // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
+    // TODO: Check if necessary? readCommandLineArgs from EDS should already handle this
     cwkConfig.appIndex = cwkConfig['app-index'] || cwkConfig.appIndex;
+    // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
     cwkConfig.cwkShell = cwkConfig['cwk-shell'] || cwkConfig.cwkShell;
   }
 

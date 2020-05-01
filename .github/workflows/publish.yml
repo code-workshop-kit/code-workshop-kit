@@ -1,0 +1,36 @@
+name: Publish NPM
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    # Release with standard-version
+    - name: Create release with standard-version
+      uses: actions/setup-node@v1
+      with:
+        node-version: 13.x
+    - run: yarn --frozen-lockfile
+    - run: yarn release
+    - run: git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --follow-tags
+
+  publish:
+    needs: release
+    name: Publish new version to NPM
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Publish new version to NPM
+      uses: actions/setup-node@v1
+      with:
+        node-version: 13.x
+    - run: yarn publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
