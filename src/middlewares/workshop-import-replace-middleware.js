@@ -8,7 +8,7 @@ export function createWorkshopImportReplaceMiddleware(rootFolder) {
     ) {
       ctx.body = ctx.body.replace(
         new RegExp('./workshopImport.js', 'g'),
-        `${rootFolder}/workshop.js`
+        `${rootFolder}/workshop.js`,
       );
     }
   };

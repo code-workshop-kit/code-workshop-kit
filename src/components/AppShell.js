@@ -67,11 +67,11 @@ class CwkAppShell extends LitElement {
             <button @click=${this.changeName}>Change your name</button>
             <div class="participants-container">
               ${this.participants.map(
-                name => html` <cwk-participant-capsule .name="${name}"></cwk-participant-capsule> `
+                name => html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
               )}
             </div>
           `
-        : html` <cwk-select-cookie></cwk-select-cookie> `}
+        : html`<cwk-select-cookie></cwk-select-cookie>`}
     `;
   }
 }

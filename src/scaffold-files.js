@@ -59,7 +59,7 @@ export const scaffold = async opts => {
       {
         participantName: name,
         ...templateData,
-      }
+      },
     ).then(files => {
       files.forEach(file => {
         writeFileToPathOnDisk(file.toPath, file.processed, {

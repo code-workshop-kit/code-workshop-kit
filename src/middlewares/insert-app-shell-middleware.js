@@ -12,13 +12,13 @@ const findBrowserPath = appIndex => {
   // Relative to the appIndex folder (usually root, but can be nested somewhere as well)
   const relativeComponentPath = path.relative(
     path.resolve('/', path.dirname(appIndex)),
-    componentPath
+    componentPath,
   );
 
   // Normalize for Windows
   const normalizedForWindows = relativeComponentPath.replace(
     new RegExp(path.sep === '\\' ? '\\\\' : path.sep, 'g'),
-    '/'
+    '/',
   );
 
   return normalizedForWindows;

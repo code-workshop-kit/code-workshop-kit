@@ -30,7 +30,7 @@ class CwkSelectCookie extends LitElement {
   render() {
     return html`
       ${this.participants.map(
-        name => html`<a href="./index.html"><button @click=${setCookie}>${name}</button></a>`
+        name => html`<a href="./index.html"><button @click=${setCookie}>${name}</button></a>`,
       )}
     `;
   }
