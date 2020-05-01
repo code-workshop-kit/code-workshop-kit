@@ -1,4 +1,4 @@
-# remote-workshop
+# code-workshop-kit
 
 Using some es-dev-server and webcomponent magic to create a nice environment for remote frontend workshops.
 I am leveraging VS Code Live Share, es-dev-server (+ koa middlewares) and open-wc's create scaffold package, to do this.
@@ -6,9 +6,30 @@ I am leveraging VS Code Live Share, es-dev-server (+ koa middlewares) and open-w
 The idea is that you set up a Live Share collaboration session with your participants to facilitate the workshop.
 The dev-server and its middlewares ensure that each participant gets a scaffolded folder + files that you as a facilitator defined, and through cookies it ensures that only files for the respective participants are loaded, whereas for the host, all files are loaded.
 
-> This package is very much a work in progress. Eventually I want to release it as an NPM package, so there will be no need for cloning this repo.
-
 ## Usage
+
+Have NodeJS version 13 or higher installed.
+
+Install the package
+
+```sh
+npm install code-workshop-kit
+```
+
+Run the cwk.mjs executable that is installed in your node_modules .bin folder
+
+You can either run the cwk dev server or scaffold files
+
+```sh
+cwk.mjs run
+```
+
+Which accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) accepts, and additionally
+
+```sh
+cwk.mjs scaffold
+```
+
 
 Clone this repo.
 
