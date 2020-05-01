@@ -1,9 +1,11 @@
+import commandLineArgs from 'command-line-args';
 import fs from 'fs';
 import glob from 'glob';
 import { createRequire } from 'module';
 import path from 'path';
 
 const require = createRequire(import.meta.url);
+const { commandLineOptions } = require('es-dev-server');
 const { readFileFromPath, writeFileToPathOnDisk } = require('@open-wc/create/dist/core.js');
 
 // Fork from @open-wc/create to allow functions that return strings inside data obj
@@ -46,14 +48,14 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
   });
 }
 
-export const participantCreateFiles = async opts => {
-  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootPath}workshop.js`));
+export const scaffold = async opts => {
+  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootFolder}/workshop.js`));
   const { participants, templateData } = workshop;
 
   participants.forEach(name => {
     copyTemplates(
-      path.resolve(process.cwd(), `.${opts.rootPath}/template/**/*`),
-      path.resolve(process.cwd(), `.${opts.rootPath}/participants/${name}`),
+      path.resolve(process.cwd(), `.${opts.rootFolder}/template/**/*`),
+      path.resolve(process.cwd(), `.${opts.rootFolder}/participants/${name}`),
       {
         participantName: name,
         ...templateData,
@@ -66,5 +68,29 @@ export const participantCreateFiles = async opts => {
         });
       });
     });
+  });
+};
+
+export const scaffoldFiles = (opts = {}) => {
+  const scaffoldDefinitions = [
+    ...commandLineOptions,
+    {
+      name: 'force',
+      alias: 'f',
+      type: Boolean,
+      description:
+        'If set, it will (re-)scaffold for the participants and overwrite the current files without warning',
+    },
+  ];
+
+  let parsedArgv = {};
+  if (opts.argv) {
+    parsedArgv = commandLineArgs(scaffoldDefinitions, { argv: opts.argv });
+  }
+
+  scaffold({
+    force: false,
+    ...opts,
+    ...parsedArgv,
   });
 };

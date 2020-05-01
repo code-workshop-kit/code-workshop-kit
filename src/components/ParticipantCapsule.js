@@ -1,6 +1,6 @@
 import { css, html, LitElement } from 'lit-element';
 
-class ParticipantCapsule extends LitElement {
+class CwkParticipantCapsule extends LitElement {
   static get properties() {
     return {
       name: {
@@ -54,4 +54,4 @@ class ParticipantCapsule extends LitElement {
     `;
   }
 }
-customElements.define('participant-capsule', ParticipantCapsule);
+customElements.define('cwk-participant-capsule', CwkParticipantCapsule);
