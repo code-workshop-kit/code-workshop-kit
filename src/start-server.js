@@ -16,7 +16,6 @@ export const startServer = (opts = {}) => {
   // cwk defaults
   let cwkConfig = {
     cwkShell: false,
-    rootFolder: '/',
     appIndex: './index.html',
     ...opts,
   };
@@ -38,14 +37,12 @@ export const startServer = (opts = {}) => {
       ...commandLineArgs(cwkServerDefinitions, { argv: opts.argv }),
       ...readCommandLineArgs(opts.argv),
     };
-    // TODO: use rootDir
-    cwkConfig.rootFolder = path.resolve('/', path.dirname(cwkConfig.appIndex));
 
-    // TODO: Check if necessary? readCommandLineArgs from EDS should already handle this
-    cwkConfig.appIndex = cwkConfig['app-index'] || cwkConfig.appIndex;
     // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
     cwkConfig.cwkShell = cwkConfig['cwk-shell'] || cwkConfig.cwkShell;
   }
+
+  const absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex) || cwkConfig.rootDir);
 
   // eds defaults & middlewares
   const edsConfig = {
@@ -56,7 +53,7 @@ export const startServer = (opts = {}) => {
     logErrorsToBrowser: true,
     middlewares: [
       ...(cwkConfig.cwkShell ? [createInsertAppShellMiddleware(cwkConfig.appIndex)] : []),
-      createWorkshopImportReplaceMiddleware(cwkConfig.rootFolder),
+      createWorkshopImportReplaceMiddleware(absoluteRootDir),
       noCacheMiddleware,
       createFileControlMiddleware('js', { admin: true }),
       createFileControlMiddleware('html', { admin: true }),

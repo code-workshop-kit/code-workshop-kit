@@ -82,6 +82,9 @@ Which accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/t
 
 Make sure you have some HTML index file. By default the server will look for `./index.html`, but you can override this by passing the `--app-index` flag.
 
+> Note: do not change the root directory (es-dev-server --root-dir flag) if you plan on using the CWK app shell.
+> The components for this app shell are located inside your node_modules, which the dev server can only access if node_modules is nested somewhere inside the root directory that it serves from.
+
 ### Scaffolding participant files
 
 ```sh

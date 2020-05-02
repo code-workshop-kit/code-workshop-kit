@@ -35,8 +35,7 @@ export function createInsertAppShellMiddleware(appIndex) {
 
     const pathRelativeToServer = path.resolve('/', appIndex);
 
-    // Extra check because the url could be ending with / and then we should be serving /index.html
-    // TODO: Support other .html files than `index` (be smart here and use appIndex)
+    // Extra check because the url could be ending with / and then we should be serving /index.html (browser behavior)
     if (ctx.url === pathRelativeToServer || `${ctx.url}index.html` === pathRelativeToServer) {
       const browserPath = findBrowserPath(appIndex);
 

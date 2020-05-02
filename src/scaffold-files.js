@@ -49,13 +49,14 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 }
 
 export const scaffold = async opts => {
-  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootFolder}/workshop.js`));
+  console.log(opts.rootDir);
+  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootDir}/workshop.js`));
   const { participants, templateData } = workshop;
 
   participants.forEach(name => {
     copyTemplates(
-      path.resolve(process.cwd(), `.${opts.rootFolder}/template/**/*`),
-      path.resolve(process.cwd(), `.${opts.rootFolder}/participants/${name}`),
+      path.resolve(process.cwd(), `.${opts.rootDir}/template/**/*`),
+      path.resolve(process.cwd(), `.${opts.rootDir}/participants/${name}`),
       {
         participantName: name,
         ...templateData,
@@ -73,8 +74,7 @@ export const scaffold = async opts => {
 
 export const scaffoldFiles = (opts = {}) => {
   let scaffoldConfig = {
-    rootFolder: '/', // TODO: use EDS rootDir instead
-    appIndex: './index.html',
+    rootDir: '/',
     force: false,
     ...opts,
   };
@@ -97,9 +97,7 @@ export const scaffoldFiles = (opts = {}) => {
       ...readCommandLineArgs(opts.argv),
     };
 
-    // TODO: use root-dir instead, app index is only important for cwk server to insert app shell
-    scaffoldConfig.appIndex = scaffoldConfig['app-index'] || scaffoldConfig.appIndex;
-    scaffoldConfig.rootFolder = path.resolve('/', path.dirname(scaffoldConfig.appIndex));
+    scaffoldConfig.rootDir = path.resolve('/', scaffoldConfig.rootDir);
   }
 
   scaffold(scaffoldConfig);

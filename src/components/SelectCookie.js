@@ -6,6 +6,7 @@ import { workshop } from './workshopImport.js';
 
 const setCookie = e => {
   document.cookie = `participant_name=${e.target.innerText}`;
+  window.location.reload();
 };
 
 class CwkSelectCookie extends LitElement {
@@ -29,9 +30,7 @@ class CwkSelectCookie extends LitElement {
 
   render() {
     return html`
-      ${this.participants.map(
-        name => html`<a href="./index.html"><button @click=${setCookie}>${name}</button></a>`,
-      )}
+      ${this.participants.map(name => html`<button @click=${setCookie}>${name}</button>`)}
     `;
   }
 }
