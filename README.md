@@ -106,7 +106,7 @@ export const workshop = {
   templateData: {
     appTitle: 'Cool Frontend App',
     intro() {
-      return `Hi ${this.participantName}, welcome to ${this.appTitle}!`;
+      return `Hi ${this.participantName}, welcome to ${this.appTitle}!!`;
     },
   },
 };
