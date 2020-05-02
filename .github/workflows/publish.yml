@@ -35,7 +35,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 13.x
-        always-auth: true
-    - run: echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc && yarn publish
+        registry-url: 'https://registry.npmjs.org'
+    - run: yarn publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
