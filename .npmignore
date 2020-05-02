@@ -35,3 +35,4 @@ browserstack.err
 /demo/
 copy-components
 yarn.lock
+.github
