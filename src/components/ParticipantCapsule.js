@@ -39,6 +39,10 @@ class CwkParticipantCapsule extends LitElement {
   }
 
   get participantIndexHtmlPath() {
+    // Take care of implicit index html files
+    if (!window.location.pathname.endsWith('.html')) {
+      return `.${window.location.pathname}/participants/${this.name}/index.html`;
+    }
     return `./participants/${this.name}/index.html`;
   }
 
