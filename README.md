@@ -33,7 +33,7 @@ First of all, you will need a `workshop.js` file in your project root directory.
 
 This will need to export a `workshop` JavaScript Object with configuration options.
 
-Most import config keys are:
+Most important config keys are:
 
 - `participants`, which is an array of participant names that you want to add in your workshop. If you are the host of the workshop, you can add yourself too, this is easy if you want to demonstrate code during your workshop in your own folder
 - `templateData`, an object which accepts any data which can be used inside your template files to fill in variables. You can also put methods in here, and you can access other templateData variables through `this` directly.
@@ -70,8 +70,6 @@ export const workshop = {
 
 You can either run the cwk dev server or scaffold files.
 
-> Note that you either need to do this through package.json `scripts` or by globally installing code-workshop-kit so that the binary is available to your command line everywhere.
-
 ```sh
 cwk run
 ```
@@ -106,7 +104,7 @@ export const workshop = {
   templateData: {
     appTitle: 'Cool Frontend App',
     intro() {
-      return `Hi ${this.participantName}, welcome to ${this.appTitle}!!`;
+      return `Hi ${this.participantName}, welcome to ${this.appTitle}!`;
     },
   },
 };
