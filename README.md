@@ -29,7 +29,7 @@ Run the cwk executable that is installed in your node_modules .bin folder
 
 ### Running the server
 
-First of all, you will need a `workshop.js` file in the same folder that you application index file is inside of. By default, it's the root folder where you run the CLI from.
+First of all, you will need a `workshop.js` file in your project root directory.
 
 This will need to export a `workshop` JavaScript Object with configuration options.
 
@@ -73,16 +73,16 @@ You can either run the cwk dev server or scaffold files.
 > Note that you either need to do this through package.json `scripts` or by globally installing code-workshop-kit so that the binary is available to your command line everywhere.
 
 ```sh
-cwk run --cwk-shell
+cwk run
 ```
 
 Which accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) accepts, and additionally:
 
-- `--cwk-shell`, if passed, will inject a cwk-shell component into your app index.html file. Recommended to try it out!
+- `--without-app-shell`, if passed, will prevent injection of the cwk-shell component into your app index.html file.
 
 Make sure you have some HTML index file. By default the server will look for `./index.html`, but you can override this by passing the `--app-index` flag.
 
-> Note: do not change the root directory (es-dev-server --root-dir flag) if you plan on using the CWK app shell.
+> Note: do not change the root directory (es-dev-server --root-dir flag) if you plan on using the CWK app shell. If you want to insert it into a custom entry file, use --app-index flag.
 > The components for this app shell are located inside your node_modules, which the dev server can only access if node_modules is nested somewhere inside the root directory that it serves from.
 
 ### Scaffolding participant files
@@ -91,7 +91,9 @@ Make sure you have some HTML index file. By default the server will look for `./
 cwk.mjs scaffold
 ```
 
-The CLI will look for a `template` folder in the root where you run the CLI. In this `template` you can put in any files or folders, and they will be copied for each of your participants.
+Optionally pass `--force` to override already existing files. Also accepts `--root-dir` to change the location of the scaffold. This is the current working directory by default.
+
+The CLI will look for a `template` folder in the root dir. In this `template` you can put in any files or folders, and they will be copied for each of your participants.
 
 You can create hooks for templateData properties by using the syntax: `<%= myVar %>`. The spaces are important here.
 

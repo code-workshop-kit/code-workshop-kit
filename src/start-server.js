@@ -41,7 +41,11 @@ export const startServer = (opts = {}) => {
     cwkConfig.withoutAppShell = cwkConfig['without-app-shell'] || cwkConfig.withoutAppShell;
   }
 
-  const absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex) || cwkConfig.rootDir);
+  /**
+   * Right now, we assume that your workshop.js is in the same folder as your app index.
+   * TODO: allow override.
+   */
+  const absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex));
 
   // eds defaults & middlewares
   const edsConfig = {
