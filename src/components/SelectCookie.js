@@ -1,11 +1,12 @@
 import { html, LitElement } from 'lit-element';
 // Placeholder here, will transform this to resolve to the workshop.js
-// in the same folder that the appIndex file is inside of. This is a user-provided file
+// in the rootDir folder. This is a user-provided file
 // eslint-disable-next-line import/no-unresolved
 import { workshop } from './workshopImport.js';
 
 const setCookie = e => {
   document.cookie = `participant_name=${e.target.innerText}`;
+  window.location.reload();
 };
 
 class CwkSelectCookie extends LitElement {
@@ -29,9 +30,7 @@ class CwkSelectCookie extends LitElement {
 
   render() {
     return html`
-      ${this.participants.map(
-        name => html`<a href="./index.html"><button @click=${setCookie}>${name}</button></a>`,
-      )}
+      ${this.participants.map(name => html`<button @click=${setCookie}>${name}</button>`)}
     `;
   }
 }

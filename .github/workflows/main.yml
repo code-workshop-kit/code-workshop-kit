@@ -1,0 +1,24 @@
+name: Verify changes
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  verify:
+    name: Verify changes
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [13.x, 14.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Verify with Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: yarn --frozen-lockfile
+    - run: yarn lint

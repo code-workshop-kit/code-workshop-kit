@@ -15,8 +15,7 @@ const startEdsServer = require('es-dev-server').startServer;
 export const startServer = (opts = {}) => {
   // cwk defaults
   let cwkConfig = {
-    cwkShell: false,
-    rootFolder: '/',
+    withoutAppShell: false,
     appIndex: './index.html',
     ...opts,
   };
@@ -26,10 +25,9 @@ export const startServer = (opts = {}) => {
     const cwkServerDefinitions = [
       ...commandLineOptions,
       {
-        name: 'cwk-shell',
+        name: 'without-app-shell',
         type: Boolean,
-        description: `If set, inject a cwk-app-shell component into your app index html file,
-  which gives you a bunch of visual tools for your workshop in the browser`,
+        description: `If set, do not inject the cwk-app-shell component into your app index html file`,
       },
     ];
 
@@ -38,12 +36,12 @@ export const startServer = (opts = {}) => {
       ...commandLineArgs(cwkServerDefinitions, { argv: opts.argv }),
       ...readCommandLineArgs(opts.argv),
     };
-    cwkConfig.rootFolder = path.resolve('/', path.dirname(cwkConfig.appIndex));
 
     // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
-    cwkConfig.appIndex = cwkConfig['app-index'] || cwkConfig.appIndex;
-    cwkConfig.cwkShell = cwkConfig['cwk-shell'] || cwkConfig.cwkShell;
+    cwkConfig.withoutAppShell = cwkConfig['without-app-shell'] || cwkConfig.withoutAppShell;
   }
+
+  const absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex) || cwkConfig.rootDir);
 
   // eds defaults & middlewares
   const edsConfig = {
@@ -53,8 +51,8 @@ export const startServer = (opts = {}) => {
     nodeResolve: true,
     logErrorsToBrowser: true,
     middlewares: [
-      ...(cwkConfig.cwkShell ? [createInsertAppShellMiddleware(cwkConfig.appIndex)] : []),
-      createWorkshopImportReplaceMiddleware(cwkConfig.rootFolder),
+      ...(cwkConfig.withoutAppShell ? [] : [createInsertAppShellMiddleware(cwkConfig.appIndex)]),
+      createWorkshopImportReplaceMiddleware(absoluteRootDir),
       noCacheMiddleware,
       createFileControlMiddleware('js', { admin: true }),
       createFileControlMiddleware('html', { admin: true }),
