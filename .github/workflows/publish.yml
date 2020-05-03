@@ -16,11 +16,13 @@ jobs:
       with:
         node-version: 13.x
         registry-url: 'https://registry.npmjs.org'
-    - name: Release new version
+    - name: Install dependencies
       run: yarn --frozen-lockfile
+    - name: Set local git config
       run: |
         git config --local user.email "joren.broekema@gmail.com"
         git config --local user.name "Joren Broekema"
+    - name: Release
       run: yarn release
     - name: Publish to NPM
       env:
