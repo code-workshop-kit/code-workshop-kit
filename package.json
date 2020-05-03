@@ -42,9 +42,11 @@
   "dependencies": {
     "@open-wc/create": "^0.28.1",
     "command-line-args": "^5.1.1",
+    "deepmerge": "^4.2.2",
     "es-dev-server": "^1.45.1",
     "glob": "^7.1.6",
-    "lit-element": "^2.2.1"
+    "lit-element": "^2.2.1",
+    "ws": "^7.2.5"
   },
   "eslintConfig": {
     "extends": [
