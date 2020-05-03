@@ -1,3 +1,4 @@
+import { adminUIMiddleware } from './admin-ui-middleware.js';
 import { createFileControlMiddleware } from './file-control-middleware.js';
 import { createInsertAppShellMiddleware } from './insert-app-shell-middleware.js';
 import { noCacheMiddleware } from './no-cache-middleware.js';
@@ -8,4 +9,5 @@ export {
   createInsertAppShellMiddleware,
   noCacheMiddleware,
   createWorkshopImportReplaceMiddleware,
+  adminUIMiddleware,
 };

@@ -5,11 +5,11 @@ import { html, LitElement } from 'lit-element';
 import { workshop } from './workshopImport.js';
 
 const setCookie = e => {
-  document.cookie = `participant_name=${e.target.innerText}`;
+  document.cookie = `participant_name=${e.target.innerText};path=/`;
   window.location.reload();
 };
 
-class CwkSelectCookie extends LitElement {
+class SelectCookie extends LitElement {
   static get properties() {
     return {
       participants: {
@@ -34,4 +34,4 @@ class CwkSelectCookie extends LitElement {
     `;
   }
 }
-customElements.define('cwk-select-cookie', CwkSelectCookie);
+customElements.define('cwk-select-cookie', SelectCookie);

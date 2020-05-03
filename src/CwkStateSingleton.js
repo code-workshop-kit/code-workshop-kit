@@ -1,3 +1,4 @@
+import isPlainObject from 'is-plain-object';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
@@ -13,7 +14,7 @@ class CwkStateSingleton {
   }
 
   set state(value) {
-    this.__data = deepmerge(this.__data, value);
+    this.__data = deepmerge(this.__data, value, { isMergeableObject: isPlainObject });
   }
 }
 
