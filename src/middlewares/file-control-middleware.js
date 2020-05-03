@@ -1,16 +1,15 @@
-export function createFileControlMiddleware(ext, { admin = false }) {
+export function createFileControlMiddleware({ ext, admin = false, rootDir }) {
   return async function fileControlMiddleware(ctx, next) {
     await next();
-
     const participantName = ctx.cookies.get('participant_name');
 
     /**
      * First we check
-     * - Whether file is inside /participants/ folder
+     * - Whether file is inside participants folder inside rootDir
      * - Whether the file ends with the specified extension (e.g. .json)
      *
      * If that's the case, we check
-     * - Whether the file is not inside the participant's folder
+     * - Whether the file is not inside the current participant's folder
      * - Whether the client is not the host of the session (if admin mode is turned on)
      *
      * If that's also the case, we return empty content
@@ -18,9 +17,10 @@ export function createFileControlMiddleware(ext, { admin = false }) {
      * This is useful if you don't want participants to see output of other participants' code.
      */
     if (
-      ctx.url.startsWith('/participants/') &&
+      ctx.status === 200 &&
+      ctx.url.startsWith(`${rootDir}/participants/`) &&
       ctx.url.endsWith(ext) &&
-      !ctx.url.split('/participants/')[1].startsWith(participantName) &&
+      !ctx.url.split(`${rootDir}/participants/`)[1].startsWith(participantName) &&
       !(admin && ctx.ip === '::1') // FIXME: This only works for localhost, should add support for 127.0.0.1
     ) {
       // return empty content
