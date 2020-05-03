@@ -9,16 +9,15 @@ jobs:
   verify:
     name: Verify changes
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [13.x, 14.x]
-
     steps:
     - uses: actions/checkout@v2
-    - name: Verify with Node.js ${{ matrix.node-version }}
+    - name: Setup Node ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: yarn --frozen-lockfile
-    - run: yarn lint
+    - name: Lint
+      run: yarn --frozen-lockfile
+      run: yarn lint
