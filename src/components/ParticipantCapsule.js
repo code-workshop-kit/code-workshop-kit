@@ -39,9 +39,17 @@ class CwkParticipantCapsule extends LitElement {
   }
 
   get participantIndexHtmlPath() {
-    // Take care of implicit index html files
-    if (!window.location.pathname.endsWith('.html')) {
-      return `.${window.location.pathname}/participants/${this.name}/index.html`;
+    // Assumes participants folder to be inside the folder which contains app index
+    // Create an issue if you need more flexibility here.
+
+    // Take care of implicit index html files.
+    // E.g. localhost:8000/demo/demo-nested should return ./demo-nested/participants/name/index.html)
+    // whereas localhost:8000/demo/demo-nested/ or localhost:8000/demo/demo-nested/index.html should return ./participants/name/index.html
+    // TODO: Check if it's better to transform with nodejs instead of relying on this flaky window.location logic..
+    if (!window.location.pathname.endsWith('.html') && !window.location.pathname.endsWith('/')) {
+      const folders = window.location.pathname.split('/');
+      const lastFolder = folders[folders.length - 1];
+      return `./${lastFolder}/participants/${this.name}/index.html`;
     }
     return `./participants/${this.name}/index.html`;
   }

@@ -6,36 +6,27 @@ on:
       - master
 
 jobs:
-  release:
-    name: Create release
+  publish:
+    name: Create release and publish
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    # Release with standard-version
     - name: Setup node 13
       uses: actions/setup-node@v1
       with:
         node-version: 13.x
-    - run: yarn --frozen-lockfile
-    - run: |
+        registry-url: 'https://registry.npmjs.org'
+    - name: Install dependencies
+      run: yarn --frozen-lockfile
+    - name: Set local git config
+      run: |
         git config --local user.email "joren.broekema@gmail.com"
         git config --local user.name "Joren Broekema"
-
-    - run: yarn release
-    - run: git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --follow-tags
-
-  publish:
-    needs: release
-    name: Publish new version to NPM
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Publish new version to NPM
-      uses: actions/setup-node@v1
-      with:
-        node-version: 13.x
-        registry-url: 'https://registry.npmjs.org'
-    - run: yarn publish
+    - name: Release
+      run: yarn release
+    - name: Publish to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: yarn publish
+    - name: Push tags to GitHub
+      run: git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --follow-tags

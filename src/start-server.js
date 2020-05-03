@@ -16,6 +16,8 @@ export const startServer = (opts = {}) => {
   // cwk defaults
   let cwkConfig = {
     withoutAppShell: false,
+    enableCaching: false,
+    alwaysServeFiles: false,
     appIndex: './index.html',
     ...opts,
   };
@@ -29,6 +31,20 @@ export const startServer = (opts = {}) => {
         type: Boolean,
         description: `If set, do not inject the cwk-app-shell component into your app index html file`,
       },
+      {
+        name: 'enable-caching',
+        type: Boolean,
+        description: `
+          If set, re-enable caching. By default it is turned off, since it's more often a hassle than a help in a workshop dev server
+          This also means that the file control middleware only has effect the upon first load, because the server serves cached responses.
+        `,
+      },
+      {
+        name: 'always-serve-files',
+        type: Boolean,
+        description:
+          'If set, disables the .html and .js file control middlewares that only serve files for the current participant',
+      },
     ];
 
     cwkConfig = {
@@ -39,6 +55,8 @@ export const startServer = (opts = {}) => {
 
     // TODO: reuse logic that eds readCommandLineUses to camelCase the cwk flags instead of syncing them here
     cwkConfig.withoutAppShell = cwkConfig['without-app-shell'] || cwkConfig.withoutAppShell;
+    cwkConfig.enableCaching = cwkConfig['enable-caching'] || cwkConfig.enableCaching;
+    cwkConfig.alwaysServeFiles = cwkConfig['always-serve-files'] || cwkConfig.alwaysServeFiles;
   }
 
   /**
@@ -57,9 +75,21 @@ export const startServer = (opts = {}) => {
     middlewares: [
       ...(cwkConfig.withoutAppShell ? [] : [createInsertAppShellMiddleware(cwkConfig.appIndex)]),
       createWorkshopImportReplaceMiddleware(absoluteRootDir),
-      noCacheMiddleware,
-      createFileControlMiddleware('js', { admin: true }),
-      createFileControlMiddleware('html', { admin: true }),
+      ...(cwkConfig.enableCaching ? [] : [noCacheMiddleware]),
+      ...(cwkConfig.alwaysServeFiles
+        ? []
+        : [
+            createFileControlMiddleware({
+              ext: 'js',
+              admin: true,
+              rootDir: absoluteRootDir,
+            }),
+            createFileControlMiddleware({
+              ext: 'html',
+              admin: true,
+              rootDir: absoluteRootDir,
+            }),
+          ]),
     ],
   };
 
