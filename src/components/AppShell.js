@@ -1,4 +1,5 @@
 import { css, html, LitElement } from 'lit-element';
+import './AdminSidebar.js';
 import './ParticipantCapsule.js';
 import './SelectCookie.js';
 // Placeholder here, we transform this to resolve to the workshop.js
@@ -6,16 +7,29 @@ import './SelectCookie.js';
 // eslint-disable-next-line import/no-unresolved
 import { workshop } from './workshopImport.js';
 
-class CwkAppShell extends LitElement {
+class AppShell extends LitElement {
   static get styles() {
     return css`
       :host {
         display: block;
       }
 
+      .app-container {
+        display: flex;
+      }
+
       .participants-container {
+        margin-top: 20px;
         display: flex;
         flex-wrap: wrap;
+      }
+
+      .change-name {
+        position: absolute;
+        right: 50%;
+        transform: translateX(50%);
+        padding: 5px;
+        margin: 5px;
       }
     `;
   }
@@ -56,7 +70,7 @@ class CwkAppShell extends LitElement {
   }
 
   changeName() {
-    document.cookie = 'participant_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    document.cookie = 'participant_name=;path=/;max-age=0';
     this.currentParticipantName = null;
   }
 
@@ -64,15 +78,21 @@ class CwkAppShell extends LitElement {
     return html`
       ${this.currentParticipantName
         ? html`
-            <button @click=${this.changeName}>Change your name</button>
-            <div class="participants-container">
-              ${this.participants.map(
-                name => html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
-              )}
+            <div class="app-container">
+              <cwk-admin-sidebar></cwk-admin-sidebar>
+              <div>
+                <button class="change-name" @click=${this.changeName}>Change your name</button>
+                <div class="participants-container">
+                  ${this.participants.map(
+                    name =>
+                      html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
+                  )}
+                </div>
+              </div>
             </div>
           `
         : html`<cwk-select-cookie></cwk-select-cookie>`}
     `;
   }
 }
-customElements.define('cwk-app-shell', CwkAppShell);
+customElements.define('cwk-app-shell', AppShell);

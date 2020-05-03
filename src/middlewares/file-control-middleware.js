@@ -25,7 +25,7 @@ export function createFileControlMiddleware({ ext, admin = false, rootDir }) {
       ctx.url.startsWith(`${rootDir}/participants/`) &&
       ctx.url.endsWith(ext) &&
       !ctx.url.split(`${rootDir}/participants/`)[1].startsWith(participantName) &&
-      !(admin && ctx.ip === '::1') // FIXME: This only works for localhost, should add support for 127.0.0.1
+      !(ctx.ip === '::1' && admin && adminConfig.enableAdmin) // FIXME: This only works for localhost, should add support for 127.0.0.1
     ) {
       // return empty content
       ctx.body = '';

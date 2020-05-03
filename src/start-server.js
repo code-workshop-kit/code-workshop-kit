@@ -3,6 +3,7 @@ import { createRequire } from 'module';
 import path from 'path';
 import { cwkState } from './CwkStateSingleton.js';
 import {
+  adminUIMiddleware,
   createFileControlMiddleware,
   createInsertAppShellMiddleware,
   createWorkshopImportReplaceMiddleware,
@@ -14,27 +15,45 @@ const { createConfig, readCommandLineArgs, commandLineOptions } = require('es-de
 const startEdsServer = require('es-dev-server').startServer;
 const WebSocket = require('ws');
 
+const getAdminUIDefaults = () => {
+  return {
+    enableCaching: false,
+    alwaysServeFiles: false,
+    enableAdmin: true,
+    followMode: false,
+  };
+};
+
+const sendAdminConfig = ws => {
+  ws.send(
+    JSON.stringify({
+      type: 'config-init',
+      config: cwkState.state.adminConfig,
+    }),
+  );
+};
+
 const setupWebSocket = (wsPort = 8083) => {
   const websocket = new WebSocket.Server({ port: wsPort });
   websocket.on('connection', ws => {
     ws.on('message', message => {
       const parsedMessage = JSON.parse(message);
       const { type } = parsedMessage;
-      if (type === 'config-updated') {
-        const { config } = parsedMessage;
-        cwkState.state = { adminConfig: { ...config } };
+      switch (type) {
+        case 'config-init': {
+          sendAdminConfig(ws);
+          break;
+        }
+        case 'config-updated': {
+          const { config } = parsedMessage;
+          cwkState.state = { adminConfig: config };
+          break;
+        }
+        // no default
       }
     });
   });
   return websocket;
-};
-
-const getAdminUIDefaults = () => {
-  return {
-    enableCaching: false,
-    alwaysServeFiles: false,
-    followMode: false,
-  };
 };
 
 export const startServer = async (opts = {}) => {
@@ -108,7 +127,6 @@ export const startServer = async (opts = {}) => {
               ext: 'js',
               admin: true,
               rootDir: absoluteRootDir,
-              adminConfig: getAdminUIDefaults(),
             }),
             createFileControlMiddleware({
               ext: 'html',
@@ -118,6 +136,7 @@ export const startServer = async (opts = {}) => {
           ]),
 
       createWorkshopImportReplaceMiddleware(absoluteRootDir),
+      adminUIMiddleware,
     ],
   };
 
@@ -126,12 +145,12 @@ export const startServer = async (opts = {}) => {
     ...cwkConfig,
   });
 
+  await startEdsServer(config);
   const wss = setupWebSocket(config.wsPort);
-  startEdsServer(config);
 
   cwkState.state = { adminConfig: getAdminUIDefaults() };
 
-  [('exit', 'SIGINT')].forEach(event => {
+  ['exit', 'SIGINT'].forEach(event => {
     process.on(event, () => {
       wss.close();
       process.exit(0);
