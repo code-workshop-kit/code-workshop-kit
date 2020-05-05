@@ -1,10 +1,13 @@
+import { cwkState } from '../CwkStateSingleton.js';
+
 export function createFileControlMiddleware({ ext, admin = false, rootDir }) {
   return async function fileControlMiddleware(ctx, next) {
     await next();
     const participantName = ctx.cookies.get('participant_name');
-
+    const { adminConfig } = cwkState.state;
     /**
      * First we check
+     * - Whether admin config hasn't enabled to always serve all files
      * - Whether file is inside participants folder inside rootDir
      * - Whether the file ends with the specified extension (e.g. .json)
      *
@@ -17,11 +20,12 @@ export function createFileControlMiddleware({ ext, admin = false, rootDir }) {
      * This is useful if you don't want participants to see output of other participants' code.
      */
     if (
+      !adminConfig.alwaysServeFiles &&
       ctx.status === 200 &&
       ctx.url.startsWith(`${rootDir}/participants/`) &&
       ctx.url.endsWith(ext) &&
       !ctx.url.split(`${rootDir}/participants/`)[1].startsWith(participantName) &&
-      !(admin && ctx.ip === '::1') // FIXME: This only works for localhost, should add support for 127.0.0.1
+      !(ctx.ip === '::1' && admin && adminConfig.enableAdmin) // FIXME: This only works for localhost, should add support for 127.0.0.1
     ) {
       // return empty content
       ctx.body = '';

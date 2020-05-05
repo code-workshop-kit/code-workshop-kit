@@ -1,4 +1,11 @@
-export async function noCacheMiddleware(ctx, next) {
+import { cwkState } from '../CwkStateSingleton.js';
+
+export const noCacheMiddleware = async (ctx, next) => {
   await next();
-  ctx.response.set('cache-control', 'no-store');
-}
+
+  const { adminConfig } = cwkState.state;
+
+  if (!adminConfig.enableCaching) {
+    ctx.response.set('cache-control', 'no-store');
+  }
+};
