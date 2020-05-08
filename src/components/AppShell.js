@@ -56,7 +56,7 @@ class AppShell extends LitElement {
   getParticipantName() {
     const allCookies = document.cookie
       .split(';')
-      .map(cookie => ({ [cookie.split('=')[0]]: cookie.split('=')[1] }));
+      .map(cookie => ({ [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() }));
 
     const participantCookie = allCookies.find(cookie => cookie.participant_name);
     if (participantCookie) {
