@@ -9,14 +9,15 @@ export const adminUIMiddleware = async (ctx, next) => {
     // Make sure the host is added as an admin
     // (but only once, so that after they can switch names without automatically making those names admins)
     if (ctx.ip === '::1' && !state.hostAdminSet) {
-      state.admins = [...(state.admins || []), participantName];
-      state.hostAdminSet = true;
-      cwkState.state = state;
+      cwkState.state = { admins: [...(state.admins || []), participantName], hostAdminSet: true };
     }
 
     if (ctx.url.endsWith('node_modules/code-workshop-kit/src/components/AdminSidebar.js')) {
-      // if current user is not amongst the admins, do not serve
-      if (!cwkState.state.admins.find(admin => admin === participantName)) {
+      // if current user is not amongst the admins (or there are no admins yet), do not serve
+      if (
+        !cwkState.state.admins ||
+        !cwkState.state.admins.find(admin => admin === participantName)
+      ) {
         ctx.body = '';
       }
     }

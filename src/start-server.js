@@ -4,10 +4,13 @@ import path from 'path';
 import { cwkState } from './CwkStateSingleton.js';
 import {
   adminUIMiddleware,
+  changeParticipantUrlMiddleware,
   createFileControlMiddleware,
   createInsertAppShellMiddleware,
   createWorkshopImportReplaceMiddleware,
+  insertFollowModeScriptMiddleware,
   noCacheMiddleware,
+  websocketConnectionMiddleware,
 } from './middlewares/middlewares.js';
 
 const require = createRequire(import.meta.url);
@@ -33,27 +36,45 @@ const sendAdminConfig = ws => {
   );
 };
 
-const setupWebSocket = (wsPort = 8083) => {
-  const websocket = new WebSocket.Server({ port: wsPort });
-  websocket.on('connection', ws => {
-    ws.on('message', message => {
-      const parsedMessage = JSON.parse(message);
-      const { type } = parsedMessage;
-      switch (type) {
-        case 'config-init': {
-          sendAdminConfig(ws);
-          break;
+const handleWsMessage = (message, ws) => {
+  const parsedMessage = JSON.parse(message);
+  const { type } = parsedMessage;
+
+  switch (type) {
+    case 'config-init': {
+      sendAdminConfig(ws);
+      break;
+    }
+    case 'config-updated': {
+      const { config } = parsedMessage;
+      cwkState.state = { adminConfig: config };
+      break;
+    }
+    case 'authenticate': {
+      const { username } = parsedMessage;
+      const { state } = cwkState;
+      if (username) {
+        if (!state.wsConnections) {
+          state.wsConnections = new Map();
         }
-        case 'config-updated': {
-          const { config } = parsedMessage;
-          cwkState.state = { adminConfig: config };
-          break;
-        }
-        // no default
+        // Store the websocket connection for this user
+        state.wsConnections.set(username, ws);
+        cwkState.state = state;
       }
-    });
+    }
+    // no default
+  }
+};
+
+const setupWebSocket = (wsPort = 8083) => {
+  const wss = new WebSocket.Server({ port: wsPort });
+
+  wss.on('connection', ws => {
+    ws.on('message', message => handleWsMessage(message, ws));
   });
-  return websocket;
+
+  cwkState.state = { wss };
+  return wss;
 };
 
 export const startServer = async (opts = {}) => {
@@ -117,6 +138,8 @@ export const startServer = async (opts = {}) => {
     nodeResolve: true,
     logErrorsToBrowser: true,
     middlewares: [
+      websocketConnectionMiddleware,
+      insertFollowModeScriptMiddleware,
       ...(cwkConfig.withoutAppShell ? [] : [createInsertAppShellMiddleware(cwkConfig.appIndex)]),
       ...(cwkConfig.enableCaching ? [] : [noCacheMiddleware]),
 
@@ -137,6 +160,7 @@ export const startServer = async (opts = {}) => {
 
       createWorkshopImportReplaceMiddleware(absoluteRootDir),
       adminUIMiddleware,
+      changeParticipantUrlMiddleware,
     ],
   };
 
