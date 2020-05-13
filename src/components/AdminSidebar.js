@@ -19,6 +19,7 @@ class AdminSidebar extends LitElement {
         z-index: 1;
         top: 0;
         position: absolute;
+        left: 0;
       }
 
       *,

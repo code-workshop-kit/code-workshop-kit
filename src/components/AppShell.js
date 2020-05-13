@@ -23,25 +23,27 @@ class AppShell extends LitElement {
         background-color: #fcfcfc;
       }
 
+      .header {
+        width: 100%;
+        display: inline-block;
+        margin-bottom: 50px;
+      }
+
       h1 {
         margin-top: 0;
-        padding-top: 50px;
         margin-bottom: 50px;
         text-align: center;
         font-weight: lighter;
       }
 
       .participants-container {
-        margin-top: 100px;
         display: flex;
         flex-wrap: wrap;
       }
 
       .change-name {
         font-family: Dank Mono, sans-serif;
-        position: absolute;
-        right: 0;
-        top: 0px;
+        float: right;
         padding: 8px;
         margin: 15px;
         border: none;
@@ -111,21 +113,21 @@ class AppShell extends LitElement {
   }
 
   render() {
-    console.log('rendering', this.title);
     return html`
       ${this.currentParticipantName
         ? html`
-            <div class="app-container">
-              ${this.title ? html`<h1>${this.title}</h1>` : nothing}
+            <div class="header">
               <cwk-admin-sidebar></cwk-admin-sidebar>
-              <div>
-                <button class="change-name" @click=${this.changeName}>Change your name</button>
-                <div class="participants-container">
-                  ${this.participants.map(
-                    name =>
-                      html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
-                  )}
-                </div>
+              <button class="change-name" @click=${this.changeName}>Change your name</button>
+            </div>
+
+            ${this.title ? html`<h1>${this.title}</h1>` : nothing}
+
+            <div>
+              <div class="participants-container">
+                ${this.participants.map(
+                  name => html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
+                )}
               </div>
             </div>
           `
