@@ -10,7 +10,6 @@ import {
   createWorkshopImportReplaceMiddleware,
   insertFollowModeScriptMiddleware,
   noCacheMiddleware,
-  websocketConnectionMiddleware,
 } from './middlewares/middlewares.js';
 
 const require = createRequire(import.meta.url);
@@ -144,7 +143,6 @@ export const startServer = async (opts = {}) => {
     nodeResolve: true,
     logErrorsToBrowser: true,
     middlewares: [
-      websocketConnectionMiddleware,
       insertFollowModeScriptMiddleware,
       ...(cwkConfig.withoutAppShell
         ? []

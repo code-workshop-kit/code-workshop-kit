@@ -32,7 +32,7 @@ class AppShell extends LitElement {
       }
 
       .participants-container {
-        margin-top: 20px;
+        margin-top: 100px;
         display: flex;
         flex-wrap: wrap;
       }
@@ -80,6 +80,9 @@ class AppShell extends LitElement {
     }
     this.getParticipants();
     this.getParticipantName();
+    if (workshop.title) {
+      this.title = workshop.title;
+    }
   }
 
   getParticipantName() {
@@ -108,6 +111,7 @@ class AppShell extends LitElement {
   }
 
   render() {
+    console.log('rendering', this.title);
     return html`
       ${this.currentParticipantName
         ? html`

@@ -2,6 +2,7 @@ export const workshop = {
   // Put your participants here!
   // Note: This key cannot be used inside templateData, because templateData gets flattened with `this`
   participants: ['Joren', 'Felix'],
+  title: 'Frontend Workshop',
 
   // Put your data here to be used inside your scaffolding template files
   templateData: {
