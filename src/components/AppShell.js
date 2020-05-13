@@ -37,7 +37,7 @@ class AppShell extends LitElement {
       }
 
       .participants-container {
-        margin: 0 30px;
+        margin: 0 30px 30px 30px;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         column-gap: 40px;
@@ -54,6 +54,11 @@ class AppShell extends LitElement {
         border-radius: 4px;
         color: var(--cwk-color-white);
         background: linear-gradient(0.1turn, var(--cwk-color-primary), var(--cwk-color-secondary));
+      }
+
+      .current-name {
+        float: right;
+        padding-top: 5px;
       }
 
       .change-name:hover {
@@ -134,6 +139,7 @@ class AppShell extends LitElement {
             <div class="header">
               <cwk-admin-sidebar></cwk-admin-sidebar>
               <button class="change-name" @click=${this.changeName}>Change your name</button>
+              <p class="current-name">Hi ${this.currentParticipantName}!</p>
             </div>
 
             ${this.title ? html`<h1>${this.title}</h1>` : nothing}
