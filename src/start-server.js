@@ -65,7 +65,7 @@ const handleWsMessage = (message, ws) => {
   }
 };
 
-const setupWebSocket = (wsPort = 8083) => {
+const setupWebSocket = (wsPort = 5051) => {
   const wss = new WebSocket.Server({ port: wsPort });
 
   wss.on('connection', ws => {

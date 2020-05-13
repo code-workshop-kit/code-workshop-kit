@@ -86,7 +86,7 @@ class ParticipantCapsule extends LitElement {
     return html`
       <div class="container">
         <div class="header">
-          <h2>${this.name.charAt(0).toUpperCase() + this.name.slice(1)}</h2>
+          <h2>${this.name}</h2>
           <a href="${this.participantIndexHtmlPath}">
             <button class="button__fullscreen">
               View

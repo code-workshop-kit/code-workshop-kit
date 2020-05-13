@@ -164,7 +164,7 @@ class AdminSidebar extends LitElement {
   }
 
   setupWs() {
-    this.ws = new WebSocket('ws://localhost:8083');
+    this.ws = new WebSocket('ws://localhost:5051');
 
     this.websocketOpen = new Promise(resolve => {
       this.resolveWebsocketOpen = resolve;
