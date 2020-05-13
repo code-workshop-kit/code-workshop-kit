@@ -14,26 +14,51 @@ class ParticipantCapsule extends LitElement {
     return css`
       :host {
         display: block;
-        position: relative;
-        margin: 10px 50px;
+      }
+
+      .container {
+        border-radius: 4px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      h2 {
+        padding-left: 20px;
+        margin: 10px 0;
+        font-weight: lighter;
+      }
+
+      .header a {
+        margin-right: 20px;
       }
 
       iframe {
-        width: calc(33vw - 110px);
-        height: calc(50vh - 110px);
+        min-width: 300px;
+        width: 100%;
+        height: 400px;
         overflow: auto;
         border: none;
-        border: 2px solid black;
-        box-sizing: border-box;
       }
 
       .button__fullscreen {
-        position: absolute;
-        right: 0;
+        font-family: Dank mono, sans-serif;
         color: white;
-        background-color: black;
+        background: linear-gradient(0.1turn, var(--cwk-color-primary), var(--cwk-color-secondary));
         border: none;
-        padding: 5px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        padding: 5px 15px;
+        border-radius: 4px;
+      }
+
+      .button__fullscreen:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        transition: all 0.15s ease;
       }
     `;
   }
@@ -56,13 +81,21 @@ class ParticipantCapsule extends LitElement {
 
   render() {
     return html`
-      <h2>${this.name.charAt(0).toUpperCase() + this.name.slice(1)}</h2>
-      <iframe id="${this.name}" allow="fullscreen" src="${this.participantIndexHtmlPath}"></iframe>
-      <a href="${this.participantIndexHtmlPath}">
-        <button @click=${this.goFullscreen} class="button__fullscreen">
-          View
-        </button>
-      </a>
+      <div class="container">
+        <div class="header">
+          <h2>${this.name}</h2>
+          <a href="${this.participantIndexHtmlPath}">
+            <button class="button__fullscreen">
+              View
+            </button>
+          </a>
+        </div>
+        <iframe
+          id="${this.name}"
+          allow="fullscreen"
+          src="${this.participantIndexHtmlPath}"
+        ></iframe>
+      </div>
     `;
   }
 }

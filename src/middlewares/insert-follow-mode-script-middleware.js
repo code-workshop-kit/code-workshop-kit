@@ -1,5 +1,5 @@
 const scriptsToInsert = () => {
-  const ws = new WebSocket('ws://localhost:8083');
+  const ws = new WebSocket('ws://localhost:5051');
 
   ws.addEventListener('open', () => {
     const allCookies = document.cookie

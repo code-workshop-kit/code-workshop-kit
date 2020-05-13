@@ -10,7 +10,6 @@ import {
   createWorkshopImportReplaceMiddleware,
   insertFollowModeScriptMiddleware,
   noCacheMiddleware,
-  websocketConnectionMiddleware,
 } from './middlewares/middlewares.js';
 
 const require = createRequire(import.meta.url);
@@ -66,7 +65,7 @@ const handleWsMessage = (message, ws) => {
   }
 };
 
-const setupWebSocket = (wsPort = 8083) => {
+const setupWebSocket = (wsPort = 5051) => {
   const wss = new WebSocket.Server({ port: wsPort });
 
   wss.on('connection', ws => {
@@ -84,6 +83,7 @@ export const startServer = async (opts = {}) => {
     enableCaching: false,
     alwaysServeFiles: false,
     appIndex: './index.html',
+    title: '',
     ...opts,
   };
 
@@ -91,6 +91,11 @@ export const startServer = async (opts = {}) => {
   if (opts.argv) {
     const cwkServerDefinitions = [
       ...commandLineOptions,
+      {
+        name: 'title',
+        type: String,
+        description: 'App Shell title that will be displayed',
+      },
       {
         name: 'without-app-shell',
         type: Boolean,
@@ -138,9 +143,10 @@ export const startServer = async (opts = {}) => {
     nodeResolve: true,
     logErrorsToBrowser: true,
     middlewares: [
-      websocketConnectionMiddleware,
       insertFollowModeScriptMiddleware,
-      ...(cwkConfig.withoutAppShell ? [] : [createInsertAppShellMiddleware(cwkConfig.appIndex)]),
+      ...(cwkConfig.withoutAppShell
+        ? []
+        : [createInsertAppShellMiddleware(cwkConfig.appIndex, cwkConfig.title)]),
       ...(cwkConfig.enableCaching ? [] : [noCacheMiddleware]),
 
       ...(cwkConfig.alwaysServeFiles

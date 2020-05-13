@@ -4,7 +4,6 @@ import { createFileControlMiddleware } from './file-control-middleware.js';
 import { createInsertAppShellMiddleware } from './insert-app-shell-middleware.js';
 import { insertFollowModeScriptMiddleware } from './insert-follow-mode-script-middleware.js';
 import { noCacheMiddleware } from './no-cache-middleware.js';
-import { websocketConnectionMiddleware } from './websocket-connection-middleware.js';
 import { createWorkshopImportReplaceMiddleware } from './workshop-import-replace-middleware.js';
 
 export {
@@ -15,5 +14,4 @@ export {
   adminUIMiddleware,
   insertFollowModeScriptMiddleware,
   changeParticipantUrlMiddleware,
-  websocketConnectionMiddleware,
 };
