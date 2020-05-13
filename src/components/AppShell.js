@@ -1,5 +1,6 @@
 import { css, html, LitElement } from 'lit-element';
 import './AdminSidebar.js';
+import './loadAndSetDankMonoFont.js';
 import './ParticipantCapsule.js';
 import './SelectCookie.js';
 // Placeholder here, we transform this to resolve to the workshop.js
@@ -12,6 +13,9 @@ class AppShell extends LitElement {
     return css`
       :host {
         display: block;
+        --cwk-color-primary: #4e88c2;
+        --cwk-color-secondary: #34618e;
+        --cwk-color-primary-transparent: #4e88c230;
       }
 
       .app-container {
@@ -54,9 +58,13 @@ class AppShell extends LitElement {
   }
 
   getParticipantName() {
-    const allCookies = document.cookie
-      .split(';')
-      .map(cookie => ({ [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() }));
+    const cookiesSplit = document.cookie.split(';');
+    const allCookies = cookiesSplit.map(cookie => {
+      if (!cookie) {
+        return {};
+      }
+      return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
+    });
 
     const participantCookie = allCookies.find(cookie => cookie.participant_name);
     if (participantCookie) {
