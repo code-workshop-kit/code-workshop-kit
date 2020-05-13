@@ -37,8 +37,11 @@ class AppShell extends LitElement {
       }
 
       .participants-container {
-        display: flex;
-        flex-wrap: wrap;
+        margin: 0 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        column-gap: 40px;
+        row-gap: 30px;
       }
 
       .change-name {
@@ -57,6 +60,18 @@ class AppShell extends LitElement {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         transition: all 0.15s ease;
+      }
+
+      @media (min-width: 600px) {
+        .participants-container {
+          grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .participants-container {
+          grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+        }
       }
     `;
   }

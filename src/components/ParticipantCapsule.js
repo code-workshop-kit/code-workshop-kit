@@ -14,9 +14,6 @@ class ParticipantCapsule extends LitElement {
     return css`
       :host {
         display: block;
-        position: relative;
-        margin: 10px 50px;
-        flex-grow: 1;
       }
 
       .container {
