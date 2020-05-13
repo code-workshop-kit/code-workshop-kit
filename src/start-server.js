@@ -84,6 +84,7 @@ export const startServer = async (opts = {}) => {
     enableCaching: false,
     alwaysServeFiles: false,
     appIndex: './index.html',
+    title: '',
     ...opts,
   };
 
@@ -91,6 +92,11 @@ export const startServer = async (opts = {}) => {
   if (opts.argv) {
     const cwkServerDefinitions = [
       ...commandLineOptions,
+      {
+        name: 'title',
+        type: String,
+        description: 'App Shell title that will be displayed',
+      },
       {
         name: 'without-app-shell',
         type: Boolean,
@@ -140,7 +146,9 @@ export const startServer = async (opts = {}) => {
     middlewares: [
       websocketConnectionMiddleware,
       insertFollowModeScriptMiddleware,
-      ...(cwkConfig.withoutAppShell ? [] : [createInsertAppShellMiddleware(cwkConfig.appIndex)]),
+      ...(cwkConfig.withoutAppShell
+        ? []
+        : [createInsertAppShellMiddleware(cwkConfig.appIndex, cwkConfig.title)]),
       ...(cwkConfig.enableCaching ? [] : [noCacheMiddleware]),
 
       ...(cwkConfig.alwaysServeFiles

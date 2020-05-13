@@ -12,7 +12,7 @@
     "node": ">=13.0.0"
   },
   "scripts": {
-    "start": "./copy-components && node src/cli.js run --watch --app-index demo/index.html --port 5000",
+    "start": "./copy-components && node src/cli.js run --watch --app-index demo/index.html --title='Frontend Workshop' --port 5000",
     "start:scaffold": "node src/cli.js scaffold --root-dir demo",
     "start:scaffold:force": "node src/cli.js scaffold --force --root-dir demo",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",

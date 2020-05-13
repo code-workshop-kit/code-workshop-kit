@@ -38,6 +38,7 @@ class SelectCookie extends LitElement {
 
       .name__item:hover,
       .name__item[selected] {
+        cursor: pointer;
         background-color: var(--cwk-color-primary-transparent);
       }
 

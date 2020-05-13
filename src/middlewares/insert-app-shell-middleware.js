@@ -29,7 +29,7 @@ const findBrowserPath = appIndex => {
   return normalizedForWindows;
 };
 
-export function createInsertAppShellMiddleware(appIndex) {
+export function createInsertAppShellMiddleware(appIndex, title) {
   return async function insertAppShellMiddleware(ctx, next) {
     await next();
     if (ctx.status === 200) {
@@ -42,7 +42,9 @@ export function createInsertAppShellMiddleware(appIndex) {
         const appShellScript = `
           <script type="module">
             import '${browserPath}';
-            document.querySelector('body').appendChild(document.createElement('cwk-app-shell'));
+            const cwkAppShell = document.createElement('cwk-app-shell');
+            cwkAppShell.title = '${title}';
+            document.querySelector('body').appendChild(cwkAppShell);
           </script>
         `;
 
