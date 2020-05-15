@@ -5,6 +5,7 @@ import { createInsertAppShellMiddleware } from './insert-app-shell-middleware.js
 import { insertFollowModeScriptMiddleware } from './insert-follow-mode-script-middleware.js';
 import { noCacheMiddleware } from './no-cache-middleware.js';
 import { createWorkshopImportReplaceMiddleware } from './workshop-import-replace-middleware.js';
+import { createWsPortReplaceMiddleware } from './ws-port-replace-middleware.js';
 
 export {
   createFileControlMiddleware,
@@ -14,4 +15,5 @@ export {
   adminUIMiddleware,
   insertFollowModeScriptMiddleware,
   changeParticipantUrlMiddleware,
+  createWsPortReplaceMiddleware,
 };

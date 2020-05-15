@@ -163,8 +163,8 @@ class AdminSidebar extends LitElement {
   }
 
   setupWs() {
-    // TODO: Port should be taken from the dev server wsPort
-    this.ws = new WebSocket('ws://localhost:5051');
+    // gets replaced by CWK server
+    this.ws = new WebSocket('ws://localhost:%websocketport%');
 
     this.websocketOpen = new Promise(resolve => {
       this.resolveWebsocketOpen = resolve;

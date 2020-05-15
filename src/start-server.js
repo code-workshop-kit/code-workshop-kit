@@ -8,6 +8,7 @@ import {
   createFileControlMiddleware,
   createInsertAppShellMiddleware,
   createWorkshopImportReplaceMiddleware,
+  createWsPortReplaceMiddleware,
   insertFollowModeScriptMiddleware,
   noCacheMiddleware,
 } from './middlewares/middlewares.js';
@@ -173,6 +174,7 @@ export const startServer = async (opts = {}) => {
           ]),
 
       createWorkshopImportReplaceMiddleware(absoluteRootDir),
+      createWsPortReplaceMiddleware(cwkConfig.wsPort),
       adminUIMiddleware,
       changeParticipantUrlMiddleware,
     ],
