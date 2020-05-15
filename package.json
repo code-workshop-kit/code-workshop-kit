@@ -12,7 +12,7 @@
     "node": ">=13.0.0"
   },
   "scripts": {
-    "start": "./copy-components && node src/cli.js run --watch --app-index demo/index.html --port 8081",
+    "start": "./copy-components && node src/cli.js run --watch --app-index demo/index.html",
     "start:scaffold": "node src/cli.js scaffold --root-dir demo",
     "start:scaffold:force": "node src/cli.js scaffold --force --root-dir demo",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
@@ -40,11 +40,15 @@
     "standard-version": "^7.0.0"
   },
   "dependencies": {
-    "@open-wc/create": "^0.28.1",
+    "@open-wc/create": "^0.30.0",
     "command-line-args": "^5.1.1",
+    "deepmerge": "^4.2.2",
     "es-dev-server": "^1.45.1",
     "glob": "^7.1.6",
-    "lit-element": "^2.2.1"
+    "is-plain-object": "^3.0.0",
+    "lit-element": "^2.2.1",
+    "lit-html": "^1.2.1",
+    "ws": "^7.2.5"
   },
   "eslintConfig": {
     "extends": [
