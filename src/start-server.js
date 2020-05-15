@@ -65,7 +65,7 @@ const handleWsMessage = (message, ws) => {
   }
 };
 
-const setupWebSocket = (wsPort = 5051) => {
+const setupWebSocket = wsPort => {
   const wss = new WebSocket.Server({ port: wsPort });
 
   wss.on('connection', ws => {
@@ -83,6 +83,8 @@ export const startServer = async (opts = {}) => {
     enableCaching: false,
     alwaysServeFiles: false,
     appIndex: './index.html',
+    port: 5050,
+    wsPort: 5051,
     title: '',
     ...opts,
   };
@@ -115,6 +117,11 @@ export const startServer = async (opts = {}) => {
         description:
           'If set, disables the .html and .js file control middlewares that only serve files for the current participant',
       },
+      {
+        name: 'ws-port',
+        type: Number,
+        description: 'Port to run the WebSocket server on',
+      },
     ];
 
     cwkConfig = {
@@ -127,6 +134,7 @@ export const startServer = async (opts = {}) => {
     cwkConfig.withoutAppShell = cwkConfig['without-app-shell'] || cwkConfig.withoutAppShell;
     cwkConfig.enableCaching = cwkConfig['enable-caching'] || cwkConfig.enableCaching;
     cwkConfig.alwaysServeFiles = cwkConfig['always-serve-files'] || cwkConfig.alwaysServeFiles;
+    cwkConfig.wsPort = cwkConfig['ws-port'] || cwkConfig.wsPort;
   }
 
   /**
@@ -176,7 +184,7 @@ export const startServer = async (opts = {}) => {
   });
 
   await startEdsServer(config);
-  const wss = setupWebSocket(config.wsPort);
+  const wss = setupWebSocket(cwkConfig.wsPort);
 
   cwkState.state = { adminConfig: getAdminUIDefaults() };
 
