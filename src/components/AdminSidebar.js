@@ -159,11 +159,11 @@ class AdminSidebar extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    // TODO: Port should be taken from the dev server wsPort
     this.setupWs();
   }
 
   setupWs() {
+    // TODO: Port should be taken from the dev server wsPort
     this.ws = new WebSocket('ws://localhost:5051');
 
     this.websocketOpen = new Promise(resolve => {
