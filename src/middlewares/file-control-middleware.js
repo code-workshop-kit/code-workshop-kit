@@ -25,8 +25,7 @@ export function createFileControlMiddleware({ ext, admin = false, rootDir }) {
       ctx.url.startsWith(`${rootDir}/participants/`) &&
       ctx.url.endsWith(ext) &&
       !ctx.url.split(`${rootDir}/participants/`)[1].startsWith(participantName) &&
-      !(ctx.ip === '::1' && admin && adminConfig.enableAdmin) // FIXME: This only works for localhost, should add support for 127.0.0.1
-      // TODO: Admin multiple admins support (check cookie for participantName, check adminConfig, see if the person is admin)
+      !(ctx.ip === '::1' && admin && adminConfig.enableAdmin)
     ) {
       // return empty content
       ctx.body = '';
