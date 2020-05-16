@@ -40,7 +40,7 @@
     "standard-version": "^7.0.0"
   },
   "dependencies": {
-    "@open-wc/create": "^0.30.0",
+    "@open-wc/create": "^0.31.0",
     "command-line-args": "^5.1.1",
     "deepmerge": "^4.2.2",
     "es-dev-server": "^1.45.1",
