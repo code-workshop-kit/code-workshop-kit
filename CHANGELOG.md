@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.2.3...0.3.0) (2020-05-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Added an admin UI bar that cannot be opted out of if the user opts into the app shell.
+
+### Features
+
+* add admin UI bar to change dev-server settings ([84bb73c](https://github.com/code-workshop-kit/cwk-frontend/commit/84bb73cff9a0a9a0e8d33aace46c4f85b95d949a))
+* add in-browser follow mode feature ([cab61d0](https://github.com/code-workshop-kit/cwk-frontend/commit/cab61d0cced5dfaa6aca3c3999ef2fc7008382cf))
+* allow changing websocket port, set default cwk port ([dffc256](https://github.com/code-workshop-kit/cwk-frontend/commit/dffc256ae9590b50c1218971f925773a3b60b181))
+* allow overriding default middlewares through cli ([a0cd972](https://github.com/code-workshop-kit/cwk-frontend/commit/a0cd972b14cef21157612cc198d13658d2849739))
+* export middlewares in our entrypoint ([3e70676](https://github.com/code-workshop-kit/cwk-frontend/commit/3e70676b00bfbb1afc73c54d0fd2ee991eb6b846))
+* provide app shell title through CLI or workshop.js ([23736a7](https://github.com/code-workshop-kit/cwk-frontend/commit/23736a7727a1c13a6f98b7e831e23a6587c1ea68))
+* redesign app shell, admin bar and capsules ([aaf4e8e](https://github.com/code-workshop-kit/cwk-frontend/commit/aaf4e8e2f5eb0d3faac5213b933e6ae8f902a2d4))
+* redesign cookie selector and add dank mono font ([1a84c5c](https://github.com/code-workshop-kit/cwk-frontend/commit/1a84c5c0739a19cd12cd944617b31da5e3c6e756))
+
+
+### Bug Fixes
+
+* upgrade @open-wc/create from 0.28.4 to 0.30.0 ([8deaad6](https://github.com/code-workshop-kit/cwk-frontend/commit/8deaad66c214ac21b14374a5b61910b72875c3ba))
+
 ### 0.2.3 (2020-05-15)
 
 ### 0.2.2 (2020-05-03)

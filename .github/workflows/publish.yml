@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - run: git fetch --prune --unshallow
     - name: Setup node 13
       uses: actions/setup-node@v1
       with:
@@ -23,10 +26,10 @@ jobs:
         git config --local user.email "joren.broekema@gmail.com"
         git config --local user.name "Joren Broekema"
     - name: Release
-      run: yarn release
-    - name: Publish to NPM
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      run: yarn publish
-    - name: Push tags to GitHub
-      run: git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --follow-tags
+      run: yarn release --dry-run
+    #- name: Publish to NPM
+    #  env:
+    #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    #  run: yarn publish
+    #- name: Push tags to GitHub
+    #  run: git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --follow-tags
