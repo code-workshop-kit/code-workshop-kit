@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.3.0...0.3.1) (2020-05-16)
+
+
+### Bug Fixes
+
+* upgrade @open-wc/create from 0.30.0 to 0.31.0 ([#17](https://github.com/code-workshop-kit/cwk-frontend/issues/17)) ([017cac5](https://github.com/code-workshop-kit/cwk-frontend/commit/017cac5f435846fcedd18205d0f42e2101d28e3c))
+
 ## [0.3.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.2.3...0.3.0) (2020-05-16)
 
 
