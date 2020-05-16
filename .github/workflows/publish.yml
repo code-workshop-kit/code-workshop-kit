@@ -24,7 +24,7 @@ jobs:
         git config --local user.email "joren.broekema@gmail.com"
         git config --local user.name "Joren Broekema"
     - name: Release
-      run: yarn release --dry-run
+      run: yarn release
     - name: Publish to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
