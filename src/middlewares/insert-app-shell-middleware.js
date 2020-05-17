@@ -45,7 +45,13 @@ export function createInsertAppShellMiddleware(appIndex, title) {
           </script>
         `;
 
-        ctx.body = ctx.body.replace('</body>', `${appShellScript}</body>`);
+        if (typeof ctx.body === 'string') {
+          ctx.body = ctx.body.replace('</body>', `${appShellScript}</body>`);
+        } else {
+          console.warn(
+            'CWK Warning: Could not insert app shell because ctx.body is not of type string.',
+          );
+        }
       }
     }
   };

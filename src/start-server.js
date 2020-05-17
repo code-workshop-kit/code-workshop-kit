@@ -186,7 +186,7 @@ export const startServer = async (opts = {}) => {
     ...cwkConfig,
   });
 
-  await startEdsServer(config);
+  const { server } = await startEdsServer(config);
   const wss = setupWebSocket(cwkConfig.wsPort);
 
   cwkState.state = { adminConfig: getAdminUIDefaults() };
@@ -197,4 +197,6 @@ export const startServer = async (opts = {}) => {
       process.exit(0);
     });
   });
+
+  return server;
 };

@@ -30,14 +30,20 @@ export const insertFollowModeScriptMiddleware = async (ctx, next) => {
     const scriptStr = scriptsToInsert.toString();
     const scriptBody = scriptStr.substring(scriptStr.indexOf('{') + 1, scriptStr.lastIndexOf('}'));
 
-    ctx.body = ctx.body.replace(
-      '</body>',
-      `
-        <script>
-          ${scriptBody}
-        </script>
-      </body>
-    `,
-    );
+    if (typeof ctx.body === 'string') {
+      ctx.body = ctx.body.replace(
+        '</body>',
+        `
+          <script>
+            ${scriptBody}
+          </script>
+        </body>
+      `,
+      );
+    } else {
+      console.warn(
+        'CWK Warning: Could not insert follow mode script because ctx.body is not of type string.',
+      );
+    }
   }
 };
