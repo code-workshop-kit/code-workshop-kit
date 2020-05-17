@@ -1,17 +1,13 @@
 # code-workshop-kit
 
 Using [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) and Web Component magic to create a nice environment for remote frontend workshops.
-Leverage VS Code Live Share, by creating a session with your workshop participants, and adding the port to your cwk server.
+Leverage VS Code Live Share, by creating a session with your workshop participants, and adding the port of your cwk server as a shared server.
 
-The cwk scaffold command ensures that each participant gets a scaffolded folder + files that you as a facilitator defined.
+The cwk scaffold command ensures that each participant gets a scaffolded folder + files that you as a facilitator define.
 
 The cwk run command starts a development server for your workshop and through the middlewares and cookies, it ensures that only files for the respective participants are loaded, whereas for the host, all files are loaded.
 
-Make sure the server (by default localhost:8000) is shared with your participants, so they see the output in their browser.
-
 ## Usage
-
-> NodeJS version 13 or higher is required. This means that you have to make sure you put `"type":"module"`, in your `package.json` of your module!
 
 Install the package
 
@@ -113,8 +109,17 @@ console.log('Hi Joren, welcome to Cool Frontend App!');
 cwk run
 ```
 
-Which accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) accepts, and additionally:
+#### Sharing the server in VS Code
 
+- Share the cwk server instance (by default port 8000)
+- Share the websockets port (by default port 8001)
+
+#### Flags
+
+CWK accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) accepts, and additionally:
+
+- `--title`, the title of your workshop instance, which will be displayed on your index page in the app shell.
+- `--ws-port`, the port you want to run the websockets server on which is used for communication between your frontend and the cwk server.
 - `--without-app-shell`, if passed, will prevent injection of the cwk-shell component into your app index.html file.
 - `--always-serve-files`, if passed, will disable the default file control middlewares for `.js` and `.html` files inside participant folders.
   This middleware ensures a participant is only served with their own files inside their own folder, in case you want the hide the output of the other participants.
@@ -124,7 +129,9 @@ Which accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/t
 
 Make sure you have some HTML index file. By default the server will look for `./index.html`, but you can override this by passing the `--app-index` flag.
 
-> Note: do not change the root directory (es-dev-server --root-dir flag) if you plan on using the CWK app shell. If you want to insert it into a custom entry file, use --app-index flag.
+> Note: do not change the root directory (es-dev-server --root-dir flag) to a nested folder inside your project if you plan on using the CWK app shell.
+> CWK server needs access to your node_modules to fetch the app shell components.
+> If you want to insert it into a custom entry file, use --app-index flag.
 > The components for this app shell are located inside your node_modules, which the dev server can only access if node_modules is nested somewhere inside the root directory that it serves from.
 
 #### App Shell

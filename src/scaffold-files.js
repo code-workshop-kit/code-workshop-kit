@@ -1,12 +1,11 @@
+import { readFileFromPath, writeFileToPathOnDisk } from '@open-wc/create/dist/core.js';
 import commandLineArgs from 'command-line-args';
+import { commandLineOptions, readCommandLineArgs } from 'es-dev-server';
+import _esmRequire from 'esm';
 import fs from 'fs';
 import glob from 'glob';
-import { createRequire } from 'module';
+import * as module from 'module';
 import path from 'path';
-
-const require = createRequire(import.meta.url);
-const { commandLineOptions, readCommandLineArgs } = require('es-dev-server');
-const { readFileFromPath, writeFileToPathOnDisk } = require('@open-wc/create/dist/core.js');
 
 // Fork from @open-wc/create to allow functions that return strings inside data obj
 function processTemplate(_fileContent, data = {}) {
@@ -49,26 +48,31 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 }
 
 export const scaffold = async opts => {
-  const { workshop } = await import(path.resolve(process.cwd(), `.${opts.rootDir}/workshop.js`));
-  const { participants, templateData } = workshop;
-
-  participants.forEach(name => {
-    copyTemplates(
-      path.resolve(process.cwd(), `.${opts.rootDir}/template/**/*`),
-      path.resolve(process.cwd(), `.${opts.rootDir}/participants/${name}`),
-      {
-        participantName: name,
-        ...templateData,
-      },
-    ).then(files => {
-      files.forEach(file => {
-        writeFileToPathOnDisk(file.toPath, file.processed, {
-          override: opts.force,
-          ask: false,
+  const workshopFolder = path.resolve(process.cwd(), `.${opts.rootDir}`);
+  if (fs.existsSync(`${workshopFolder}/workshop.js`)) {
+    const esmRequire = _esmRequire(module);
+    const { workshop } = esmRequire(`${workshopFolder}/workshop.js`);
+    const { participants, templateData } = workshop;
+    participants.forEach(name => {
+      copyTemplates(
+        path.resolve(process.cwd(), `.${opts.rootDir}/template/**/*`),
+        path.resolve(process.cwd(), `.${opts.rootDir}/participants/${name}`),
+        {
+          participantName: name,
+          ...templateData,
+        },
+      ).then(files => {
+        files.forEach(file => {
+          writeFileToPathOnDisk(file.toPath, file.processed, {
+            override: opts.force,
+            ask: false,
+          });
         });
       });
     });
-  });
+  } else {
+    throw new Error(`Error: Cannot find workshop.js inside ${workshopFolder}`);
+  }
 };
 
 export const scaffoldFiles = (opts = {}) => {

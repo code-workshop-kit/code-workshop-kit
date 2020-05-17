@@ -1,4 +1,4 @@
-import { cwkState } from '../CwkStateSingleton.js';
+import { cwkState } from '../utils/CwkStateSingleton.js';
 
 export const noCacheMiddleware = async (ctx, next) => {
   await next();

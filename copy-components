@@ -2,7 +2,7 @@
 
 # (re-)copies the components to node modules, because our app shell insertion relies on
 # importing this component from our node modules in the browser.
-dir="node_modules/code-workshop-kit/src"
+dir="node_modules/code-workshop-kit/dist"
 
 if [[ ! -e $dir ]]; then
   mkdir -p $dir
@@ -10,4 +10,4 @@ fi
 
 rm -rf "$dir/components"
 
-cp -rf src/components "$dir/components"
+cp -rf dist/components "$dir/components"
