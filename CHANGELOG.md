@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.4.0...0.4.1) (2020-05-17)
+
+
+### Bug Fixes
+
+* build dist folder before publish ([67f5fe8](https://github.com/code-workshop-kit/cwk-frontend/commit/67f5fe8e4f904fb920167a105f858f4551360b07))
+
 ## [0.4.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.3.1...0.4.0) (2020-05-17)
 
 
