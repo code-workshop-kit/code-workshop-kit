@@ -25,6 +25,8 @@ jobs:
         git config --local user.name "Joren Broekema"
     - name: Release
       run: yarn release
+    - name: Build
+      run: yarn build
     - name: Publish to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
