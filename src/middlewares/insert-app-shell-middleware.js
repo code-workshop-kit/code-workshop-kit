@@ -1,10 +1,7 @@
-import { createRequire } from 'module';
 import path from 'path';
 
-const require = createRequire(import.meta.url);
-
 const findBrowserPath = appIndex => {
-  const absolutePath = require.resolve('code-workshop-kit/src/components/AppShell.js');
+  const absolutePath = require.resolve('code-workshop-kit/dist/components/AppShell.js');
 
   // Subtract working directory and resolve to root of the es-dev-server
   const componentPath = path.resolve('/', path.relative(process.cwd(), absolutePath));

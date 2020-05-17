@@ -1,4 +1,4 @@
-import { cwkState } from '../CwkStateSingleton.js';
+import { cwkState } from '../utils/CwkStateSingleton.js';
 
 export const adminUIMiddleware = async (ctx, next) => {
   await next();
@@ -12,7 +12,7 @@ export const adminUIMiddleware = async (ctx, next) => {
       cwkState.state = { admins: [...(state.admins || []), participantName], hostAdminSet: true };
     }
 
-    if (ctx.url.endsWith('node_modules/code-workshop-kit/src/components/AdminSidebar.js')) {
+    if (ctx.url.endsWith('node_modules/code-workshop-kit/dist/components/AdminSidebar.js')) {
       // if current user is not amongst the admins (or there are no admins yet), do not serve
       if (
         !cwkState.state.admins ||

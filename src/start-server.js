@@ -1,7 +1,12 @@
 import commandLineArgs from 'command-line-args';
-import { createRequire } from 'module';
+import {
+  commandLineOptions,
+  createConfig,
+  readCommandLineArgs,
+  startServer as startEdsServer,
+} from 'es-dev-server';
 import path from 'path';
-import { cwkState } from './CwkStateSingleton.js';
+import WebSocket from 'ws';
 import {
   adminUIMiddleware,
   changeParticipantUrlMiddleware,
@@ -12,11 +17,7 @@ import {
   insertFollowModeScriptMiddleware,
   noCacheMiddleware,
 } from './middlewares/middlewares.js';
-
-const require = createRequire(import.meta.url);
-const { createConfig, readCommandLineArgs, commandLineOptions } = require('es-dev-server');
-const startEdsServer = require('es-dev-server').startServer;
-const WebSocket = require('ws');
+import { cwkState } from './utils/CwkStateSingleton.js';
 
 const getAdminUIDefaults = () => {
   return {
@@ -84,8 +85,8 @@ export const startServer = async (opts = {}) => {
     enableCaching: false,
     alwaysServeFiles: false,
     appIndex: './index.html',
-    port: 5050,
-    wsPort: 5051,
+    port: 8000,
+    wsPort: 8001,
     title: '',
     ...opts,
   };

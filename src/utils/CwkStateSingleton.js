@@ -1,8 +1,5 @@
+import deepmerge from 'deepmerge';
 import isPlainObject from 'is-plain-object';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-const deepmerge = require('deepmerge');
 
 class CwkStateSingleton {
   constructor() {

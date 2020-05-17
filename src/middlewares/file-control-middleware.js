@@ -1,4 +1,4 @@
-import { cwkState } from '../CwkStateSingleton.js';
+import { cwkState } from '../utils/CwkStateSingleton.js';
 
 export function createFileControlMiddleware({ ext, admin = false, rootDir }) {
   return async function fileControlMiddleware(ctx, next) {

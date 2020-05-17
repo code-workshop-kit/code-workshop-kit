@@ -1,4 +1,4 @@
-import { cwkState } from '../CwkStateSingleton.js';
+import { cwkState } from '../utils/CwkStateSingleton.js';
 
 export const changeParticipantUrlMiddleware = async (ctx, next) => {
   const fromIFrame = ctx.header['sec-fetch-dest'] === 'iframe';
