@@ -1,5 +1,8 @@
 # code-workshop-kit
 
+[![npm version](https://badge.fury.io/js/code-workshop-kit.svg)](https://badge.fury.io/js/code-workshop-kit)
+![Publish NPM](https://github.com/code-workshop-kit/cwk-frontend/workflows/Publish%20NPM/badge.svg)
+
 Using [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) and Web Component magic to create a nice environment for remote frontend workshops.
 Leverage VS Code Live Share, by creating a session with your workshop participants, and adding the port of your cwk server as a shared server.
 
