@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.3.1...0.4.0) (2020-05-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* change default port back to 8000 for cwk and 8001 for websockets. Previously this was set to 5050 and 5051 but this is unconventional.
+
+### Features
+
+* support old nodejs versions by compiling to CommonJS ([1df6558](https://github.com/code-workshop-kit/cwk-frontend/commit/1df655816e602313f868835ea75f317823ee5eda))
+
 ### [0.3.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.3.0...0.3.1) (2020-05-16)
 
 
