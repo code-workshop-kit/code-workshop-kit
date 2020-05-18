@@ -7,16 +7,15 @@ import {
 } from 'es-dev-server';
 import path from 'path';
 import WebSocket from 'ws';
+import { changeParticipantUrlMiddleware, noCacheMiddleware } from './middlewares/middlewares.js';
 import {
-  adminUIMiddleware,
-  changeParticipantUrlMiddleware,
-  createFileControlMiddleware,
-  createInsertAppShellMiddleware,
-  createWorkshopImportReplaceMiddleware,
-  createWsPortReplaceMiddleware,
-  insertFollowModeScriptMiddleware,
-  noCacheMiddleware,
-} from './middlewares/middlewares.js';
+  adminUIPlugin,
+  appShellPlugin,
+  fileControlPlugin,
+  followModePlugin,
+  workshopImportPlugin,
+  wsPortPlugin,
+} from './plugins/plugins.js';
 import { cwkState } from './utils/CwkStateSingleton.js';
 
 const getAdminUIDefaults = () => {
@@ -152,34 +151,27 @@ export const startServer = async (opts = {}) => {
     moduleDirs: ['node_modules'],
     nodeResolve: true,
     logErrorsToBrowser: true,
-    middlewares: [
-      insertFollowModeScriptMiddleware,
-      ...(cwkConfig.withoutAppShell
-        ? []
-        : [createInsertAppShellMiddleware(cwkConfig.appIndex, cwkConfig.title)]),
-      ...(cwkConfig.enableCaching ? [] : [noCacheMiddleware]),
-
-      ...(cwkConfig.alwaysServeFiles
-        ? []
-        : [
-            createFileControlMiddleware({
-              ext: 'js',
-              admin: true,
-              rootDir: absoluteRootDir,
-            }),
-            createFileControlMiddleware({
-              ext: 'html',
-              admin: true,
-              rootDir: absoluteRootDir,
-            }),
-          ]),
-
-      createWorkshopImportReplaceMiddleware(absoluteRootDir),
-      createWsPortReplaceMiddleware(cwkConfig.wsPort),
-      adminUIMiddleware,
-      changeParticipantUrlMiddleware,
+    plugins: [
+      wsPortPlugin(cwkConfig.wsPort),
+      workshopImportPlugin(absoluteRootDir),
+      followModePlugin(cwkConfig.wsPort),
     ],
+    middlewares: [changeParticipantUrlMiddleware],
   };
+
+  // Plugins & middlewares that can be turned off completely from the start through cwk flags
+  if (!cwkConfig.alwaysServeFiles) {
+    edsConfig.plugins.push(fileControlPlugin({ exts: ['js', 'html'], rootDir: absoluteRootDir }));
+  }
+
+  if (!cwkConfig.withoutAppShell) {
+    edsConfig.plugins.push(appShellPlugin(cwkConfig.appIndex, cwkConfig.title));
+    edsConfig.plugins.push(adminUIPlugin());
+  }
+
+  if (cwkConfig.enableCaching) {
+    edsConfig.middlewares.push(noCacheMiddleware);
+  }
 
   const config = createConfig({
     ...edsConfig,
