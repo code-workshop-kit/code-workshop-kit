@@ -73,7 +73,6 @@ const setupWebSocket = wsPort => {
     ws.on('message', message => handleWsMessage(message, ws));
   });
 
-  cwkState.state = { wss };
   return wss;
 };
 
@@ -145,7 +144,7 @@ export const startServer = async (opts = {}) => {
   const absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex));
 
   // eds defaults & middlewares
-  const edsConfig = {
+  let edsConfig = {
     open: true,
     watch: false,
     moduleDirs: ['node_modules'],
@@ -173,15 +172,15 @@ export const startServer = async (opts = {}) => {
     edsConfig.middlewares.push(noCacheMiddleware);
   }
 
-  const config = createConfig({
+  edsConfig = createConfig({
     ...edsConfig,
     ...cwkConfig,
   });
 
-  const { server } = await startEdsServer(config);
+  const { server } = await startEdsServer(edsConfig);
   const wss = setupWebSocket(cwkConfig.wsPort);
 
-  cwkState.state = { adminConfig: getAdminUIDefaults() };
+  cwkState.state = { adminConfig: getAdminUIDefaults(), wss };
 
   ['exit', 'SIGINT'].forEach(event => {
     process.on(event, () => {
@@ -190,5 +189,5 @@ export const startServer = async (opts = {}) => {
     });
   });
 
-  return server;
+  return { server, edsConfig, cwkConfig };
 };
