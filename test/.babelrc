@@ -10,5 +10,6 @@
         "useBuiltIns": "usage"
       }
     ]
-  ]
+  ],
+  "ignore": ["./components/**/*"]
 }

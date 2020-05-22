@@ -63,7 +63,7 @@ class ParticipantCapsule extends LitElement {
     `;
   }
 
-  get participantIndexHtmlPath() {
+  get _participantIndexHtmlPath() {
     // Assumes participants folder to be inside the folder which contains app index
     // Create an issue if you need more flexibility here.
 
@@ -84,7 +84,7 @@ class ParticipantCapsule extends LitElement {
       <div class="container">
         <div class="header">
           <h2>${this.name}</h2>
-          <a href="${this.participantIndexHtmlPath}">
+          <a href="${this._participantIndexHtmlPath}">
             <button class="button__fullscreen">
               View
             </button>
@@ -93,7 +93,7 @@ class ParticipantCapsule extends LitElement {
         <iframe
           id="${this.name}"
           allow="fullscreen"
-          src="${this.participantIndexHtmlPath}"
+          src="${this._participantIndexHtmlPath}"
         ></iframe>
       </div>
     `;

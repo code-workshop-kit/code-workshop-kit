@@ -1,8 +1,4 @@
 import { css, html, LitElement } from 'lit-element';
-// Placeholder here, will transform this to resolve to the workshop.js
-// in the rootDir folder. This is a user-provided file
-// eslint-disable-next-line import/no-unresolved
-import { workshop } from './workshopImport.js';
 
 class SelectCookie extends LitElement {
   static get styles() {
@@ -81,14 +77,23 @@ class SelectCookie extends LitElement {
     };
   }
 
+  constructor() {
+    super();
+    this.fetchConfigComplete = new Promise(resolve => {
+      this.fetchConfigResolve = resolve;
+    });
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this.fetchNames();
   }
 
   async fetchNames() {
-    const { participants } = workshop;
-    this.participants = participants;
+    const { workshop } = await import(this.workshopImport || 'placeholder-import.js');
+    this.participants = workshop.participants;
+    this.fetchConfigResolve();
+    return this.participants;
   }
 
   animateDone() {
@@ -105,7 +110,9 @@ class SelectCookie extends LitElement {
     e.target.setAttribute('selected', true);
     document.cookie = `participant_name=${e.target.innerText};path=/`;
     await this.animateDone();
-    window.location.reload();
+    if (!this._noReload) {
+      window.location.reload();
+    }
   }
 
   render() {
@@ -113,9 +120,11 @@ class SelectCookie extends LitElement {
       <div class="wrapper">
         <h1>Who are you?</h1>
         <ul class="name__list">
-          ${this.participants.map(
-            name => html`<li class="name__item" @click=${this.setCookie}>${name}</li>`,
-          )}
+          ${this.participants
+            ? this.participants.map(
+                name => html`<li class="name__item" @click=${this.setCookie}>${name}</li>`,
+              )
+            : html``}
         </ul>
         <svg
           version="1.1"

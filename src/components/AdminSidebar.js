@@ -164,7 +164,7 @@ class AdminSidebar extends LitElement {
 
   setupWs() {
     // gets replaced by CWK server
-    this.ws = new WebSocket('ws://localhost:%websocketport%');
+    this.ws = new WebSocket(`ws://localhost:${this.websocketPort || '%websocketport%'}`);
 
     this.websocketOpen = new Promise(resolve => {
       this.resolveWebsocketOpen = resolve;

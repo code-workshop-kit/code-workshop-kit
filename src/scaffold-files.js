@@ -49,9 +49,15 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 
 export const scaffold = async opts => {
   const workshopFolder = path.resolve(process.cwd(), `.${opts.rootDir}`);
-  if (fs.existsSync(`${workshopFolder}/workshop.js`)) {
-    const esmRequire = _esmRequire(module);
-    const { workshop } = esmRequire(`${workshopFolder}/workshop.js`);
+  if (opts.workshop || fs.existsSync(`${workshopFolder}/workshop.js`)) {
+    let workshop = {};
+    if (opts.workshop) {
+      ({ workshop } = opts);
+    } else {
+      const esmRequire = _esmRequire(module);
+      ({ workshop } = esmRequire(`${workshopFolder}/workshop.js`));
+    }
+
     const { participants, templateData } = workshop;
     participants.forEach(name => {
       copyTemplates(
@@ -99,9 +105,8 @@ export const scaffoldFiles = (opts = {}) => {
       ...commandLineArgs(scaffoldDefinitions, { argv: opts.argv }),
       ...readCommandLineArgs(opts.argv),
     };
-
-    scaffoldConfig.rootDir = path.resolve('/', scaffoldConfig.rootDir);
   }
 
+  scaffoldConfig.rootDir = path.resolve('/', scaffoldConfig.rootDir);
   scaffold(scaffoldConfig);
 };

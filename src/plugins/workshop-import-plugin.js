@@ -10,7 +10,7 @@ export function workshopImportPlugin(rootDir) {
           context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js'
         ) {
           rewrittenBody = rewrittenBody.replace(
-            new RegExp('./workshopImport.js', 'g'),
+            new RegExp('placeholder-import.js', 'g'),
             path.resolve('/', `${rootDir}/workshop.js`),
           );
         }

@@ -5,7 +5,7 @@ export const noCacheMiddleware = async (ctx, next) => {
 
   const { adminConfig } = cwkState.state;
 
-  if (!adminConfig.enableCaching) {
+  if (adminConfig && !adminConfig.enableCaching) {
     ctx.response.set('cache-control', 'no-store');
   }
 };

@@ -15,7 +15,10 @@
     "start": "yarn build && ./copy-components && node dist/cli.js run --watch --app-index demo/index.html",
     "start:scaffold": "yarn build && node dist/cli.js scaffold --root-dir demo",
     "start:scaffold:force": "yarn build && node dist/cli.js scaffold --force --root-dir demo",
-    "test": "./copy-components && mocha test/**/*.test.js test/*.test.js --require @babel/register",
+    "test": "yarn test:node && yarn test:browser",
+    "test:node": "yarn build && ./copy-components && mocha test/node/*.test.js --require @babel/register",
+    "test:node:watch": "yarn build && ./copy-components && mocha test/**/*.test.js test/*.test.js --watch --require @babel/register",
+    "test:browser": "wtr test/components/*.test.js --config \"web-test-runner.config.js\"",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
@@ -38,7 +41,7 @@
     "@open-wc/create": "^0.31.0",
     "command-line-args": "^5.1.1",
     "deepmerge": "^4.2.2",
-    "es-dev-server": "^1.50.0",
+    "es-dev-server": "^1.51.0",
     "esm": "^3.2.25",
     "glob": "^7.1.6",
     "is-plain-object": "^3.0.0",
@@ -51,6 +54,8 @@
     "@babel/preset-env": "^7.9.0",
     "@babel/register": "^7.9.0",
     "@open-wc/eslint-config": "^2.0.0",
+    "@open-wc/testing": "^2.5.16",
+    "@open-wc/testing-helpers": "^1.8.2",
     "chai": "^4.2.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.11.0",
@@ -59,8 +64,10 @@
     "mocha": "^7.1.2",
     "node-fetch": "^2.6.0",
     "prettier": "^2.0.5",
+    "puppeteer": "^3.2.0",
     "rimraf": "^3.0.2",
-    "standard-version": "^7.0.0"
+    "standard-version": "^7.0.0",
+    "web-test-runner": "^0.0.31"
   },
   "eslintConfig": {
     "extends": [

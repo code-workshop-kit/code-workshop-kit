@@ -4,10 +4,6 @@ import './AdminSidebar.js';
 import './loadAndSetDankMonoFont.js';
 import './ParticipantCapsule.js';
 import './SelectCookie.js';
-// Placeholder here, we transform this to resolve to the workshop.js
-// in the rootDir folder. This is a user-provided file
-// eslint-disable-next-line import/no-unresolved
-import { workshop } from './workshopImport.js';
 
 class AppShell extends LitElement {
   static get styles() {
@@ -96,15 +92,29 @@ class AppShell extends LitElement {
     };
   }
 
+  constructor() {
+    super();
+    this.fetchConfigComplete = new Promise(resolve => {
+      this.fetchConfigResolve = resolve;
+    });
+  }
+
   connectedCallback() {
     if (super.connectedCallback) {
       super.connectedCallback();
     }
-    this.getParticipants();
+    this.fetchWorkshopConfig();
     this.getParticipantName();
-    if (workshop.title) {
-      this.title = workshop.title;
-    }
+  }
+
+  async fetchWorkshopConfig() {
+    const { workshop } = await import(this.workshopImport || 'placeholder-import.js');
+    this.workshop = workshop;
+    const { title, participants } = this.workshop;
+    this.participants = participants;
+    this.title = title || this.title;
+    this.fetchConfigResolve();
+    return this.workshop;
   }
 
   getParticipantName() {
@@ -122,11 +132,6 @@ class AppShell extends LitElement {
     }
   }
 
-  async getParticipants() {
-    const { participants } = workshop;
-    this.participants = participants;
-  }
-
   changeName() {
     document.cookie = 'participant_name=;path=/;max-age=0';
     this.currentParticipantName = null;
@@ -137,7 +142,7 @@ class AppShell extends LitElement {
       ${this.currentParticipantName
         ? html`
             <div class="header">
-              <cwk-admin-sidebar></cwk-admin-sidebar>
+              <cwk-admin-sidebar .websocketPort=${this.websocketPort}></cwk-admin-sidebar>
               <button class="change-name" @click=${this.changeName}>Change your name</button>
               <p class="current-name">Hi ${this.currentParticipantName}!</p>
             </div>
@@ -146,13 +151,16 @@ class AppShell extends LitElement {
 
             <div>
               <div class="participants-container">
-                ${this.participants.map(
-                  name => html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
-                )}
+                ${this.participants
+                  ? this.participants.map(
+                      name =>
+                        html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
+                    )
+                  : html``}
               </div>
             </div>
           `
-        : html`<cwk-select-cookie></cwk-select-cookie>`}
+        : html`<cwk-select-cookie .workshopImport=${this.workshopImport}></cwk-select-cookie>`}
     `;
   }
 }

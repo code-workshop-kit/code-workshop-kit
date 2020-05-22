@@ -29,10 +29,7 @@ export function adminUIPlugin() {
         }
       }
 
-      return {
-        body: rewrittenBody,
-        transformCache: false,
-      };
+      return { body: rewrittenBody, transformCache: false };
     },
   };
 }

@@ -24,7 +24,7 @@ export function fileControlPlugin({ exts, rootDir }) {
        */
       if (
         context.status === 200 &&
-        !adminConfig.alwaysServeFiles &&
+        !(adminConfig && adminConfig.alwaysServeFiles) &&
         context.url.startsWith(`${rootDir}/participants/`) &&
         !context.url.split(`${rootDir}/participants/`)[1].startsWith(participantName) &&
         !(context.ip === '::1' && adminConfig.enableAdmin)
