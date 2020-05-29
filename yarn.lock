@@ -805,10 +805,10 @@
     whatwg-fetch "^3.0.0"
     whatwg-url "^7.0.0"
 
-"@open-wc/create@^0.31.0":
-  version "0.31.1"
-  resolved "https://registry.yarnpkg.com/@open-wc/create/-/create-0.31.1.tgz#59f43629cf183129d22550bb22094dfc3e699a51"
-  integrity sha512-i04clZlAMgAmHOw+E2Kkc5OnzisIa/sO0RQF7uwogmU6gmRRntNP096+Pf9HFUBLUvcw33Hg13DSDZirVRBplQ==
+"@open-wc/create@^0.32.0":
+  version "0.32.4"
+  resolved "https://registry.yarnpkg.com/@open-wc/create/-/create-0.32.4.tgz#ed2cd4c2d55237493a605c817a0c797bdd55bf2d"
+  integrity sha512-tUjBnT3BKCn+KCMQsxmWXndZrfCjiX6+oYuuVFaNfzasGFGRuUuj2fFVqQ3aVt1YnsAnmyXXg+3/r4fryE3Kvw==
   dependencies:
     chalk "^2.4.2"
     command-line-args "^5.0.2"
