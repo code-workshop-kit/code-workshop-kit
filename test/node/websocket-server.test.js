@@ -22,12 +22,18 @@ describe('websocket server', () => {
       }));
     });
 
-    afterEach(() => {
-      server.close();
-      wss.close();
+    afterEach(async () => {
       if (ws) {
         ws.send(JSON.stringify({ type: 'reset-state' }));
         ws.close();
+      }
+      if (wss) {
+        wss.close();
+      }
+      if (server) {
+        await new Promise(resolve => {
+          server.close(() => resolve());
+        });
       }
     });
 

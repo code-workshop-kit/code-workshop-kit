@@ -9,7 +9,7 @@ import { userAgents } from '../utils/user-agents.js';
 const hostPort = 5000;
 const wsPort = 5001;
 const host = `http://localhost:${hostPort}/`;
-
+const testTimeout = 10000;
 const baseCfg = {
   port: hostPort,
   wsPort,
@@ -56,7 +56,7 @@ describe('CWK Server e2e', () => {
 
       expect(response.status).to.equal(200);
       expect(responseText).to.include('<title>My app</title>');
-    });
+    }).timeout(testTimeout);
 
     it('inserts the app shell component by default', async () => {
       ({ server, wss } = await startServer({
@@ -76,7 +76,7 @@ describe('CWK Server e2e', () => {
       });
 
       expect(tagName).to.equal('CWK-APP-SHELL');
-    }).timeout(4000);
+    }).timeout(testTimeout);
 
     // TODO: cannot spoof ip address easily, re-enable this once we have a proper admin system with passwords
     // instead of checking context.ip === ::1
@@ -98,7 +98,7 @@ describe('CWK Server e2e', () => {
       });
 
       expect(url).to.equal('ws://localhost:5001/');
-    });
+    }).timeout(testTimeout);
 
     describe('Admin UI Sidebar', () => {
       it('inserts admin ui sidebar component for admins', async () => {
@@ -135,7 +135,7 @@ describe('CWK Server e2e', () => {
 
         expect(tagName).to.equal('CWK-ADMIN-SIDEBAR');
         expect(opened).to.be.false;
-      }).timeout(4000); // this test gets a little too close to 2000ms... so let's make the limit a bit higher
+      }).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher
 
       it('can enable caching which enables the server to send cached responses', async () => {
         let lastWsMsg = '';
@@ -233,7 +233,7 @@ describe('CWK Server e2e', () => {
         // Last 3 timestamps, cache was enabled by admin sidebar
         expect(timestamps[2]).to.equal(timestamps[3]);
         expect(timestamps[2]).to.equal(timestamps[4]);
-      }).timeout(4000); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
+      }).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
 
       it('can disable admin mode ensures only current participant files are loaded', async () => {
         let lastWsMsg = '';
@@ -294,7 +294,7 @@ describe('CWK Server e2e', () => {
         await page.reload();
         // The first time felix script was called. The second time it wasn't because we disabled adminMode, which means only joren script gets called now
         expect(felixCalled).to.equal(1);
-      }).timeout(4000); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
+      }).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
 
       // TODO: cannot spoof ip address easily, re-enable this once we have a proper admin system with passwords
       // instead of checking context.ip === ::1. Right now felix is called once too many because for Alex, it loads due to his ip being ::1
@@ -380,7 +380,7 @@ describe('CWK Server e2e', () => {
           // The first time felix script was called. The second time it wasn't because we disabled adminMode, which means only joren script gets called now
           expect(felixCalled).to.equal(3);
         },
-      ).timeout(4000); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
+      ).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
     });
   });
 });

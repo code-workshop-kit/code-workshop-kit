@@ -11,9 +11,15 @@ describe('start cwk server', () => {
     let cwkConfig;
     let edsConfig;
 
-    afterEach(() => {
-      server.close();
-      wss.close();
+    afterEach(async () => {
+      if (wss) {
+        wss.close();
+      }
+      if (server) {
+        await new Promise(resolve => {
+          server.close(() => resolve());
+        });
+      }
     });
 
     it('supports overriding CWK server default settings', async () => {
