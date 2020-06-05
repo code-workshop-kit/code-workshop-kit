@@ -1036,10 +1036,10 @@
     "@open-wc/semantic-dom-diff" "^0.13.16"
     "@types/chai" "^4.1.7"
 
-"@open-wc/create@^0.31.0":
-  version "0.31.1"
-  resolved "https://registry.yarnpkg.com/@open-wc/create/-/create-0.31.1.tgz#59f43629cf183129d22550bb22094dfc3e699a51"
-  integrity sha512-i04clZlAMgAmHOw+E2Kkc5OnzisIa/sO0RQF7uwogmU6gmRRntNP096+Pf9HFUBLUvcw33Hg13DSDZirVRBplQ==
+"@open-wc/create@^0.32.0":
+  version "0.32.4"
+  resolved "https://registry.yarnpkg.com/@open-wc/create/-/create-0.32.4.tgz#ed2cd4c2d55237493a605c817a0c797bdd55bf2d"
+  integrity sha512-tUjBnT3BKCn+KCMQsxmWXndZrfCjiX6+oYuuVFaNfzasGFGRuUuj2fFVqQ3aVt1YnsAnmyXXg+3/r4fryE3Kvw==
   dependencies:
     chalk "^2.4.2"
     command-line-args "^5.0.2"
@@ -7564,15 +7564,10 @@ ws@^6.1.0:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7.2.3:
+ws@^7.2.3, ws@^7.3.0:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.0.tgz#4b2f7f219b3d3737bc1a2fbf145d825b94d38ffd"
   integrity sha512-iFtXzngZVXPGgpTlP1rBqsUK82p9tKqsWRPg5L56egiljujJT3vGAYnHANvFxBieXrTFavhzhxW52jnaWV+w2w==
-
-ws@^7.2.5:
-  version "7.2.5"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.2.5.tgz#abb1370d4626a5a9cd79d8de404aa18b3465d10d"
-  integrity sha512-C34cIU4+DB2vMyAbmEKossWq2ZQDr6QEyuuCzWrM9zfw1sGc0mYiJ0UnG9zzNykt49C2Fi34hvr2vssFQRS6EA==
 
 xtend@~4.0.1:
   version "4.0.2"

@@ -38,7 +38,7 @@
   "author": "Joren Broekema <joren.broekema@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@open-wc/create": "^0.31.0",
+    "@open-wc/create": "^0.32.0",
     "command-line-args": "^5.1.1",
     "deepmerge": "^4.2.2",
     "es-dev-server": "^1.51.0",
@@ -47,7 +47,7 @@
     "is-plain-object": "^3.0.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.2.1",
-    "ws": "^7.2.5"
+    "ws": "^7.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
