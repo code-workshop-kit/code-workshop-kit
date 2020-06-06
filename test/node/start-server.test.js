@@ -27,14 +27,14 @@ describe('start cwk server', () => {
         port: 5000,
         wsPort: 5002,
         title: 'Frontend Workshop',
-        appIndex: './test/index.html',
+        appIndex: './test/utils/fixtures/simple/index.html',
         logStartup: false,
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         open: false,
       }));
 
       expect(cwkConfig.wsPort).to.equal(5002);
-      expect(edsConfig.appIndex).to.equal('/./test/index.html');
+      expect(edsConfig.appIndex).to.equal('/./test/utils/fixtures/simple/index.html');
       expect(cwkConfig.title).to.equal('Frontend Workshop');
     });
 
@@ -46,6 +46,7 @@ describe('start cwk server', () => {
         enableCaching: true,
         alwaysServeFiles: true,
         logStartup: false,
+        appIndex: './test/utils/fixtures/simple/index.html',
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         open: false,
       }));

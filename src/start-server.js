@@ -2,7 +2,11 @@ import commandLineArgs from 'command-line-args';
 import { commandLineOptions, createConfig, startServer as startEdsServer } from 'es-dev-server';
 import path from 'path';
 import WebSocket from 'ws';
-import { changeParticipantUrlMiddleware, noCacheMiddleware } from './middlewares/middlewares.js';
+import {
+  changeParticipantUrlMiddleware,
+  jwtMiddleware,
+  noCacheMiddleware,
+} from './middlewares/middlewares.js';
 import {
   adminUIPlugin,
   appShellPlugin,
@@ -108,8 +112,9 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
 
   newEdsConfig.plugins.push(wsPortPlugin(cwkConfig.wsPort));
   newEdsConfig.plugins.push(workshopImportPlugin(absoluteRootDir));
-  newEdsConfig.plugins.push(followModePlugin(cwkConfig.wsPort));
-  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware);
+  newEdsConfig.plugins.push(followModePlugin(absoluteRootDir, cwkConfig.wsPort));
+  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteRootDir));
+  newEdsConfig.middlewares.push(jwtMiddleware(absoluteRootDir));
 
   // Plugins & middlewares that can be turned off completely from the start through cwk flags
   if (!cwkConfig.alwaysServeFiles) {
@@ -120,7 +125,7 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
 
   if (!cwkConfig.withoutAppShell) {
     newEdsConfig.plugins.push(appShellPlugin(cwkConfig.appIndex, cwkConfig.title));
-    newEdsConfig.plugins.push(adminUIPlugin());
+    newEdsConfig.plugins.push(adminUIPlugin(absoluteRootDir));
   }
 
   if (!cwkConfig.enableCaching) {
@@ -222,6 +227,12 @@ export const startServer = async (opts = {}) => {
 
   cwkState.state = { wss };
   setDefaultAdminConfig();
+
+  ['exit', 'SIGINT'].forEach(event => {
+    process.on(event, () => {
+      wss.close();
+    });
+  });
 
   return { server, edsConfig, cwkConfig, wss };
 };

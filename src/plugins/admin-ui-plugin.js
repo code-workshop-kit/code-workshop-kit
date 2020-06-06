@@ -1,34 +1,17 @@
-import { cwkState } from '../utils/CwkStateSingleton.js';
+import { verifyJWT } from '../utils/verifyJWT.js';
 
-export function adminUIPlugin() {
+export function adminUIPlugin(rootDir) {
   return {
     transform(context) {
       let rewrittenBody = context.body;
-
-      const { state } = cwkState;
-      const participantName = context.cookies.get('participant_name');
-
-      if (participantName) {
-        // Make sure the host is added as an admin
-        // (but only once, so that after they can switch names without automatically making those names admins)
-        if (context.ip === '::1' && !state.hostAdminSet) {
-          cwkState.state = {
-            admins: [...(state.admins || []), participantName],
-            hostAdminSet: true,
-          };
-        }
-
-        if (context.path === '/node_modules/code-workshop-kit/dist/components/AdminSidebar.js') {
-          // if current user is not amongst the admins (or there are no admins yet), do not serve
-          if (
-            !cwkState.state.admins ||
-            !cwkState.state.admins.find(admin => admin === participantName)
-          ) {
-            rewrittenBody = '';
-          }
-        }
+      const authToken = context.cookies.get('cwk_auth_token');
+      const authed = verifyJWT(rootDir, authToken);
+      if (
+        context.path === '/node_modules/code-workshop-kit/dist/components/AdminSidebar.js' &&
+        !authed
+      ) {
+        rewrittenBody = '';
       }
-
       return { body: rewrittenBody, transformCache: false };
     },
   };
