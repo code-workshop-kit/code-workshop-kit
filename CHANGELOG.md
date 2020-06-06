@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.4.0...0.6.0) (2020-06-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* A couple of plugins and middlewares now require passing the rootDir as an argument, in order to get the application key from the workshop.js to verify admin authentication with JWT
+* all middlewares with the exception of no-cache and change-participant-url are now EDS plugins which can be imported from index.js. adminUIMiddleware is now adminUIPlugin, createFileControlMiddleware is now fileControlPlugin, createInsertAppShellMiddleware is now appShellPlugin, insertFollowModeScriptMiddleware is now followModePlugin, createWsPortReplaceMiddleware is now wsPortPlugin and createWorkshopImportReplaceMiddleware is now workshopImportPlugin
+* fileControlPlugin (previously createFileControlMiddleware) config object now accepts an array of extensions "exts" and no longer uses the "admin" property
+
+### Features
+
+* add admin login with JWT ([dd2bc56](https://github.com/code-workshop-kit/cwk-frontend/commit/dd2bc564115a50b592c7935d1d99d75c71446860))
+* migrate to EDS plugin system as much as possible ([1f0aa43](https://github.com/code-workshop-kit/cwk-frontend/commit/1f0aa43497fd797a86a1b270a0c14246a9b5ab15))
+* return edsConfig and cwkConfig in start-server ([23abe18](https://github.com/code-workshop-kit/cwk-frontend/commit/23abe1824cb14af23c25e3e8b8d5179dedfbae5b))
+
+
+### Bug Fixes
+
+* build dist folder before publish ([67f5fe8](https://github.com/code-workshop-kit/cwk-frontend/commit/67f5fe8e4f904fb920167a105f858f4551360b07))
+
 ## [0.5.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.4.0...0.5.0) (2020-06-05)
 
 
