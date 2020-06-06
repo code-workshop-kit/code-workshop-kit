@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 import path from 'path';
 import puppeteer from 'puppeteer';
@@ -45,7 +46,7 @@ describe('CWK Server e2e', () => {
     it('returns static files', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
-        appIndex: './test/index.html',
+        appIndex: './test/utils/fixtures/simple/index.html',
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
       }));
 
@@ -78,9 +79,7 @@ describe('CWK Server e2e', () => {
       expect(tagName).to.equal('CWK-APP-SHELL');
     }).timeout(testTimeout);
 
-    // TODO: cannot spoof ip address easily, re-enable this once we have a proper admin system with passwords
-    // instead of checking context.ip === ::1
-    it.skip('applies follow-mode websocket hooks by default', async () => {
+    it('applies follow-mode websocket hooks by default', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
         appIndex: './test/utils/fixtures/simple/index.html',
@@ -100,17 +99,58 @@ describe('CWK Server e2e', () => {
       expect(url).to.equal('ws://localhost:5001/');
     }).timeout(testTimeout);
 
+    it('can select admin user using password', async () => {
+      ({ server, wss } = await startServer({
+        ...baseCfg,
+        appIndex: './test/utils/fixtures/admins/index.html',
+      }));
+
+      browser = await puppeteer.launch();
+      const page = await browser.newPage();
+
+      await page.goto(`${host}test/utils/fixtures/admins/index.html`);
+      await page.evaluate(() => {
+        document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-select-cookie')
+          .shadowRoot.querySelector('.name__item')
+          .click();
+      });
+
+      await aTimeout(100);
+
+      await page.evaluate(() => {
+        const dialogContent = document.querySelector('cwk-dialog-content');
+        dialogContent.shadowRoot.querySelector('input').value = 'pineapples';
+        dialogContent.shadowRoot.querySelector('.confirm-btn').click();
+      });
+
+      await aTimeout(3000);
+
+      const { tagName, adminSidebarTagName } = await page.evaluate(() => {
+        return {
+          tagName: document.querySelector('cwk-app-shell').tagName,
+          adminSidebarTagName: document
+            .querySelector('cwk-app-shell')
+            .shadowRoot.querySelector('cwk-admin-sidebar').tagName,
+        };
+      });
+
+      expect(tagName).to.equal('CWK-APP-SHELL');
+      expect(adminSidebarTagName).to.equal('CWK-ADMIN-SIDEBAR');
+    }).timeout(testTimeout);
+
     describe('Admin UI Sidebar', () => {
       it('inserts admin ui sidebar component for admins', async () => {
         ({ server, wss } = await startServer({
           ...baseCfg,
-          appIndex: './test/utils/fixtures/simple/index.html',
+          appIndex: './test/utils/fixtures/admins/index.html',
         }));
 
         browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+        await page.goto(`${host}test/utils/fixtures/admins/index.html`);
 
         await page.evaluate(() => {
           document
@@ -120,8 +160,15 @@ describe('CWK Server e2e', () => {
             .click();
         });
 
+        await aTimeout(100);
+        await page.evaluate(() => {
+          const dialogContent = document.querySelector('cwk-dialog-content');
+          dialogContent.shadowRoot.querySelector('input').value = 'pineapples';
+          dialogContent.shadowRoot.querySelector('.confirm-btn').click();
+        });
+
         // animation for cookie selection takes 1000ms and then reloads the page and renders app shell with admin bar
-        await aTimeout(1350);
+        await aTimeout(3000);
         const { tagName, opened } = await page.evaluate(() => {
           const queryAdminBar = () =>
             document.querySelector('cwk-app-shell').shadowRoot.querySelector('cwk-admin-sidebar');
@@ -143,13 +190,13 @@ describe('CWK Server e2e', () => {
           ...baseCfg,
           compatibility:
             'none' /* TODO: Troubleshoot why this test only if compatibility is 'none'... */,
-          appIndex: './test/utils/fixtures/simple/index.html',
+          appIndex: './test/utils/fixtures/admins/index.html',
           plugins: [
             {
               transform(context) {
                 let rewrittenBody = context.body;
 
-                if (context.url === '/test/utils/fixtures/simple/index.html') {
+                if (context.url === '/test/utils/fixtures/admins/index.html') {
                   rewrittenBody = rewrittenBody.replace(
                     '<body>',
                     `<body><p id="unixTimestamp">${Date.now()}</p>`,
@@ -172,17 +219,26 @@ describe('CWK Server e2e', () => {
 
         browser = await puppeteer.launch();
         const page = await browser.newPage();
-        await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+        await page.goto(`${host}test/utils/fixtures/admins/index.html`);
 
         const timestamps = [];
         let timestamp;
-        timestamp = await page.evaluate(() => {
+
+        const token = jwt.sign(
+          { username: 'Joren' },
+          '(=]#bYS940q)T8S*dX1g;Sey)X3YhN|98B>4hwE:c2ew8QrN3);hQN?x"5#yUS',
+          { expiresIn: '12h' },
+        );
+
+        timestamp = await page.evaluate(tok => {
           document.cookie = `participant_name=Joren;path=/`;
+          document.cookie = `cwk_auth_token=${tok};path=/`;
           return document.getElementById('unixTimestamp').innerText;
-        });
+        }, token);
         timestamps.push(timestamp);
 
         await page.reload();
+
         timestamp = await page.evaluate(() => {
           document
             .querySelector('cwk-app-shell')
@@ -240,7 +296,7 @@ describe('CWK Server e2e', () => {
         ({ server, wss } = await startServer({
           ...baseCfg,
           compatibility: 'none',
-          appIndex: './test/utils/fixtures/simple/index.html',
+          appIndex: './test/utils/fixtures/admins/index.html',
         }));
 
         wss.on('connection', ws => {
@@ -259,10 +315,17 @@ describe('CWK Server e2e', () => {
           }
         });
 
-        await page.goto(`${host}test/utils/fixtures/simple/index.html`);
-        await page.evaluate(() => {
+        await page.goto(`${host}test/utils/fixtures/admins/index.html`);
+
+        const token = jwt.sign(
+          { username: 'Joren' },
+          '(=]#bYS940q)T8S*dX1g;Sey)X3YhN|98B>4hwE:c2ew8QrN3);hQN?x"5#yUS',
+          { expiresIn: '12h' },
+        );
+        await page.evaluate(tok => {
           document.cookie = `participant_name=Joren;path=/`;
-        });
+          document.cookie = `cwk_auth_token=${tok};path=/`;
+        }, token);
 
         await page.reload();
         await aTimeout(100);
@@ -296,91 +359,95 @@ describe('CWK Server e2e', () => {
         expect(felixCalled).to.equal(1);
       }).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
 
-      // TODO: cannot spoof ip address easily, re-enable this once we have a proper admin system with passwords
-      // instead of checking context.ip === ::1. Right now felix is called once too many because for Alex, it loads due to his ip being ::1
-      it.skip(
-        'can enable always serve files which ensures all participant files are loaded',
-        async () => {
-          let lastWsMsg = '';
-          ({ server, wss } = await startServer({
-            ...baseCfg,
-            compatibility: 'none',
-            appIndex: './test/utils/fixtures/simple/index.html',
-          }));
+      it('can enable always serve files which ensures all participant files are loaded', async () => {
+        let lastWsMsg = '';
+        ({ server, wss } = await startServer({
+          ...baseCfg,
+          compatibility: 'none',
+          appIndex: './test/utils/fixtures/admins/index.html',
+        }));
 
-          wss.on('connection', ws => {
-            ws.on('message', message => {
-              lastWsMsg = JSON.parse(message);
-            });
+        wss.on('connection', ws => {
+          ws.on('message', message => {
+            lastWsMsg = JSON.parse(message);
           });
+        });
 
-          browser = await puppeteer.launch();
-          const page = await browser.newPage();
+        browser = await puppeteer.launch();
+        const page = await browser.newPage();
 
-          let felixCalled = 0;
-          page.on('console', msg => {
-            if (msg.text() === 'Felix') {
-              felixCalled += 1;
-            }
-          });
+        let felixCalled = 0;
+        page.on('console', msg => {
+          if (msg.text() === 'Felix') {
+            felixCalled += 1;
+          }
+        });
 
-          await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+        await page.goto(`${host}test/utils/fixtures/admins/index.html`);
 
-          await page.evaluate(() => {
-            document.cookie = `participant_name=Joren;path=/`;
-          });
-          await page.reload();
-          await aTimeout(100);
+        const token = jwt.sign(
+          { username: 'Joren' },
+          '(=]#bYS940q)T8S*dX1g;Sey)X3YhN|98B>4hwE:c2ew8QrN3);hQN?x"5#yUS',
+          { expiresIn: '12h' },
+        );
+        await page.evaluate(tok => {
+          document.cookie = `participant_name=Joren;path=/`;
+          document.cookie = `cwk_auth_token=${tok};path=/`;
+        }, token);
+        await page.reload();
+        await aTimeout(300);
+        expect(felixCalled).to.equal(1);
+        await page.evaluate(() => {
+          document.cookie = 'participant_name=;path=/;max-age=0';
+          document.cookie = `cwk_auth_token=;path=/;max-age=0`;
+          document.cookie = 'participant_name=Alex;path=/';
+        });
+        await page.reload();
+        await aTimeout(300);
+        expect(felixCalled).to.equal(1);
+        await page.evaluate(tok => {
+          document.cookie = 'participant_name=;path=/;max-age=0';
+          document.cookie = 'participant_name=Joren;path=/';
+          document.cookie = `cwk_auth_token=${tok};path=/`;
+        }, token);
+        await page.reload();
+        await aTimeout(300);
+        expect(felixCalled).to.equal(2);
+        await page.evaluate(() => {
+          document
+            .querySelector('cwk-app-shell')
+            .shadowRoot.querySelector('cwk-admin-sidebar')
+            .shadowRoot.querySelector('.open-button')
+            .click();
+        });
 
-          await page.evaluate(() => {
-            document.cookie = 'participant_name=;path=/;max-age=0';
-            document.cookie = 'participant_name=Alex;path=/';
-          });
-          await page.reload();
-          await aTimeout(100);
+        // Websocket config init + rerender takes some time
+        await aTimeout(50);
 
-          await page.evaluate(() => {
-            document.cookie = 'participant_name=;path=/;max-age=0';
-            document.cookie = 'participant_name=Joren;path=/';
-          });
-          await page.reload();
-          await aTimeout(100);
+        await page.evaluate(() => {
+          document
+            .querySelector('cwk-app-shell')
+            .shadowRoot.querySelector('cwk-admin-sidebar')
+            .shadowRoot.querySelector('#alwaysServeFiles')
+            .click();
+        });
 
-          await page.evaluate(() => {
-            document
-              .querySelector('cwk-app-shell')
-              .shadowRoot.querySelector('cwk-admin-sidebar')
-              .shadowRoot.querySelector('.open-button')
-              .click();
-          });
+        // Websocket message takes some time
+        await aTimeout(50);
 
-          // Websocket config init + rerender takes some time
-          await aTimeout(50);
+        expect(lastWsMsg.type).to.equal('config-updated');
 
-          await page.evaluate(() => {
-            document
-              .querySelector('cwk-app-shell')
-              .shadowRoot.querySelector('cwk-admin-sidebar')
-              .shadowRoot.querySelector('#alwaysServeFiles')
-              .click();
-          });
+        await page.evaluate(() => {
+          document.cookie = 'participant_name=;path=/;max-age=0';
+          document.cookie = `cwk_auth_token=;path=/;max-age=0`;
+          document.cookie = 'participant_name=Alex;path=/';
+        });
+        await page.reload();
+        await aTimeout(300);
 
-          // Websocket message takes some time
-          await aTimeout(50);
-
-          expect(lastWsMsg.type).to.equal('config-updated');
-
-          await page.evaluate(() => {
-            document.cookie = 'participant_name=;path=/;max-age=0';
-            document.cookie = 'participant_name=Alex;path=/';
-          });
-          await page.reload();
-          await aTimeout(100);
-
-          // The first time felix script was called. The second time it wasn't because we disabled adminMode, which means only joren script gets called now
-          expect(felixCalled).to.equal(3);
-        },
-      ).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
+        // The first time felix script was called. The second time it wasn't because we disabled adminMode, which means only joren script gets called now
+        expect(felixCalled).to.equal(3);
+      }).timeout(testTimeout * 2);
     });
   });
 });

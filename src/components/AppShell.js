@@ -5,16 +5,18 @@ import './loadAndSetDankMonoFont.js';
 import './ParticipantCapsule.js';
 import './SelectCookie.js';
 
+const setCustomCSSProps = () => {
+  document.body.style.setProperty('--cwk-color-primary', '#4e88c2');
+  document.body.style.setProperty('--cwk-color-secondary', '#34618e');
+  document.body.style.setProperty('--cwk-color-white', '#ffffff');
+  document.body.style.setProperty('--cwk-color-primary-transparent', '#4e88c230');
+};
+
 class AppShell extends LitElement {
   static get styles() {
     return css`
       :host {
         display: block;
-        --cwk-color-primary: #4e88c2;
-        --cwk-color-secondary: #34618e;
-        --cwk-color-white: #ffffff;
-        --cwk-color-primary-transparent: #4e88c230;
-
         height: 100vh;
         background-color: #fcfcfc;
       }
@@ -94,6 +96,7 @@ class AppShell extends LitElement {
 
   constructor() {
     super();
+    setCustomCSSProps();
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
     });

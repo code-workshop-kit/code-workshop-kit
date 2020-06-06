@@ -1,10 +1,13 @@
 import { cwkState } from '../utils/CwkStateSingleton.js';
+import { verifyJWT } from '../utils/verifyJWT.js';
 
 export function fileControlPlugin({ exts, rootDir }) {
   return {
     transform(context) {
       let rewrittenBody = context.body;
       const participantName = context.cookies.get('participant_name');
+      const authToken = context.cookies.get('cwk_auth_token');
+      const authed = verifyJWT(rootDir, authToken);
       const { adminConfig } = cwkState.state;
       /**
        * First we check
@@ -27,7 +30,7 @@ export function fileControlPlugin({ exts, rootDir }) {
         !(adminConfig && adminConfig.alwaysServeFiles) &&
         context.url.startsWith(`${rootDir}/participants/`) &&
         !context.url.split(`${rootDir}/participants/`)[1].startsWith(participantName) &&
-        !(context.ip === '::1' && adminConfig.enableAdmin)
+        !(authed && adminConfig.enableAdmin)
       ) {
         const fileExt = context.url.substring(context.url.lastIndexOf('.') + 1, context.url.length);
         exts.forEach(ext => {

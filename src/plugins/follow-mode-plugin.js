@@ -1,4 +1,6 @@
-export function followModePlugin(wsPort) {
+import { verifyJWT } from '../utils/verifyJWT.js';
+
+export function followModePlugin(rootDir, wsPort) {
   const scriptsToInsert = () => {
     window.__cwkFollowModeWs = new WebSocket(`ws://localhost:${wsPort}`);
 
@@ -30,14 +32,13 @@ export function followModePlugin(wsPort) {
   return {
     transform(context) {
       let rewrittenBody = context.body;
-
       const fromIFrame = context.header['sec-fetch-dest'] === 'iframe';
-      if (
-        context.status === 200 &&
-        context.response.is('html') &&
-        context.ip !== '::1' &&
-        !fromIFrame
-      ) {
+      const authToken = context.cookies.get('cwk_auth_token');
+      const authed = verifyJWT(rootDir, authToken);
+
+      // TODO: Admins don't follow, because the person who enabled follow mode is not stored
+      // We should check the authed.username vs the one that enabled follow mode
+      if (context.status === 200 && context.response.is('html') && !authed && !fromIFrame) {
         const scriptStr = scriptsToInsert.toString();
         const scriptBody = scriptStr
           .substring(scriptStr.indexOf('{') + 1, scriptStr.lastIndexOf('}'))
