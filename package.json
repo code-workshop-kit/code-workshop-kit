@@ -1,6 +1,6 @@
 {
   "name": "code-workshop-kit",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "repository": "https://github.com/code-workshop-kit/cwk-frontend",
   "main": "./dist/index.js",
