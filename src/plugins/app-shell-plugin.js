@@ -26,27 +26,36 @@ const findBrowserPath = appIndex => {
   return normalizedForWindows;
 };
 
-export function createInsertAppShellMiddleware(appIndex, title) {
-  return async function insertAppShellMiddleware(ctx, next) {
-    await next();
-    if (ctx.status === 200) {
-      const pathRelativeToServer = path.resolve('/', appIndex);
+export function appShellPlugin(appIndex, title) {
+  return {
+    transform(context) {
+      let rewrittenBody = context.body;
+      if (context.status === 200) {
+        const pathRelativeToServer = path.resolve('/', appIndex);
 
-      // Extra check because the url could be ending with / and then we should be serving /index.html (browser behavior)
-      if (ctx.url === pathRelativeToServer || `${ctx.url}index.html` === pathRelativeToServer) {
-        const browserPath = findBrowserPath(appIndex);
+        // Extra check because the url could be ending with / and then we should be serving /index.html (browser behavior)
+        if (
+          context.url === pathRelativeToServer ||
+          `${context.url}index.html` === pathRelativeToServer
+        ) {
+          const browserPath = findBrowserPath(appIndex);
 
-        const appShellScript = `
-          <script type="module">
-            import '${browserPath}';
-            const cwkAppShell = document.createElement('cwk-app-shell');
-            cwkAppShell.title = '${title}';
-            document.querySelector('body').appendChild(cwkAppShell);
-          </script>
-        `;
+          const appShellScript = `
+            <script type="module">
+              import '${browserPath}';
+              const cwkAppShell = document.createElement('cwk-app-shell');
+              cwkAppShell.title = '${title}';
+              document.querySelector('body').appendChild(cwkAppShell);
+            </script>
+          `;
 
-        ctx.body = ctx.body.replace('</body>', `${appShellScript}</body>`);
+          rewrittenBody = rewrittenBody.replace('</body>', `${appShellScript}</body>`);
+        }
       }
-    }
+
+      return {
+        body: rewrittenBody,
+      };
+    },
   };
 }

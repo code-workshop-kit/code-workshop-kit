@@ -1,8 +1,6 @@
 import { css, html, LitElement } from 'lit-element';
-// Placeholder here, will transform this to resolve to the workshop.js
-// in the rootDir folder. This is a user-provided file
-// eslint-disable-next-line import/no-unresolved
-import { workshop } from './workshopImport.js';
+import './CwkDialog.js';
+import './CwkDialogContent.js';
 
 class SelectCookie extends LitElement {
   static get styles() {
@@ -81,14 +79,24 @@ class SelectCookie extends LitElement {
     };
   }
 
+  constructor() {
+    super();
+    this.fetchConfigComplete = new Promise(resolve => {
+      this.fetchConfigResolve = resolve;
+    });
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this.fetchNames();
   }
 
   async fetchNames() {
-    const { participants } = workshop;
-    this.participants = participants;
+    const { workshop } = await import(this.workshopImport || 'placeholder-import.js');
+    this.participants = workshop.participants;
+    this.admins = workshop.admins;
+    this.fetchConfigResolve();
+    return this.participants;
   }
 
   animateDone() {
@@ -102,20 +110,76 @@ class SelectCookie extends LitElement {
   }
 
   async setCookie(e) {
-    e.target.setAttribute('selected', true);
-    document.cookie = `participant_name=${e.target.innerText};path=/`;
-    await this.animateDone();
-    window.location.reload();
+    const { target } = e;
+    const participant = target.innerText;
+    let isAdmin = false;
+    let providedPw;
+
+    const changeCookie = async (_target, _participant, _authToken) => {
+      _target.setAttribute('selected', true);
+      document.cookie = `participant_name=${_participant};path=/`;
+      if (_authToken) {
+        document.cookie = `cwk_auth_token=${_authToken};path=/`;
+      }
+      await this.animateDone();
+      if (!this._noReload) {
+        window.location.reload();
+      }
+    };
+
+    if (this.admins && this.admins.includes(participant)) {
+      isAdmin = true;
+    }
+
+    if (!isAdmin) {
+      changeCookie(target, participant);
+    } else {
+      const confirmDialog = this.shadowRoot.querySelector('cwk-dialog');
+      confirmDialog.opened = true;
+
+      const receivePw = pwEvent => {
+        pwEvent.stopPropagation();
+        this.resolvePwPromise(pwEvent.detail);
+        this.removeEventListener('cwk-confirm-pw', receivePw);
+      };
+      this.addEventListener('cwk-confirm-pw', receivePw);
+
+      providedPw = await new Promise(resolve => {
+        this.resolvePwPromise = resolve;
+      });
+    }
+
+    if (isAdmin && providedPw) {
+      // verify pw and store token
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'cwk-admin-password': providedPw,
+          'cwk-user': participant,
+        },
+      });
+
+      if (response.status === 200) {
+        const result = await response.json();
+        const authToken = result.token;
+        changeCookie(target, participant, authToken);
+      }
+    }
   }
 
   render() {
     return html`
       <div class="wrapper">
         <h1>Who are you?</h1>
+        <cwk-dialog>
+          <cwk-dialog-content slot="content"></cwk-dialog-content>
+        </cwk-dialog>
         <ul class="name__list">
-          ${this.participants.map(
-            name => html`<li class="name__item" @click=${this.setCookie}>${name}</li>`,
-          )}
+          ${this.participants
+            ? this.participants.map(
+                name => html`<li class="name__item" @click=${this.setCookie}>${name}</li>`,
+              )
+            : html``}
         </ul>
         <svg
           version="1.1"

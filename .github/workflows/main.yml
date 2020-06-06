@@ -6,9 +6,10 @@ jobs:
   verify:
     name: Verify changes
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     strategy:
       matrix:
-        node-version: [12.x, 13.x]
+        node-version: [10.x, 14.x]
     steps:
     - uses: actions/checkout@v2
     - name: Setup Node ${{ matrix.node-version }}
@@ -19,3 +20,7 @@ jobs:
       run: yarn --frozen-lockfile
     - name: Lint
       run: yarn lint
+    - name: Test node
+      run: yarn test:node
+    - name: Test browser
+      run: yarn test:browser

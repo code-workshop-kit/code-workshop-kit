@@ -13,6 +13,10 @@ class CwkStateSingleton {
   set state(value) {
     this.__data = deepmerge(this.__data, value, { isMergeableObject: isPlainObject });
   }
+
+  clear() {
+    this.__data = {};
+  }
 }
 
 const cwkState = new CwkStateSingleton();
