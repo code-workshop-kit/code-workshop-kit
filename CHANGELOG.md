@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.6.0...0.6.1) (2020-06-08)
+
+
+### Bug Fixes
+
+* **app-shell:** reset cwk_auth_token cookie on change name button ([0455dd5](https://github.com/code-workshop-kit/cwk-frontend/commit/0455dd5387e213d0cfab26d6219657e9b555cce7))
+* **cwk-server:** accommodate root dir of '/' ([dc642a9](https://github.com/code-workshop-kit/cwk-frontend/commit/dc642a9eee688dea06c58dea38002fde130dc381))
+
 ## [0.6.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.4.0...0.6.0) (2020-06-06)
 
 
