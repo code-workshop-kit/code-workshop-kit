@@ -10,7 +10,7 @@ import { userAgents } from '../utils/user-agents.js';
 const hostPort = 5000;
 const wsPort = 5001;
 const host = `http://localhost:${hostPort}/`;
-const testTimeout = 10000;
+const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
   wsPort,
