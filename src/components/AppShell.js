@@ -137,6 +137,7 @@ class AppShell extends LitElement {
 
   changeName() {
     document.cookie = 'participant_name=;path=/;max-age=0';
+    document.cookie = 'cwk_auth_token=;path=/;max-age=0';
     this.currentParticipantName = null;
   }
 
