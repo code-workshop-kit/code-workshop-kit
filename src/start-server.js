@@ -108,7 +108,10 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
    * Right now, we assume that your workshop.js is in the same folder as your app index.
    * TODO: allow override.
    */
-  const absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex));
+  let absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex));
+  if (absoluteRootDir === '/') {
+    absoluteRootDir = '';
+  }
 
   newEdsConfig.plugins.push(wsPortPlugin(cwkConfig.wsPort));
   newEdsConfig.plugins.push(workshopImportPlugin(absoluteRootDir));
