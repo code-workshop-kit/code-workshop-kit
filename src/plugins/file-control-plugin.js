@@ -35,7 +35,7 @@ export function fileControlPlugin({ exts, rootDir }) {
         const fileExt = context.url.substring(context.url.lastIndexOf('.') + 1, context.url.length);
         exts.forEach(ext => {
           if (ext === fileExt) {
-            rewrittenBody = '';
+            rewrittenBody = '<body></body>';
           }
         });
       }
