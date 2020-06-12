@@ -59,6 +59,29 @@ describe('CWK Server e2e', () => {
       expect(responseText).to.include('<title>My app</title>');
     }).timeout(testTimeout);
 
+    it('returns Content Hidden body for files that are in other participant folders', async () => {
+      ({ server, wss } = await startServer({
+        ...baseCfg,
+        appIndex: './test/utils/fixtures/simple/index.html',
+      }));
+
+      browser = await puppeteer.launch();
+      const page = await browser.newPage();
+
+      await page.goto(`${host}test/utils/fixtures/simple/participants/Alex/index.html`);
+      await page.evaluate(() => {
+        document.cookie = `participant_name=Joren;path=/`;
+      });
+      await page.reload();
+      const { content } = await page.evaluate(() => {
+        return {
+          content: document.body.innerText,
+        };
+      });
+
+      expect(content).to.equal('🚧 Content hidden 🚧');
+    }).timeout(testTimeout);
+
     it('inserts the app shell component by default', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
@@ -69,7 +92,11 @@ describe('CWK Server e2e', () => {
       const page = await browser.newPage();
 
       await page.goto(`${host}test/utils/fixtures/simple/index.html`);
-      await page.evaluate(() => console.log(window.__followModeWs));
+
+      await page.evaluate(() => {
+        document.cookie = `participant_name=Joren;path=/`;
+      });
+      await page.reload();
       const { tagName } = await page.evaluate(() => {
         return {
           tagName: document.querySelector('cwk-app-shell').tagName,
@@ -89,8 +116,11 @@ describe('CWK Server e2e', () => {
       const page = await browser.newPage();
 
       await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+      await page.evaluate(() => {
+        document.cookie = `participant_name=Joren;path=/`;
+      });
+      await page.reload();
       const { url } = await page.evaluate(() => {
-        console.log(window.__cwkFollowModeWs.url);
         return {
           url: window.__cwkFollowModeWs.url,
         };
@@ -109,12 +139,13 @@ describe('CWK Server e2e', () => {
       const page = await browser.newPage();
 
       await page.goto(`${host}test/utils/fixtures/admins/index.html`);
-      await page.evaluate(() => {
-        document
+      await page.evaluate(async () => {
+        const cookieElem = document
           .querySelector('cwk-app-shell')
-          .shadowRoot.querySelector('cwk-select-cookie')
-          .shadowRoot.querySelector('.name__item')
-          .click();
+          .shadowRoot.querySelector('cwk-select-cookie');
+
+        await cookieElem.fetchDialogComplete;
+        cookieElem.shadowRoot.querySelector('.name__item').click();
       });
 
       await aTimeout(100);
@@ -152,12 +183,13 @@ describe('CWK Server e2e', () => {
 
         await page.goto(`${host}test/utils/fixtures/admins/index.html`);
 
-        await page.evaluate(() => {
-          document
+        await page.evaluate(async () => {
+          const cookieElem = document
             .querySelector('cwk-app-shell')
-            .shadowRoot.querySelector('cwk-select-cookie')
-            .shadowRoot.querySelector('.name__item')
-            .click();
+            .shadowRoot.querySelector('cwk-select-cookie');
+
+          await cookieElem.fetchDialogComplete;
+          cookieElem.shadowRoot.querySelector('.name__item').click();
         });
 
         await aTimeout(100);

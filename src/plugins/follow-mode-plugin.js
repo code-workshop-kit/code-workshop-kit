@@ -36,9 +36,13 @@ export function followModePlugin(rootDir, wsPort) {
       const authToken = context.cookies.get('cwk_auth_token');
       const authed = verifyJWT(rootDir, authToken);
 
-      // TODO: Admins don't follow, because the person who enabled follow mode is not stored
-      // We should check the authed.username vs the one that enabled follow mode
-      if (context.status === 200 && context.response.is('html') && !authed && !fromIFrame) {
+      if (
+        context.status === 200 &&
+        context.response.is('html') &&
+        !authed &&
+        !fromIFrame &&
+        context.cookies.get('participant_name') // don't make unnamed participants follow yet
+      ) {
         const scriptStr = scriptsToInsert.toString();
         const scriptBody = scriptStr
           .substring(scriptStr.indexOf('{') + 1, scriptStr.lastIndexOf('}'))
@@ -55,7 +59,7 @@ export function followModePlugin(rootDir, wsPort) {
         );
       }
 
-      return { body: rewrittenBody };
+      return { body: rewrittenBody, transformCache: false };
     },
   };
 }

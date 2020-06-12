@@ -115,7 +115,6 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
 
   newEdsConfig.plugins.push(wsPortPlugin(cwkConfig.wsPort));
   newEdsConfig.plugins.push(workshopImportPlugin(absoluteRootDir));
-  newEdsConfig.plugins.push(followModePlugin(absoluteRootDir, cwkConfig.wsPort));
   newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteRootDir));
   newEdsConfig.middlewares.push(jwtMiddleware(absoluteRootDir));
 
@@ -125,7 +124,8 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
       fileControlPlugin({ exts: ['js', 'html'], rootDir: absoluteRootDir }),
     );
   }
-
+  // Important that we place insert plugins after file control, if we want them to apply scripts to files that should be served empty to the user
+  newEdsConfig.plugins.push(followModePlugin(absoluteRootDir, cwkConfig.wsPort));
   if (!cwkConfig.withoutAppShell) {
     newEdsConfig.plugins.push(appShellPlugin(cwkConfig.appIndex, cwkConfig.title));
     newEdsConfig.plugins.push(adminUIPlugin(absoluteRootDir));
