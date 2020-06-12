@@ -17,6 +17,7 @@ class ParticipantCapsule extends LitElement {
       }
 
       .container {
+        padding: 10px 20px;
         border-radius: 4px;
         box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
       }
@@ -25,16 +26,12 @@ class ParticipantCapsule extends LitElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 5px;
       }
 
       h2 {
-        padding-left: 20px;
         margin: 10px 0;
         font-weight: lighter;
-      }
-
-      .header a {
-        margin-right: 20px;
       }
 
       iframe {
