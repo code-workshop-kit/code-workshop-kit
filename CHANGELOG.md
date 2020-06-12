@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.6.1...0.6.2) (2020-06-12)
+
+
+### Features
+
+* **app-shell:** add fetchDialogComplete hook for cookie select ([7b4093f](https://github.com/code-workshop-kit/cwk-frontend/commit/7b4093f4e3474c67fa583b134b2557667006f9d5))
+* **cwk-server:** return 'content hidden' body instead of nothing ([f1524a1](https://github.com/code-workshop-kit/cwk-frontend/commit/f1524a11f929f6fda1e5a2cd9bc285feb988af8f))
+
+
+### Bug Fixes
+
+* **cwk-server:** insert follow mode after file control middleware replaces body ([ccf5d3e](https://github.com/code-workshop-kit/cwk-frontend/commit/ccf5d3e922d99713d5bfc7c914bb042c7bc94006))
+
 ### [0.6.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.6.0...0.6.1) (2020-06-08)
 
 
