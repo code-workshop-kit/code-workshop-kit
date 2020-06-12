@@ -82,6 +82,9 @@ class SelectCookie extends LitElement {
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
     });
+    this.fetchDialogComplete = new Promise(resolve => {
+      this.fetchDialogResolve = resolve;
+    });
   }
 
   connectedCallback() {
@@ -172,7 +175,8 @@ class SelectCookie extends LitElement {
   async fetchDialogComponents() {
     await import('./CwkDialog.js');
     await import('./CwkDialogContent.js');
-    this.requestUpdate();
+    await this.requestUpdate();
+    this.fetchDialogResolve();
   }
 
   render() {

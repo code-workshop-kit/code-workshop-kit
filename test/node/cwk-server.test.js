@@ -139,12 +139,13 @@ describe('CWK Server e2e', () => {
       const page = await browser.newPage();
 
       await page.goto(`${host}test/utils/fixtures/admins/index.html`);
-      await page.evaluate(() => {
-        document
+      await page.evaluate(async () => {
+        const cookieElem = document
           .querySelector('cwk-app-shell')
-          .shadowRoot.querySelector('cwk-select-cookie')
-          .shadowRoot.querySelector('.name__item')
-          .click();
+          .shadowRoot.querySelector('cwk-select-cookie');
+
+        await cookieElem.fetchDialogComplete;
+        cookieElem.shadowRoot.querySelector('.name__item').click();
       });
 
       await aTimeout(100);
@@ -182,12 +183,13 @@ describe('CWK Server e2e', () => {
 
         await page.goto(`${host}test/utils/fixtures/admins/index.html`);
 
-        await page.evaluate(() => {
-          document
+        await page.evaluate(async () => {
+          const cookieElem = document
             .querySelector('cwk-app-shell')
-            .shadowRoot.querySelector('cwk-select-cookie')
-            .shadowRoot.querySelector('.name__item')
-            .click();
+            .shadowRoot.querySelector('cwk-select-cookie');
+
+          await cookieElem.fetchDialogComplete;
+          cookieElem.shadowRoot.querySelector('.name__item').click();
         });
 
         await aTimeout(100);
