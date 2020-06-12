@@ -1,6 +1,4 @@
 import { css, html, LitElement } from 'lit-element';
-import './CwkDialog.js';
-import './CwkDialogContent.js';
 
 class SelectCookie extends LitElement {
   static get styles() {
@@ -89,6 +87,7 @@ class SelectCookie extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.fetchNames();
+    this.fetchDialogComponents();
   }
 
   async fetchNames() {
@@ -165,6 +164,15 @@ class SelectCookie extends LitElement {
         changeCookie(target, participant, authToken);
       }
     }
+  }
+
+  // Fetch these components after first render
+  // So that we don't load them unnecessarily if component is loaded but not rendered,
+  // and don't make it block first paint..
+  async fetchDialogComponents() {
+    await import('./CwkDialog.js');
+    await import('./CwkDialogContent.js');
+    this.requestUpdate();
   }
 
   render() {
