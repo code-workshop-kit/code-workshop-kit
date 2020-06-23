@@ -1,9 +1,5 @@
 {
   "$schema": "http://json.schemastore.org/vsls",
   "gitignore": "none",
-  "excludeFiles": [
-    "index.html",
-    "workshop.js",
-    "template"
-  ]
+  "excludeFiles": ["index.html", "cwk.config.js", "template"]
 }

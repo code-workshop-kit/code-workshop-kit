@@ -2,7 +2,7 @@ import { expect, fixture } from '@open-wc/testing';
 import { html } from 'lit-html';
 import '../../src/components/SelectCookie.js';
 
-const workshopImport = '/test/utils/workshop-mock/workshop.js';
+const workshopImport = '/test/utils/workshop-mock/cwk.config.js';
 
 describe('Select Cookie Component', () => {
   afterEach(() => {

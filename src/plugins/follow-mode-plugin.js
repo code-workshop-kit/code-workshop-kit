@@ -1,6 +1,6 @@
 import { verifyJWT } from '../utils/verifyJWT.js';
 
-export function followModePlugin(rootDir, wsPort) {
+export function followModePlugin(appIndexDir, wsPort) {
   const scriptsToInsert = () => {
     window.__cwkFollowModeWs = new WebSocket(`ws://localhost:${wsPort}`);
 
@@ -34,7 +34,7 @@ export function followModePlugin(rootDir, wsPort) {
       let rewrittenBody = context.body;
       const fromIFrame = context.header['sec-fetch-dest'] === 'iframe';
       const authToken = context.cookies.get('cwk_auth_token');
-      const authed = verifyJWT(rootDir, authToken);
+      const authed = verifyJWT(appIndexDir, authToken);
 
       if (
         context.status === 200 &&

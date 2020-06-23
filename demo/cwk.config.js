@@ -1,4 +1,4 @@
-export const workshop = {
+export default {
   // Put your participants here!
   // Note: This key cannot be used inside templateData, because templateData gets flattened with `this`
   participants: ['Joren', 'Felix', 'Alex'],

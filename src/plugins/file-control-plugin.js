@@ -1,19 +1,19 @@
 import { cwkState } from '../utils/CwkStateSingleton.js';
 import { verifyJWT } from '../utils/verifyJWT.js';
 
-export function fileControlPlugin({ exts, rootDir }) {
+export function fileControlPlugin({ exts, appIndexDir }) {
   return {
     transform(context) {
       let rewrittenBody = context.body;
       const participantName = context.cookies.get('participant_name');
       const authToken = context.cookies.get('cwk_auth_token');
-      const authed = verifyJWT(rootDir, authToken);
+      const authed = verifyJWT(appIndexDir, authToken);
       const { adminConfig } = cwkState.state;
       /**
        * First we check
        * - status 200
        * - Whether admin config hasn't enabled to always serve all files
-       * - Whether file is inside participants folder inside rootDir
+       * - Whether file is inside participants folder inside appIndexDir
        * - Whether the file is not inside the current participant's folder
        * - Whether the current requester is not the host & admin mode turned on
        *
@@ -28,8 +28,8 @@ export function fileControlPlugin({ exts, rootDir }) {
       if (
         context.status === 200 &&
         !(adminConfig && adminConfig.alwaysServeFiles) &&
-        context.url.startsWith(`${rootDir}/participants/`) &&
-        !context.url.split(`${rootDir}/participants/`)[1].startsWith(participantName) &&
+        context.url.startsWith(`${appIndexDir}/participants/`) &&
+        !context.url.split(`${appIndexDir}/participants/`)[1].startsWith(participantName) &&
         !(authed && adminConfig.enableAdmin)
       ) {
         const fileExt = context.url.substring(context.url.lastIndexOf('.') + 1, context.url.length);
