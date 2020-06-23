@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.6.2...0.7.0) (2020-06-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* for fileControlPlugin, the rootDir property that is passed in the config is now renamed to appIndexDir, which is more clear. rootDir has a special, different meaning inside the cwk server (see es-dev-server docs about rootDir)
+* instead of using workshop.js, you should now use cwk.config.js. Instead of exporting a named const "workshop", you should export default {}
+* rootDir is no longer supported for cwk scaffold. If you need to override, use inputDir, outputDir, and workshopDir (or its CLI kebab-cased equivalents)
+
+### Features
+
+* allow more flexible scaffold, change config file main API ([9ed6b5b](https://github.com/code-workshop-kit/cwk-frontend/commit/9ed6b5bb14416f289db4f9aa0c182fc47abf8398))
+* rename rootDir to appIndexDir to be more clear ([214d7fc](https://github.com/code-workshop-kit/cwk-frontend/commit/214d7fc84317d7505d2c0a62d31cc385300d6b75))
+
+
+### Bug Fixes
+
+* expire participant_name and cwk_auth_token cookies when JWT auth fails ([c715ca6](https://github.com/code-workshop-kit/cwk-frontend/commit/c715ca6e54e4549bff578fae1ac348b9f9df0551))
+
 ### [0.6.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.6.1...0.6.2) (2020-06-12)
 
 
