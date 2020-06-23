@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.7.0...0.7.1) (2020-06-23)
+
+
+### Bug Fixes
+
+* pass context from plugins to verifyJWT ([7ba972c](https://github.com/code-workshop-kit/cwk-frontend/commit/7ba972c321eef3f98bed66bcf3b9151e87c98430))
+
 ## [0.7.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.6.2...0.7.0) (2020-06-23)
 
 
