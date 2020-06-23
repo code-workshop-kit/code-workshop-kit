@@ -5,7 +5,7 @@ export function adminUIPlugin(appIndexDir) {
     transform(context) {
       let rewrittenBody = context.body;
       const authToken = context.cookies.get('cwk_auth_token');
-      const authed = verifyJWT(appIndexDir, authToken);
+      const authed = verifyJWT(appIndexDir, authToken, context);
       if (
         context.path === '/node_modules/code-workshop-kit/dist/components/AdminSidebar.js' &&
         !authed
