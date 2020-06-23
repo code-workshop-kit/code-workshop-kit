@@ -7,7 +7,7 @@ export function fileControlPlugin({ exts, appIndexDir }) {
       let rewrittenBody = context.body;
       const participantName = context.cookies.get('participant_name');
       const authToken = context.cookies.get('cwk_auth_token');
-      const authed = verifyJWT(appIndexDir, authToken);
+      const authed = verifyJWT(appIndexDir, authToken, context);
       const { adminConfig } = cwkState.state;
       /**
        * First we check
