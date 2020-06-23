@@ -1,6 +1,6 @@
 import path from 'path';
 
-export function workshopImportPlugin(rootDir) {
+export function workshopImportPlugin(appIndexDir) {
   return {
     transform(context) {
       let rewrittenBody = context.body;
@@ -11,7 +11,7 @@ export function workshopImportPlugin(rootDir) {
         ) {
           rewrittenBody = rewrittenBody.replace(
             new RegExp('placeholder-import.js', 'g'),
-            path.resolve('/', `${rootDir}/cwk.config.js`),
+            path.resolve('/', `${appIndexDir}/cwk.config.js`),
           );
         }
       }

@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import * as module from 'module';
 import path from 'path';
 
-export const verifyJWT = (rootDir, authToken) => {
-  const workshopFolder = path.resolve(process.cwd(), `.${rootDir}`);
+export const verifyJWT = (appIndexDir, authToken) => {
+  const workshopFolder = path.resolve(process.cwd(), `.${appIndexDir}`);
   const esmRequire = _esmRequire(module);
   const workshop = esmRequire(`${workshopFolder}/cwk.config.js`).default;
 

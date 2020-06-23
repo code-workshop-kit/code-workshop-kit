@@ -108,27 +108,27 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
    * Right now, we assume that your cwk.config.js is in the same folder as your app index.
    * TODO: allow override.
    */
-  let absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex));
-  if (absoluteRootDir === '/') {
-    absoluteRootDir = '';
+  let absoluteAppIndexDir = path.resolve('/', path.dirname(cwkConfig.appIndex));
+  if (absoluteAppIndexDir === '/') {
+    absoluteAppIndexDir = '';
   }
 
   newEdsConfig.plugins.push(wsPortPlugin(cwkConfig.wsPort));
-  newEdsConfig.plugins.push(workshopImportPlugin(absoluteRootDir));
-  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteRootDir));
-  newEdsConfig.middlewares.push(jwtMiddleware(absoluteRootDir));
+  newEdsConfig.plugins.push(workshopImportPlugin(absoluteAppIndexDir));
+  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteAppIndexDir));
+  newEdsConfig.middlewares.push(jwtMiddleware(absoluteAppIndexDir));
 
   // Plugins & middlewares that can be turned off completely from the start through cwk flags
   if (!cwkConfig.alwaysServeFiles) {
     newEdsConfig.plugins.push(
-      fileControlPlugin({ exts: ['js', 'html'], rootDir: absoluteRootDir }),
+      fileControlPlugin({ exts: ['js', 'html'], appIndexDir: absoluteAppIndexDir }),
     );
   }
   // Important that we place insert plugins after file control, if we want them to apply scripts to files that should be served empty to the user
-  newEdsConfig.plugins.push(followModePlugin(absoluteRootDir, cwkConfig.wsPort));
+  newEdsConfig.plugins.push(followModePlugin(absoluteAppIndexDir, cwkConfig.wsPort));
   if (!cwkConfig.withoutAppShell) {
     newEdsConfig.plugins.push(appShellPlugin(cwkConfig.appIndex, cwkConfig.title));
-    newEdsConfig.plugins.push(adminUIPlugin(absoluteRootDir));
+    newEdsConfig.plugins.push(adminUIPlugin(absoluteAppIndexDir));
   }
 
   if (!cwkConfig.enableCaching) {

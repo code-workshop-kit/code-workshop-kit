@@ -5,7 +5,7 @@ import '../../src/components/AppShell.js';
 /**
  * We mock the following things
  * 1) websocket port, which normally would be set by the server middleware
- * 2) workshop import, which normally would be set by the server which knows where the rootDir is
+ * 2) workshop import, which normally would be set by the server which knows where the appIndexDir is
  */
 
 const workshopImport = '/test/utils/workshop-mock/cwk.config.js';
