@@ -11,7 +11,7 @@ export function workshopImportPlugin(rootDir) {
         ) {
           rewrittenBody = rewrittenBody.replace(
             new RegExp('placeholder-import.js', 'g'),
-            path.resolve('/', `${rootDir}/workshop.js`),
+            path.resolve('/', `${rootDir}/cwk.config.js`),
           );
         }
       }

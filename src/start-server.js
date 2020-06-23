@@ -105,7 +105,7 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
   newEdsConfig.middlewares = [...edsConfig.middlewares];
 
   /**
-   * Right now, we assume that your workshop.js is in the same folder as your app index.
+   * Right now, we assume that your cwk.config.js is in the same folder as your app index.
    * TODO: allow override.
    */
   let absoluteRootDir = path.resolve('/', path.dirname(cwkConfig.appIndex));

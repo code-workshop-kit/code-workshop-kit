@@ -111,8 +111,8 @@ class AppShell extends LitElement {
   }
 
   async fetchWorkshopConfig() {
-    const { workshop } = await import(this.workshopImport || 'placeholder-import.js');
-    this.workshop = workshop;
+    const workshop = await import(this.workshopImport || 'placeholder-import.js');
+    this.workshop = workshop.default;
     const { title, participants } = this.workshop;
     this.participants = participants;
     this.title = title || this.title;

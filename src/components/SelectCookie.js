@@ -94,9 +94,9 @@ class SelectCookie extends LitElement {
   }
 
   async fetchNames() {
-    const { workshop } = await import(this.workshopImport || 'placeholder-import.js');
-    this.participants = workshop.participants;
-    this.admins = workshop.admins;
+    const workshop = await import(this.workshopImport || 'placeholder-import.js');
+    this.participants = workshop.default.participants;
+    this.admins = workshop.default.admins;
     this.fetchConfigResolve();
     return this.participants;
   }

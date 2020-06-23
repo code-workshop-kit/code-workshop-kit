@@ -4,11 +4,7 @@
 ![Publish NPM](https://github.com/code-workshop-kit/cwk-frontend/workflows/Publish%20NPM/badge.svg)
 
 Using [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) and Web Component magic to create a nice environment for remote frontend workshops.
-Leverage VS Code Live Share, by creating a session with your workshop participants, and adding the port of your cwk server as a shared server.
-
-The cwk scaffold command ensures that each participant gets a scaffolded folder + files that you as a facilitator define.
-
-The cwk run command starts a development server for your workshop and through the middlewares and cookies, it ensures that only files for the respective participants are loaded, whereas for the host, all files are loaded.
+Leverage VS Code Live Share, by creating a session with your workshop participants. Scaffold files for them, then use the CWK server to create a shared server for your workshop.
 
 ## Usage
 
@@ -28,9 +24,9 @@ Run the cwk executable that is installed in your node_modules .bin folder
 
 ### Configuration
 
-First of all, you will need a `workshop.js` file in your project root directory.
+First of all, you will need a `cwk.config.js` file in your project root directory.
 
-This will need to export a `workshop` JavaScript Object with configuration options.
+This will need to include a default export which contains a JavaScript Object with configuration options.
 
 Most important config keys are:
 
@@ -42,9 +38,47 @@ There is also the special `this.participantName` that can be used, this is the n
 > Usage of these templateData variables and methods can be found below in the Scaffolding participant files section
 
 ```js
-export const workshop = {
+export default {
   // Put your participant names here!
   participants: ['Joren', 'Felix'],
+
+  // Put any data here to be used inside your scaffolding template files
+  templateData: {
+    // Note: 'participants' key cannot be used inside templateData, because templateData gets flattened
+    appTitle: 'Cool Frontend App',
+
+    // It is possible to have dynamic data where you can run JS that returns a String
+    participantNameLowercase() {
+      // participantName is a special value that represents the name of the current participant
+      // that we are scaffolding files for.
+      return this.participantName.toLowerCase();
+    },
+
+    intro() {
+      // participantName is a special value that represents the name of the current participant
+      // that we are scaffolding files for.
+      return `Hi ${this.participantName}, welcome to ${this.appTitle}!`;
+    },
+  },
+};
+```
+
+#### Additional configurations
+
+Optionally add a title so your workshop app shell has a nice heading.
+
+You can also add `admins`, `adminPassword`, and `appKey`, to add admins and admin authentication inside your workshop environment.
+
+This will allow admins to control some of the server's settings live, on the fly! It also allows the usage of in-browser follow mode, which mimicks VS Code Live Share's follow feature.
+
+```js
+export default {
+  title: 'Frontend Workshop',
+  // Put your participant names here!
+  participants: ['Joren', 'Felix'],
+  admins: ['Joren'],
+  adminPassword: 'pineapples',
+  appKey: 'some-secret-key-here',
 
   // Put any data here to be used inside your scaffolding template files
   templateData: {
@@ -70,19 +104,25 @@ export const workshop = {
 ### Scaffolding participant files
 
 ```sh
-cwk.mjs scaffold
+yarn cwk scaffold
 ```
 
-Optionally pass `--force` to override already existing files. Also accepts `--root-dir` to change the location of the scaffold. This is the current working directory by default.
+Optionally pass `--force` to override already existing files.
 
-The CLI will look for a `template` folder in the root dir. In this `template` you can put in any files or folders, and they will be copied for each of your participants.
+Also accepts:
+
+- `--config-dir` to change the folder where `cwk.config.js` is located. This is the current working directory by default.
+- `--input-dir` to change the folder where your template files are located. This is the current working directory --> `template` folder by default.
+- `--output-dir` to change the folder where your scaffold output should be dumped. This is the current working directory --> `participants` folder by default.
+
+Inside the input directory you can put any files or folders, and they will be copied for each of your participants.
 
 You can create hooks for templateData properties by using the syntax: `<%= myVar %>`. The spaces are important here.
 
 Example templateData:
 
 ```js
-export const workshop = {
+export default {
   participants: ['Joren'],
 
   templateData: {
@@ -109,7 +149,7 @@ console.log('Hi Joren, welcome to Cool Frontend App!');
 ### Running the server
 
 ```sh
-cwk run
+yarn cwk run
 ```
 
 #### Sharing the server in VS Code
@@ -154,12 +194,6 @@ Install dependencies (use yarn or npm install)
 yarn
 ```
 
-Edit the `participants.json` file to have a list of the names of your participants that will be joining for the workshop.
-
-Edit the es-dev-server.config.js if you want to turn off or reconfigure certain middlewares.
-
-Start a VS Code Live Share session, and have your participants join. 
-
 Run the server (use yarn or npm run):
 
 ```sh
@@ -171,6 +205,8 @@ Scaffold files:
 ```sh
 yarn start:scaffold
 ```
+
+Which will use the demo folder in this repo.
 
 ## File permissions
 

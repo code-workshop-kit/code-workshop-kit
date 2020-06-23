@@ -13,8 +13,8 @@
   "scripts": {
     "build": "rimraf dist && babel src --out-dir dist --copy-files",
     "start": "yarn build && ./copy-components && node dist/cli.js run --watch --app-index demo/index.html",
-    "start:scaffold": "yarn build && node dist/cli.js scaffold --root-dir demo",
-    "start:scaffold:force": "yarn build && node dist/cli.js scaffold --force --root-dir demo",
+    "scaffold": "yarn build && node dist/cli.js scaffold --config-dir ./demo --input-dir ./demo/template --output-dir ./demo/parts",
+    "scaffold:force": "yarn build && node dist/cli.js scaffold --config-dir ./demo --input-dir ./demo/template --output-dir ./demo/participants --force",
     "test": "yarn test:node && yarn test:browser",
     "test:node": "yarn build && ./copy-components && mocha test/node/*.test.js --require @babel/register",
     "test:node:watch": "yarn build && ./copy-components && mocha test/**/*.test.js test/*.test.js --watch --require @babel/register",

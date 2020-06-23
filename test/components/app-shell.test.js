@@ -8,7 +8,7 @@ import '../../src/components/AppShell.js';
  * 2) workshop import, which normally would be set by the server which knows where the rootDir is
  */
 
-const workshopImport = '/test/utils/workshop-mock/workshop.js';
+const workshopImport = '/test/utils/workshop-mock/cwk.config.js';
 
 describe('App Shell Component', () => {
   beforeEach(() => {

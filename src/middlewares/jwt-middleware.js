@@ -5,7 +5,7 @@ import path from 'path';
 export const jwtMiddleware = rootDir => {
   const workshopFolder = path.resolve(process.cwd(), `.${rootDir}`);
   const esmRequire = _esmRequire(module);
-  const { workshop } = esmRequire(`${workshopFolder}/workshop.js`);
+  const workshop = esmRequire(`${workshopFolder}/cwk.config.js`).default;
 
   return async (ctx, next) => {
     await next();

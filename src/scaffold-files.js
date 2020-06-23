@@ -1,6 +1,5 @@
 import { readFileFromPath, writeFileToPathOnDisk } from '@open-wc/create/dist/core.js';
 import commandLineArgs from 'command-line-args';
-import { commandLineOptions, readCommandLineArgs } from 'es-dev-server';
 import _esmRequire from 'esm';
 import fs from 'fs';
 import glob from 'glob';
@@ -48,21 +47,27 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 }
 
 export const scaffold = async opts => {
-  const workshopFolder = path.resolve(process.cwd(), `.${opts.rootDir}`);
-  if (opts.workshop || fs.existsSync(`${workshopFolder}/workshop.js`)) {
+  let pathToWorkshop = `${path.resolve(process.cwd(), `${opts.inputDir}`, '../')}/cwk.config.js`;
+  if (opts.configDir !== '/') {
+    pathToWorkshop = `${path.resolve(process.cwd(), `${opts.configDir}`)}/cwk.config.js`;
+  }
+  const pathToOutputDir = path.resolve(process.cwd(), `${opts.outputDir}`);
+  const pathToInputDir = path.resolve(process.cwd(), `${opts.inputDir}`);
+
+  if (opts.workshop || fs.existsSync(pathToWorkshop)) {
     let workshop = {};
     if (opts.workshop) {
       ({ workshop } = opts);
     } else {
       const esmRequire = _esmRequire(module);
-      ({ workshop } = esmRequire(`${workshopFolder}/workshop.js`));
+      workshop = esmRequire(pathToWorkshop).default;
     }
 
     const { participants, templateData } = workshop;
     participants.forEach(name => {
       copyTemplates(
-        path.resolve(process.cwd(), `.${opts.rootDir}/template/**/*`),
-        path.resolve(process.cwd(), `.${opts.rootDir}/participants/${name}`),
+        path.resolve(process.cwd(), `${pathToInputDir}/**/*`),
+        path.resolve(process.cwd(), `${pathToOutputDir}/${name}`),
         {
           participantName: name,
           ...templateData,
@@ -77,20 +82,21 @@ export const scaffold = async opts => {
       });
     });
   } else {
-    throw new Error(`Error: Cannot find workshop.js inside ${workshopFolder}`);
+    throw new Error(`Error: Cannot find cwk.config.js at ${pathToWorkshop}`);
   }
 };
 
 export const scaffoldFiles = (opts = {}) => {
   let scaffoldConfig = {
-    rootDir: '/',
+    configDir: '/',
+    inputDir: '/template',
+    outputDir: '/participants',
     force: false,
     ...opts,
   };
 
   if (opts.argv) {
     const scaffoldDefinitions = [
-      ...commandLineOptions,
       {
         name: 'force',
         alias: 'f',
@@ -98,15 +104,43 @@ export const scaffoldFiles = (opts = {}) => {
         description:
           'If set, it will (re-)scaffold for the participants and overwrite the current files without warning',
       },
+      {
+        name: 'config-dir',
+        alias: 'w',
+        type: String,
+        description: 'If set, will search for cwk.config.js in this directory',
+      },
+      {
+        name: 'input-dir',
+        alias: 'i',
+        type: String,
+        description: 'If set, will use contents of this directory as a scaffold templating base',
+      },
+      {
+        name: 'output-dir',
+        alias: 'o',
+        type: String,
+        description:
+          'If set, outputs the scaffolded files in this directory, and create if parent folder exists but outputDir does not exist yet',
+      },
     ];
+
+    const cliConfig = commandLineArgs(scaffoldDefinitions, { argv: opts.argv });
+
+    // Convert these to camelCase props
+    ['config-dir', 'input-dir', 'output-dir'].forEach(param => {
+      if (cliConfig[param]) {
+        const camelize = s => s.replace(/-./g, x => x.toUpperCase()[1]);
+        cliConfig[camelize(param)] = cliConfig[param];
+        delete cliConfig[param];
+      }
+    });
 
     scaffoldConfig = {
       ...scaffoldConfig,
-      ...commandLineArgs(scaffoldDefinitions, { argv: opts.argv }),
-      ...readCommandLineArgs(opts.argv),
+      ...cliConfig,
     };
   }
 
-  scaffoldConfig.rootDir = path.resolve('/', scaffoldConfig.rootDir);
   scaffold(scaffoldConfig);
 };

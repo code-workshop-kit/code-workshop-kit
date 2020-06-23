@@ -6,7 +6,7 @@ import path from 'path';
 export const verifyJWT = (rootDir, authToken) => {
   const workshopFolder = path.resolve(process.cwd(), `.${rootDir}`);
   const esmRequire = _esmRequire(module);
-  const { workshop } = esmRequire(`${workshopFolder}/workshop.js`);
+  const workshop = esmRequire(`${workshopFolder}/cwk.config.js`).default;
 
   let authed;
   if (authToken) {

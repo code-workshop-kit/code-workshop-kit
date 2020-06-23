@@ -17,9 +17,23 @@ describe('scaffoldFiles', () => {
     await aTimeout(timeout);
   });
 
-  it('creates a participants folder in the same folder as workshop.js', async () => {
-    // rootDir for scaffold should be relative to where we run the tests from
-    scaffoldFiles({ rootDir: workshopMockPath });
+  it('uses an input folder and creates an output folder', async () => {
+    scaffoldFiles({
+      workshopDir: `${workshopMockPath}`,
+      inputDir: `${workshopMockPath}/template`,
+      outputDir: `${workshopMockPath}/participants`,
+    });
+    await aTimeout(timeout);
+
+    const stats = fs.statSync(path.resolve(process.cwd(), `${workshopMockPath}/participants`));
+    expect(stats.isDirectory()).to.be.true;
+  });
+
+  it('uses inputDir parent directory as a fallback when workshopDir is not specified', async () => {
+    scaffoldFiles({
+      inputDir: `${workshopMockPath}/template`,
+      outputDir: `${workshopMockPath}/participants`,
+    });
     await aTimeout(timeout);
 
     const stats = fs.statSync(path.resolve(process.cwd(), `${workshopMockPath}/participants`));
@@ -27,8 +41,10 @@ describe('scaffoldFiles', () => {
   });
 
   it('creates a participant folder with contents for each participant', async () => {
-    // rootDir for scaffold should be relative to where we run the tests from
-    scaffoldFiles({ rootDir: workshopMockPath });
+    scaffoldFiles({
+      inputDir: `${workshopMockPath}/template`,
+      outputDir: `${workshopMockPath}/participants`,
+    });
     await aTimeout(timeout);
 
     ['Joren', 'Felix', 'Alex'].forEach(participant => {
@@ -44,9 +60,10 @@ describe('scaffoldFiles', () => {
     });
   });
 
-  it('allows passing a workshop object imperatively instead of looking for it inside rootDir', async () => {
+  it('allows passing a workshop object imperatively instead of looking for it inside workshopDir', async () => {
     scaffoldFiles({
-      rootDir: workshopMockPath,
+      inputDir: `${workshopMockPath}/template`,
+      outputDir: `${workshopMockPath}/participants`,
       workshop: {
         participants: ['Joren'],
         templateData: {
@@ -80,7 +97,10 @@ describe('scaffoldFiles', () => {
   });
 
   it('supports using methods and using current participantName inside templateData', async () => {
-    scaffoldFiles({ rootDir: workshopMockPath });
+    scaffoldFiles({
+      inputDir: `${workshopMockPath}/template`,
+      outputDir: `${workshopMockPath}/participants`,
+    });
 
     await aTimeout(timeout);
 
