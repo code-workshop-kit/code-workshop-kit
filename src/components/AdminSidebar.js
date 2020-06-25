@@ -1,5 +1,6 @@
 import { css, html, LitElement } from 'lit-element';
 import { nothing } from 'lit-html';
+import { getParticipantCookie } from './getParticipantCookie.js';
 
 class AdminSidebar extends LitElement {
   static get properties() {
@@ -193,9 +194,17 @@ class AdminSidebar extends LitElement {
     const newOpts = this.options;
     newOpts[e.target.getAttribute('id')] = e.target.checked;
     this.options = newOpts;
+    const participantCookie = getParticipantCookie();
     // sync to server
     await this.websocketOpen;
-    this.ws.send(JSON.stringify({ type: 'config-updated', config: this.options }));
+    this.ws.send(
+      JSON.stringify({
+        type: 'config-updated',
+        config: this.options,
+        key: e.target.getAttribute('id'),
+        byAdmin: participantCookie ? participantCookie.participant_name : null,
+      }),
+    );
   }
 
   render() {

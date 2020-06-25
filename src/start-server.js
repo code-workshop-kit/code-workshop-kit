@@ -57,8 +57,13 @@ const handleWsMessage = (message, ws) => {
       break;
     }
     case 'config-updated': {
-      const { config } = parsedMessage;
+      const { config, key, byAdmin } = parsedMessage;
       cwkState.state = { adminConfig: config };
+
+      if (key === 'followMode') {
+        cwkState.state = { followModeInitiatedBy: byAdmin };
+      }
+
       ws.send(
         JSON.stringify({
           type: 'config-update-completed',
@@ -125,7 +130,7 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
     );
   }
   // Important that we place insert plugins after file control, if we want them to apply scripts to files that should be served empty to the user
-  newEdsConfig.plugins.push(followModePlugin(absoluteAppIndexDir, cwkConfig.wsPort));
+  newEdsConfig.plugins.push(followModePlugin(cwkConfig.wsPort));
   if (!cwkConfig.withoutAppShell) {
     newEdsConfig.plugins.push(appShellPlugin(cwkConfig.appIndex, cwkConfig.title));
     newEdsConfig.plugins.push(adminUIPlugin(absoluteAppIndexDir));

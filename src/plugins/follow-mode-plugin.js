@@ -1,28 +1,33 @@
-import { verifyJWT } from '../utils/verifyJWT.js';
-
-export function followModePlugin(appIndexDir, wsPort) {
+export function followModePlugin(wsPort) {
+  // Warning: this script gets inserted as a string, so keep that in mind when adding dynamic JS stuff in there from outside scope
+  // I didn't stringify it because this way it's more readable, but I may come to regret that..
+  // wsPort works because we replace it later by the actual value of wsPort
   const scriptsToInsert = () => {
     window.__cwkFollowModeWs = new WebSocket(`ws://localhost:${wsPort}`);
+    const allCookies = document.cookie.split(';').map(cookie => {
+      if (cookie) {
+        return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
+      }
+      return {};
+    });
+    let participantName = null;
+    const participantCookie = allCookies.find(cookie => cookie.participant_name);
+    if (participantCookie) {
+      participantName = participantCookie.participant_name;
+    }
 
     window.__cwkFollowModeWs.addEventListener('open', () => {
-      const allCookies = document.cookie.split(';').map(cookie => {
-        if (cookie) {
-          return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
-        }
-        return {};
-      });
-      const participantCookie = allCookies.find(cookie => cookie.participant_name);
-
       if (participantCookie) {
         window.__cwkFollowModeWs.send(
-          JSON.stringify({ type: 'authenticate', username: participantCookie.participant_name }),
+          JSON.stringify({ type: 'authenticate', username: participantName }),
         );
       }
     });
 
     window.__cwkFollowModeWs.addEventListener('message', e => {
-      const { type, data } = JSON.parse(e.data);
-      if (type === 'update-url') {
+      const { type, data, byAdmin } = JSON.parse(e.data);
+      // Guard against initiator of follow mode's url getting changed. It should not happen, but just in case
+      if (type === 'update-url' && byAdmin !== participantName) {
         const url = data;
         window.location.href = `${window.location.protocol}//${window.location.host}${url}`;
       }
@@ -33,13 +38,10 @@ export function followModePlugin(appIndexDir, wsPort) {
     transform(context) {
       let rewrittenBody = context.body;
       const fromIFrame = context.header['sec-fetch-dest'] === 'iframe';
-      const authToken = context.cookies.get('cwk_auth_token');
-      const authed = verifyJWT(appIndexDir, authToken, context);
 
       if (
         context.status === 200 &&
         context.response.is('html') &&
-        !authed &&
         !fromIFrame &&
         context.cookies.get('participant_name') // don't make unnamed participants follow yet
       ) {

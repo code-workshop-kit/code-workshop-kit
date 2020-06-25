@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import './AdminSidebar.js';
+import { getParticipantCookie } from './getParticipantCookie.js';
 import './loadAndSetDankMonoFont.js';
 import './ParticipantCapsule.js';
 import './SelectCookie.js';
@@ -107,7 +108,10 @@ class AppShell extends LitElement {
       super.connectedCallback();
     }
     this.fetchWorkshopConfig();
-    this.getParticipantName();
+    const participant = getParticipantCookie();
+    if (participant) {
+      this.currentParticipantName = participant.participant_name;
+    }
   }
 
   async fetchWorkshopConfig() {
@@ -118,21 +122,6 @@ class AppShell extends LitElement {
     this.title = title || this.title;
     this.fetchConfigResolve();
     return this.workshop;
-  }
-
-  getParticipantName() {
-    const cookiesSplit = document.cookie.split(';');
-    const allCookies = cookiesSplit.map(cookie => {
-      if (!cookie) {
-        return {};
-      }
-      return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
-    });
-
-    const participantCookie = allCookies.find(cookie => cookie.participant_name);
-    if (participantCookie) {
-      this.currentParticipantName = participantCookie.participant_name;
-    }
   }
 
   changeName() {

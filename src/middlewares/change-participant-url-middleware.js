@@ -11,12 +11,19 @@ export const changeParticipantUrlMiddleware = appIndexDir => async (ctx, next) =
     const authToken = ctx.cookies.get('cwk_auth_token');
     const authed = verifyJWT(appIndexDir, authToken, ctx);
 
-    if (authed) {
+    if (authed && authed.username === cwkState.state.followModeInitiatedBy) {
       if (state.adminConfig.followMode && state.wss && state.wsConnections) {
-        // Send URL update message to all connections, which excludes admins because they don't get the follow mode script inserted
+        // Send URL update message to all connections, which excludes follow mode initiator that changes the url
+        // The websocket message is sent before the follow mode intiator has loaded the new page and established a new WS connection
         for (const entry of state.wsConnections) {
           const [, connection] = entry;
-          connection.send(JSON.stringify({ type: 'update-url', data: ctx.url }));
+          connection.send(
+            JSON.stringify({
+              type: 'update-url',
+              data: ctx.url,
+              byAdmin: cwkState.state.followModeInitiatedBy,
+            }),
+          );
         }
       }
     }
