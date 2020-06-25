@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.7.1...0.7.2) (2020-06-25)
+
+
+### Bug Fixes
+
+* admins now also follow the initiator of follow-mode ([3ad4783](https://github.com/code-workshop-kit/cwk-frontend/commit/3ad4783a0aafdfdc5f98e77c2d8fd514683d4b42))
+
 ### [0.7.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.7.0...0.7.1) (2020-06-23)
 
 
