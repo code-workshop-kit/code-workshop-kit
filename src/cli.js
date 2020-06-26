@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import commandLineArgs from 'command-line-args';
+import { generateKey } from './generate-key.js';
 import { scaffoldFiles } from './scaffold-files.js';
 import { startServer } from './start-server.js';
 
@@ -14,6 +15,9 @@ switch (mainOptions.command) {
     break;
   case 'scaffold':
     scaffoldFiles({ argv });
+    break;
+  case 'generate-key':
+    generateKey({ argv });
     break;
   // no default
 }

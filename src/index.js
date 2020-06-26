@@ -1,3 +1,4 @@
+export { generateKey } from './generate-key.js';
 export * from './middlewares/middlewares.js';
 export * from './plugins/plugins.js';
 export { scaffoldFiles } from './scaffold-files.js';
