@@ -4,9 +4,8 @@ export default {
   participants: ['Joren', 'Felix', 'Alex'],
   admins: ['Joren'],
   adminPassword: 'pineapples',
-  appKey: '(=]#bYS940q)T8S*dX1g;Sey)X3YhN|98B>4hwE:c2ew8QrN3);hQN?x"5#yUS',
+  appKey: 'c9b5cfe85ec154e2f21dc03074ac78a4d0689e2f6f083c421426871f',
   title: 'Frontend Workshop',
-
   // Put your data here to be used inside your scaffolding template files
   templateData: {
     appTitle: 'Cool Frontend App',
