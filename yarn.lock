@@ -1082,32 +1082,32 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@lion/core@0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@lion/core/-/core-0.7.0.tgz#149e60ebb88a24b80b4d503c00de923a3a451cd7"
-  integrity sha512-pQ+jALnpwMqeEf3zTguklyb/5tuBmvMPLal4JD1Q8a0cPl+4o6sh2K2ZJ5u7h9o3Zt/mFpmvR3tnd+UCsxB7qw==
+"@lion/core@0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@lion/core/-/core-0.7.2.tgz#d96dbfda896a44efe1a7feefabc4626cd1394aa5"
+  integrity sha512-1Z5DMOXOZ9RZMB9UCJWmv2PVRjh7TJNhdMX6OhaTkfUQuEonPJLCy45DMOjcirfub5885zm3n7GFpv9DKES63g==
   dependencies:
     "@open-wc/dedupe-mixin" "^1.2.1"
     "@open-wc/scoped-elements" "^1.0.3"
     lit-element "^2.2.1"
     lit-html "^1.0.0"
 
-"@lion/dialog@~0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@lion/dialog/-/dialog-0.7.1.tgz#6bd14f757cfc8cedba2bc6bc9b507cd4bc818ec2"
-  integrity sha512-9ipypHcZ34tZOPSHUUWc1CykSl3IH1FjPoAEJ9pg5GfMqyMdCe2yVOAidXnLk8G0YWG30SxstDo0DOKjiiOuzA==
+"@lion/dialog@~0.7.2":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@lion/dialog/-/dialog-0.7.6.tgz#4830dea7c2909a8c33796f1432b92241dc0d5560"
+  integrity sha512-QYAOePz/92ItlfIhlS6bXZG9k2qIrpWd/xQRB4/bp1iSOM6T0BC3KTmZdKo9zaRRM4gNxQgrDZ1ay5FpRzAyAg==
   dependencies:
-    "@lion/core" "0.7.0"
-    "@lion/overlays" "0.16.1"
+    "@lion/core" "0.7.2"
+    "@lion/overlays" "0.16.6"
 
-"@lion/overlays@0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@lion/overlays/-/overlays-0.16.1.tgz#2e0b5e29a6fdc8b2efc918cf9f3fc76fb980edb9"
-  integrity sha512-UsmtFyZxhsvlzm3eLAJW/rhQmfT1o2xQ2qmA4VZvBxjV1XjqwYfSWzoB6JFMbN1tVa0zQ5IglqvzEbwqf//dOw==
+"@lion/overlays@0.16.6":
+  version "0.16.6"
+  resolved "https://registry.yarnpkg.com/@lion/overlays/-/overlays-0.16.6.tgz#990f664ffe9659fa2fd49371b6c8beaefeb1cd4e"
+  integrity sha512-3/Q8LE8O9cC6SVFhf6hp7eQIDBExyLAX5nm2NM9TWAKoX/0b/quAYSfoE0XOTs+8tUAeMBe5N89OghZh6rJXrA==
   dependencies:
-    "@lion/core" "0.7.0"
+    "@lion/core" "0.7.2"
     popper.js "^1.15.0"
-    singleton-manager "1.0.0"
+    singleton-manager "1.1.0"
 
 "@nodelib/fs.scandir@2.1.3":
   version "2.1.3"
@@ -6767,10 +6767,10 @@ simple-git@^1.85.0:
   dependencies:
     debug "^4.0.1"
 
-singleton-manager@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/singleton-manager/-/singleton-manager-1.0.0.tgz#f98539c9809895cb209d6908c78b088ec43711dc"
-  integrity sha512-7VVITgcGAxt+raPcALHkIgnPwkumZAVGp5zZGm6QjxXPg11d3+q4qF16gVsw1d+ypSzSisPr8O269zb3IF5AKA==
+singleton-manager@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/singleton-manager/-/singleton-manager-1.1.0.tgz#f423185d3485688201ac7e59f6afce0bebb208d2"
+  integrity sha512-h3XOcgN1Ms9UFYvJH4NHBeXk6vwoIKl4/gbp60p8lwJYdtzZIsm+kfdOw2uT99jkeXdR3+ytpZfwi+Us06C8/g==
 
 sinon-chai@^3.3.0:
   version "3.5.0"
