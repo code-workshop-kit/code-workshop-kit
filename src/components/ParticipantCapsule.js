@@ -13,7 +13,15 @@ class ParticipantCapsule extends LitElement {
         reflect: true,
         attribute: 'participant-index-html-exists',
       },
+      usingParticipantIframes: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'using-participant-iframes',
+      },
       participantTemplate: {
+        attribute: false,
+      },
+      loading: {
         attribute: false,
       },
     };
@@ -69,36 +77,24 @@ class ParticipantCapsule extends LitElement {
     `;
   }
 
-  get _participantIndexHtmlPath() {
-    // Assumes participants folder to be inside the folder which contains app index
-    // Create an issue if you need more flexibility here.
-
-    // Take care of implicit index html files.
-    // E.g. localhost:8000/demo/demo-nested should return ./demo-nested/participants/name/index.html)
-    // whereas localhost:8000/demo/demo-nested/ or localhost:8000/demo/demo-nested/index.html should return ./participants/name/index.html
-    // TODO: Check if it's better to transform with nodejs instead of relying on this flaky window.location logic..
-    if (!window.location.pathname.endsWith('.html') && !window.location.pathname.endsWith('/')) {
-      const folders = window.location.pathname.split('/');
-      const lastFolder = folders[folders.length - 1];
-      return `./${lastFolder}/participants/${this.name}/index.html`;
-    }
-    return `./participants/${this.name}/index.html`;
+  constructor() {
+    super();
+    this.loading = true;
   }
 
   async _fetchParticipantModule() {
-    try {
-      const participantModule = await import(`/demo/participants/${this.name}/index.js`);
-      this.participantTemplate = participantModule.default;
-    } catch (e) {
-      //
+    if (!this.usingParticipantIframes) {
+      try {
+        const participantModule = await import(
+          this.participantModuleImport || `/%dir%/participants/${this.name}/index.js`
+        );
+        this.participantTemplate = participantModule.default;
+      } catch (e) {
+        throw new Error(e);
+      }
     }
-  }
-
-  connectedCallback() {
-    if (super.connectedCallback) {
-      super.connectedCallback();
-    }
-    this._fetchParticipantModule();
+    this.loading = false;
+    this.__loadingResolve();
   }
 
   get __participantContent() {
@@ -111,6 +107,16 @@ class ParticipantCapsule extends LitElement {
     return unsafeHTML(this.participantTemplate);
   }
 
+  connectedCallback() {
+    if (super.connectedCallback) {
+      super.connectedCallback();
+    }
+    this.loadingComplete = new Promise(resolve => {
+      this.__loadingResolve = resolve;
+    });
+    this._fetchParticipantModule();
+  }
+
   render() {
     // TODO: Support other rendering engines? or let people make their extension app shell / etc.? Probably only React where you have issues..
     return html`
@@ -118,23 +124,25 @@ class ParticipantCapsule extends LitElement {
         <div class="header">
           <h2 class="header__name">${this.name}</h2>
           ${this.participantIndexHtmlExists
-            ? html`<a href="${this._participantIndexHtmlPath}">
+            ? html`<a href="/%dir%/participants/${this.name}/index.html">
                 <button class="button__fullscreen">
                   View
                 </button>
               </a>`
             : ''}
         </div>
-        ${this.participantTemplate
-          ? html`<div class="participant-content-container">${this.__participantContent}</div>`
-          : html`
-              <iframe
-                class="participant-content-container"
-                id="${this.name}"
-                allow="fullscreen"
-                src="${this._participantIndexHtmlPath}"
-              ></iframe>
-            `}
+        ${this.loading
+          ? html`<span>Loading....</span>`
+          : html`${this.participantTemplate
+              ? html`<div class="participant-content-container">${this.__participantContent}</div>`
+              : html`
+                  <iframe
+                    class="participant-content-container"
+                    id="${this.name}"
+                    allow="fullscreen"
+                    src="/%dir%/participants/${this.name}/index.html"
+                  ></iframe>
+                `}`}
       </div>
     `;
   }

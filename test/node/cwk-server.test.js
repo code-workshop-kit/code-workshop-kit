@@ -44,7 +44,7 @@ describe('CWK Server e2e', () => {
     it('returns static files', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
       }));
 
@@ -60,7 +60,7 @@ describe('CWK Server e2e', () => {
     it('returns Content Hidden body for files that are in other participant folders', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
@@ -83,7 +83,7 @@ describe('CWK Server e2e', () => {
     it('inserts the app shell component by default', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
@@ -107,7 +107,7 @@ describe('CWK Server e2e', () => {
     it('applies follow-mode websocket hooks by default', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
@@ -130,7 +130,7 @@ describe('CWK Server e2e', () => {
     it('can select admin user using password', async () => {
       ({ server, wss } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/admins/index.html',
+        dir: './test/utils/fixtures/admins',
       }));
 
       browser = await puppeteer.launch();
@@ -173,7 +173,7 @@ describe('CWK Server e2e', () => {
       it('inserts admin ui sidebar component for admins', async () => {
         ({ server, wss } = await startServer({
           ...baseCfg,
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
         }));
 
         browser = await puppeteer.launch();
@@ -220,7 +220,7 @@ describe('CWK Server e2e', () => {
           ...baseCfg,
           compatibility:
             'none' /* TODO: Troubleshoot why this test only if compatibility is 'none'... */,
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
           plugins: [
             {
               transform(context) {
@@ -321,12 +321,13 @@ describe('CWK Server e2e', () => {
         expect(timestamps[2]).to.equal(timestamps[4]);
       }).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
 
-      it('can disable admin mode ensures only current participant files are loaded', async () => {
+      it('can disable admin mode to ensure only current participant files are loaded', async () => {
         let lastWsMsg = '';
         ({ server, wss } = await startServer({
           ...baseCfg,
           compatibility: 'none',
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
+          usingParticipantIframes: true,
         }));
 
         wss.on('connection', ws => {
@@ -394,7 +395,8 @@ describe('CWK Server e2e', () => {
         ({ server, wss } = await startServer({
           ...baseCfg,
           compatibility: 'none',
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
+          usingParticipantIframes: true,
         }));
 
         wss.on('connection', ws => {

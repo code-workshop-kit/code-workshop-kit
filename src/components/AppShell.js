@@ -97,13 +97,18 @@ class AppShell extends LitElement {
         reflect: true,
         attribute: 'participant-index-html-exists',
       },
+      usingParticipantIframes: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'using-participant-iframes',
+      },
     };
   }
 
   constructor() {
     super();
-    // TODO: Allow turning off through CWK server (see workshop plugin)
     this.participantIndexHtmlExists = true;
+    this.usingParticipantIframes = false;
     setCustomCSSProps();
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
@@ -155,7 +160,9 @@ class AppShell extends LitElement {
                   ? this.participants.map(
                       name =>
                         html`<cwk-participant-capsule
+                          .participantModuleImport=${this.participantModuleImport}
                           ?participant-index-html-exists=${this.participantIndexHtmlExists}
+                          ?using-participant-iframes=${this.usingParticipantIframes}
                           .name="${name}"
                         ></cwk-participant-capsule>`,
                     )

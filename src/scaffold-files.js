@@ -47,12 +47,13 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 }
 
 export const scaffold = async opts => {
-  let pathToWorkshop = `${path.resolve(process.cwd(), `${opts.inputDir}`, '../')}/cwk.config.js`;
-  if (opts.configDir !== '/') {
-    pathToWorkshop = `${path.resolve(process.cwd(), `${opts.configDir}`)}/cwk.config.js`;
+  if (opts.dir.startsWith('/')) {
+    // eslint-disable-next-line no-param-reassign
+    opts.dir = `.${opts.dir}`;
   }
-  const pathToOutputDir = path.resolve(process.cwd(), `${opts.outputDir}`);
-  const pathToInputDir = path.resolve(process.cwd(), `${opts.inputDir}`);
+  const pathToWorkshop = path.resolve(process.cwd(), opts.dir, 'cwk.config.js');
+  const pathToOutputDir = path.resolve(pathToWorkshop, '../', 'participants');
+  const pathToInputDir = path.resolve(pathToWorkshop, '../', 'template');
 
   if (opts.workshop || fs.existsSync(pathToWorkshop)) {
     let workshop = {};
@@ -64,6 +65,7 @@ export const scaffold = async opts => {
     }
 
     const { participants, templateData } = workshop;
+
     participants.forEach(name => {
       copyTemplates(
         path.resolve(process.cwd(), `${pathToInputDir}/**/*`),
@@ -88,9 +90,7 @@ export const scaffold = async opts => {
 
 export const scaffoldFiles = (opts = {}) => {
   let scaffoldConfig = {
-    configDir: '/',
-    inputDir: '/template',
-    outputDir: '/participants',
+    dir: '/',
     force: false,
     ...opts,
   };
@@ -105,36 +105,14 @@ export const scaffoldFiles = (opts = {}) => {
           'If set, it will (re-)scaffold for the participants and overwrite the current files without warning',
       },
       {
-        name: 'config-dir',
-        alias: 'w',
+        name: 'dir',
+        alias: 'd',
         type: String,
         description: 'If set, will search for cwk.config.js in this directory',
-      },
-      {
-        name: 'input-dir',
-        alias: 'i',
-        type: String,
-        description: 'If set, will use contents of this directory as a scaffold templating base',
-      },
-      {
-        name: 'output-dir',
-        alias: 'o',
-        type: String,
-        description:
-          'If set, outputs the scaffolded files in this directory, and create if parent folder exists but outputDir does not exist yet',
       },
     ];
 
     const cliConfig = commandLineArgs(scaffoldDefinitions, { argv: opts.argv });
-
-    // Convert these to camelCase props
-    ['config-dir', 'input-dir', 'output-dir'].forEach(param => {
-      if (cliConfig[param]) {
-        const camelize = s => s.replace(/-./g, x => x.toUpperCase()[1]);
-        cliConfig[camelize(param)] = cliConfig[param];
-        delete cliConfig[param];
-      }
-    });
 
     scaffoldConfig = {
       ...scaffoldConfig,

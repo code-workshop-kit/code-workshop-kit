@@ -1,0 +1,48 @@
+import path from 'path';
+
+export function componentReplacersPlugin(opts) {
+  // subtract the current working dir from absolute dir to get the dir relative to the server root
+  const pathRelativeToServer = opts.dir.split(process.cwd())[1];
+  return {
+    transform(context) {
+      let rewrittenBody = context.body;
+      if (context.status === 200) {
+        if (
+          context.path === '/node_modules/code-workshop-kit/dist/components/SelectCookie.js' ||
+          context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js'
+        ) {
+          rewrittenBody = rewrittenBody.replace(
+            new RegExp('placeholder-import.js', 'g'),
+            path.resolve('/', `${pathRelativeToServer}/cwk.config.js`),
+          );
+        }
+
+        if (
+          context.path === '/node_modules/code-workshop-kit/dist/components/ParticipantCapsule.js'
+        ) {
+          rewrittenBody = rewrittenBody.replace(
+            new RegExp('/%dir%/', 'g'),
+            `${path.resolve('/', pathRelativeToServer)}/`,
+          );
+        }
+
+        if (context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js') {
+          if (!opts.participantIndexHtmlExists) {
+            rewrittenBody = rewrittenBody.replace(
+              new RegExp('this.participantIndexHtmlExists = true;', 'g'),
+              'this.participantIndexHtmlExists = false;',
+            );
+          }
+
+          if (opts.usingParticipantIframes) {
+            rewrittenBody = rewrittenBody.replace(
+              new RegExp('this.usingParticipantIframes = false;', 'g'),
+              'this.usingParticipantIframes = true;',
+            );
+          }
+        }
+      }
+      return { body: rewrittenBody };
+    },
+  };
+}

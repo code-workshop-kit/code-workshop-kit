@@ -16,9 +16,9 @@ import {
 import {
   adminUIPlugin,
   appShellPlugin,
+  componentReplacersPlugin,
   fileControlPlugin,
   followModePlugin,
-  workshopImportPlugin,
   wsPortPlugin,
 } from './plugins/plugins.js';
 import { cwkState } from './utils/CwkStateSingleton.js';
@@ -115,31 +115,32 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
   newEdsConfig.plugins = [...edsConfig.plugins];
   newEdsConfig.middlewares = [...edsConfig.middlewares];
 
-  /**
-   * Right now, we assume that your cwk.config.js is in the same folder as your app index.
-   * TODO: allow override.
-   */
-  let absoluteAppIndexDir = path.resolve('/', path.dirname(cwkConfig.appIndex));
-  if (absoluteAppIndexDir === '/') {
-    absoluteAppIndexDir = '';
+  if (cwkConfig.dir.startsWith('/')) {
+    // eslint-disable-next-line no-param-reassign
+    cwkConfig.dir = `.${cwkConfig.dir}`;
   }
+  const absoluteDir = path.resolve(process.cwd(), cwkConfig.dir);
 
   newEdsConfig.plugins.push(wsPortPlugin(edsConfig.port));
-  newEdsConfig.plugins.push(workshopImportPlugin(absoluteAppIndexDir));
-  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteAppIndexDir));
-  newEdsConfig.middlewares.push(jwtMiddleware(absoluteAppIndexDir));
+  newEdsConfig.plugins.push(
+    componentReplacersPlugin({
+      dir: absoluteDir,
+      usingParticipantIframes: cwkConfig.usingParticipantIframes,
+      participantIndexHtmlExists: cwkConfig.participantIndexHtmlExists,
+    }),
+  );
+  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteDir));
+  newEdsConfig.middlewares.push(jwtMiddleware(absoluteDir));
 
   // Plugins & middlewares that can be turned off completely from the start through cwk flags
   if (!cwkConfig.alwaysServeFiles) {
-    newEdsConfig.plugins.push(
-      fileControlPlugin({ exts: ['js', 'html'], appIndexDir: absoluteAppIndexDir }),
-    );
+    newEdsConfig.plugins.push(fileControlPlugin(absoluteDir, ['js', 'html']));
   }
   // Important that we place insert plugins after file control, if we want them to apply scripts to files that should be served empty to the user
   newEdsConfig.plugins.push(followModePlugin(edsConfig.port));
   if (!cwkConfig.withoutAppShell) {
-    newEdsConfig.plugins.push(appShellPlugin(cwkConfig.appIndex, cwkConfig.title));
-    newEdsConfig.plugins.push(adminUIPlugin(absoluteAppIndexDir));
+    newEdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title));
+    newEdsConfig.plugins.push(adminUIPlugin(absoluteDir));
   }
 
   if (!cwkConfig.enableCaching) {
@@ -155,7 +156,9 @@ const getCwkConfig = opts => {
     withoutAppShell: false,
     enableCaching: false,
     alwaysServeFiles: false,
-    appIndex: './index.html',
+    usingParticipantIframes: false,
+    participantIndexHtmlExists: true,
+    dir: '/',
     title: '',
     ...opts,
   };
@@ -164,6 +167,12 @@ const getCwkConfig = opts => {
   if (opts.argv) {
     const cwkServerDefinitions = [
       ...commandLineOptions,
+      {
+        name: 'dir',
+        type: String,
+        description:
+          'The directory to read the cwk.config.js from, the index.html for the app shell and the template folder for scaffolding',
+      },
       {
         name: 'title',
         type: String,
@@ -179,7 +188,7 @@ const getCwkConfig = opts => {
         type: Boolean,
         description: `
         If set, re-enable caching. By default it is turned off, since it's more often a hassle than a help in a workshop dev server
-        This also means that the file control middleware only has effect the upon first load, because the server serves cached responses.
+        This also means that the file control middleware only has effect the upon first load, because the server serves cached responses
       `,
       },
       {
@@ -187,6 +196,20 @@ const getCwkConfig = opts => {
         type: Boolean,
         description:
           'If set, disables the .html and .js file control middlewares that only serve files for the current participant',
+      },
+      {
+        name: 'using-participant-iframes',
+        type: Boolean,
+        description: `
+          If set, ensures the app shell will not try to load participant index.js files as modules, which gets rid of duplicate console logs.
+          Use this when using iframes instead of having your participants export templates or nodes in their index.js for showing in the app shell participant capsules.
+        `,
+      },
+      {
+        name: 'no-participant-index-html',
+        type: Boolean,
+        description:
+          "If set to true, disables the app shell participant view buttons, useful when you don't scaffold index.html files for your participants to be shown in the overview",
       },
     ];
 
@@ -199,7 +222,10 @@ const getCwkConfig = opts => {
     cwkConfig.withoutAppShell = cwkConfig['without-app-shell'] || cwkConfig.withoutAppShell;
     cwkConfig.enableCaching = cwkConfig['enable-caching'] || cwkConfig.enableCaching;
     cwkConfig.alwaysServeFiles = cwkConfig['always-serve-files'] || cwkConfig.alwaysServeFiles;
-    cwkConfig.appIndex = cwkConfig['app-index'] || cwkConfig.appIndex;
+    cwkConfig.usingParticipantIframes =
+      cwkConfig['using-participant-iframes'] || cwkConfig.usingParticipantIframes;
+    cwkConfig.participantIndexHtmlExists =
+      !cwkConfig['no-participant-index-html'] || cwkConfig.participantIndexHtmlExists;
   }
 
   return cwkConfig;
@@ -221,16 +247,9 @@ const getEdsConfig = (opts, cwkConfig, defaultPort) => {
   };
 
   if (opts.argv) {
-    const edsArgs = readCommandLineArgs(opts.argv);
-
-    // EDS appIndex is not useful for CWK and we already have CWK appIndex API which is different..
-    if (edsArgs.appIndex) {
-      delete edsArgs.appIndex;
-    }
-
     edsConfig = {
       ...edsConfig,
-      ...edsArgs,
+      ...readCommandLineArgs(opts.argv),
     };
   }
 

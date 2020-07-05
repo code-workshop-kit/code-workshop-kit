@@ -4,7 +4,7 @@ import { generateAppKey } from './app-key/generateAppKey.js';
 
 export const generateKey = (opts = {}) => {
   let generateConfig = {
-    configDir: '/',
+    dir: '/',
     length: 28,
     ...opts,
   };
@@ -12,8 +12,8 @@ export const generateKey = (opts = {}) => {
   if (opts.argv) {
     const scaffoldDefinitions = [
       {
-        name: 'config-dir',
-        alias: 'w',
+        name: 'dir',
+        alias: 'd',
         type: String,
         description: 'If set, will search for cwk.config.js in this directory',
       },
@@ -27,20 +27,11 @@ export const generateKey = (opts = {}) => {
 
     const cliConfig = commandLineArgs(scaffoldDefinitions, { argv: opts.argv });
 
-    // Convert these to camelCase props
-    ['config-dir'].forEach(param => {
-      if (cliConfig[param]) {
-        const camelize = s => s.replace(/-./g, x => x.toUpperCase()[1]);
-        cliConfig[camelize(param)] = cliConfig[param];
-        delete cliConfig[param];
-      }
-    });
-
     generateConfig = {
       ...generateConfig,
       ...cliConfig,
     };
 
-    generateAppKey(path.resolve(process.cwd(), generateConfig.configDir), generateConfig.length);
+    generateAppKey(path.resolve(process.cwd(), generateConfig.dir), generateConfig.length);
   }
 };

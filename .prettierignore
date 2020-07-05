@@ -1,1 +1,4 @@
-demo/template
+node_modules/
+test-coverage/
+dist/
+demo/

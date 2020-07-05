@@ -1,16 +1,13 @@
 import path from 'path';
 
-const findBrowserPath = appIndex => {
+const findBrowserPath = dir => {
   const absolutePath = require.resolve('code-workshop-kit/dist/components/AppShell.js');
 
   // Subtract working directory and resolve to root of the es-dev-server
   const componentPath = path.resolve('/', path.relative(process.cwd(), absolutePath));
 
-  // Relative to the appIndex folder (usually root, but can be nested somewhere as well) and resolved again
-  let relativeComponentPath = path.relative(
-    path.resolve('/', path.dirname(appIndex)),
-    componentPath,
-  );
+  // Relative to the dir folder (usually root, but can be nested somewhere as well) and resolved again
+  let relativeComponentPath = path.relative(path.resolve('/', dir), componentPath);
 
   // Check if the relative component path is bare... this can happen with path.relative
   // Then we just assume we can resolve it to root
@@ -26,19 +23,20 @@ const findBrowserPath = appIndex => {
   return normalizedForWindows;
 };
 
-export function appShellPlugin(appIndex, title) {
+export function appShellPlugin(dir, title) {
   return {
     transform(context) {
       let rewrittenBody = context.body;
       if (context.status === 200) {
-        const pathRelativeToServer = path.resolve('/', appIndex);
+        // subtract the current working dir from absolute dir to get the dir relative to the server root
+        const pathRelativeToServer = dir.split(process.cwd())[1];
 
         // Extra check because the url could be ending with / and then we should be serving /index.html (browser behavior)
         if (
-          context.url === pathRelativeToServer ||
-          `${context.url}index.html` === pathRelativeToServer
+          context.url === `${pathRelativeToServer}/` ||
+          context.url === `${pathRelativeToServer}/index.html`
         ) {
-          const browserPath = findBrowserPath(appIndex);
+          const browserPath = findBrowserPath(pathRelativeToServer);
 
           const appShellScript = `
             <script type="module">

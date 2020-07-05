@@ -3,7 +3,7 @@ import { html } from 'lit-html';
 import '../../src/components/AdminSidebar.js';
 
 describe('Admin Sidebar Component', () => {
-  const websocketPort = 5001;
+  const websocketPort = 5000;
 
   it('is closed by default', async () => {
     const el = await fixture(
