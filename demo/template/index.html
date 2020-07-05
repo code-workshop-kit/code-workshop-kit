@@ -7,6 +7,11 @@
   </style>
 </head>
 <body>
-  <script src="./index.js" type="module"></script>
-  <<%= participantNameLowercase %>-component></<%= participantNameLowercase %>-component>
+  <script type="module">
+    // eslint-disable-next-line import/no-extraneous-dependencies
+    import 'code-workshop-kit/dist/components/loadAndSetDankMonoFont.js';
+    import './index.js';
+
+    document.body.appendChild(document.createElement('<%= participantNameLowercase %>-component'));
+  </script>
 </body>

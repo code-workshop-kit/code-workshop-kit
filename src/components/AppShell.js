@@ -92,11 +92,18 @@ class AppShell extends LitElement {
       currentParticipantName: {
         type: String,
       },
+      participantIndexHtmlExists: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'participant-index-html-exists',
+      },
     };
   }
 
   constructor() {
     super();
+    // TODO: Allow turning off through CWK server (see workshop plugin)
+    this.participantIndexHtmlExists = true;
     setCustomCSSProps();
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
@@ -147,7 +154,10 @@ class AppShell extends LitElement {
                 ${this.participants
                   ? this.participants.map(
                       name =>
-                        html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
+                        html`<cwk-participant-capsule
+                          ?participant-index-html-exists=${this.participantIndexHtmlExists}
+                          .name="${name}"
+                        ></cwk-participant-capsule>`,
                     )
                   : html``}
               </div>

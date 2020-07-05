@@ -35,13 +35,17 @@ export function fileControlPlugin({ exts, appIndexDir }) {
         const fileExt = context.url.substring(context.url.lastIndexOf('.') + 1, context.url.length);
         exts.forEach(ext => {
           if (ext === fileExt) {
-            rewrittenBody = `
+            if (ext === 'html') {
+              rewrittenBody = `
               <body style="margin: 0; padding: 0">
                 <h3 style="font-family: Dank Mono, sans-serif; font-weight: lighter">
                   🚧 Content hidden 🚧
                 </h3>
               </body>
             `;
+            } else {
+              rewrittenBody = ``;
+            }
           }
         });
       }

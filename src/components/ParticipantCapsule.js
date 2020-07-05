@@ -1,4 +1,5 @@
-import { css, html, LitElement } from 'lit-element';
+import { css, html, LitElement, TemplateResult } from 'lit-element';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 
 class ParticipantCapsule extends LitElement {
   static get properties() {
@@ -6,6 +7,14 @@ class ParticipantCapsule extends LitElement {
       name: {
         type: String,
         reflect: true,
+      },
+      participantIndexHtmlExists: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'participant-index-html-exists',
+      },
+      participantTemplate: {
+        attribute: false,
       },
     };
   }
@@ -29,12 +38,12 @@ class ParticipantCapsule extends LitElement {
         margin-bottom: 5px;
       }
 
-      h2 {
+      .header__name {
         margin: 10px 0;
         font-weight: lighter;
       }
 
-      iframe {
+      .participant-content-container {
         min-width: 300px;
         width: 100%;
         height: 400px;
@@ -76,22 +85,56 @@ class ParticipantCapsule extends LitElement {
     return `./participants/${this.name}/index.html`;
   }
 
+  async _fetchParticipantModule() {
+    try {
+      const participantModule = await import(`/demo/participants/${this.name}/index.js`);
+      this.participantTemplate = participantModule.default;
+    } catch (e) {
+      //
+    }
+  }
+
+  connectedCallback() {
+    if (super.connectedCallback) {
+      super.connectedCallback();
+    }
+    this._fetchParticipantModule();
+  }
+
+  get __participantContent() {
+    if (
+      this.participantTemplate instanceof HTMLElement ||
+      this.participantTemplate instanceof TemplateResult
+    ) {
+      return this.participantTemplate;
+    }
+    return unsafeHTML(this.participantTemplate);
+  }
+
   render() {
+    // TODO: Support other rendering engines? or let people make their extension app shell / etc.? Probably only React where you have issues..
     return html`
       <div class="container">
         <div class="header">
-          <h2>${this.name}</h2>
-          <a href="${this._participantIndexHtmlPath}">
-            <button class="button__fullscreen">
-              View
-            </button>
-          </a>
+          <h2 class="header__name">${this.name}</h2>
+          ${this.participantIndexHtmlExists
+            ? html`<a href="${this._participantIndexHtmlPath}">
+                <button class="button__fullscreen">
+                  View
+                </button>
+              </a>`
+            : ''}
         </div>
-        <iframe
-          id="${this.name}"
-          allow="fullscreen"
-          src="${this._participantIndexHtmlPath}"
-        ></iframe>
+        ${this.participantTemplate
+          ? html`<div class="participant-content-container">${this.__participantContent}</div>`
+          : html`
+              <iframe
+                class="participant-content-container"
+                id="${this.name}"
+                allow="fullscreen"
+                src="${this._participantIndexHtmlPath}"
+              ></iframe>
+            `}
       </div>
     `;
   }

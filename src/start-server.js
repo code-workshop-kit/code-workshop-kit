@@ -1,5 +1,10 @@
 import commandLineArgs from 'command-line-args';
-import { commandLineOptions, createConfig, startServer as startEdsServer } from 'es-dev-server';
+import {
+  commandLineOptions,
+  createConfig,
+  readCommandLineArgs,
+  startServer as startEdsServer,
+} from 'es-dev-server';
 import path from 'path';
 import portfinder from 'portfinder';
 import WebSocket from 'ws';
@@ -214,6 +219,20 @@ const getEdsConfig = (opts, cwkConfig, defaultPort) => {
     middlewares: [],
     ...opts,
   };
+
+  if (opts.argv) {
+    const edsArgs = readCommandLineArgs(opts.argv);
+
+    // EDS appIndex is not useful for CWK and we already have CWK appIndex API which is different..
+    if (edsArgs.appIndex) {
+      delete edsArgs.appIndex;
+    }
+
+    edsConfig = {
+      ...edsConfig,
+      ...edsArgs,
+    };
+  }
 
   edsConfig.port = edsConfig.port || defaultPort;
   edsConfig = addPluginsAndMiddlewares(edsConfig, cwkConfig);
