@@ -25,7 +25,6 @@ describe('start cwk server', () => {
     it('supports overriding CWK server default settings', async () => {
       ({ cwkConfig, edsConfig, server, wss } = await startServer({
         port: 5000,
-        wsPort: 5002,
         title: 'Frontend Workshop',
         appIndex: './test/utils/fixtures/simple/index.html',
         logStartup: false,
@@ -33,7 +32,6 @@ describe('start cwk server', () => {
         open: false,
       }));
 
-      expect(cwkConfig.wsPort).to.equal(5002);
       expect(edsConfig.appIndex).to.equal('/./test/utils/fixtures/simple/index.html');
       expect(cwkConfig.title).to.equal('Frontend Workshop');
     });
@@ -41,7 +39,6 @@ describe('start cwk server', () => {
     it('supports preventing certain plugins and middlewares from being added', async () => {
       ({ cwkConfig, edsConfig, server, wss } = await startServer({
         port: 5000,
-        wsPort: 5001,
         withoutAppShell: true,
         enableCaching: true,
         alwaysServeFiles: true,

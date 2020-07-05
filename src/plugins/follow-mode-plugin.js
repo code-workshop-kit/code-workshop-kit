@@ -1,9 +1,9 @@
-export function followModePlugin(wsPort) {
+export function followModePlugin(port) {
   // Warning: this script gets inserted as a string, so keep that in mind when adding dynamic JS stuff in there from outside scope
   // I didn't stringify it because this way it's more readable, but I may come to regret that..
-  // wsPort works because we replace it later by the actual value of wsPort
+  // port works because we replace it later by the actual value of port
   const scriptsToInsert = () => {
-    window.__cwkFollowModeWs = new WebSocket(`ws://localhost:${wsPort}`);
+    window.__cwkFollowModeWs = new WebSocket(`ws://localhost:${port}`);
     const allCookies = document.cookie.split(';').map(cookie => {
       if (cookie) {
         return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
@@ -48,7 +48,7 @@ export function followModePlugin(wsPort) {
         const scriptStr = scriptsToInsert.toString();
         const scriptBody = scriptStr
           .substring(scriptStr.indexOf('{') + 1, scriptStr.lastIndexOf('}'))
-          .replace(/\${wsPort}/, wsPort);
+          .replace(/\${port}/, port);
 
         rewrittenBody = rewrittenBody.replace(
           '</body>',

@@ -8,12 +8,10 @@ import { aTimeout } from '../utils/helpers.js';
 import { userAgents } from '../utils/user-agents.js';
 
 const hostPort = 5000;
-const wsPort = 5001;
 const host = `http://localhost:${hostPort}/`;
 const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
-  wsPort,
   logStartup: false,
   open: false,
 };
@@ -126,7 +124,7 @@ describe('CWK Server e2e', () => {
         };
       });
 
-      expect(url).to.equal('ws://localhost:5001/');
+      expect(url).to.equal('ws://localhost:5000/');
     }).timeout(testTimeout);
 
     it('can select admin user using password', async () => {

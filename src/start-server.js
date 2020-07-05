@@ -1,6 +1,7 @@
 import commandLineArgs from 'command-line-args';
 import { commandLineOptions, createConfig, startServer as startEdsServer } from 'es-dev-server';
 import path from 'path';
+import portfinder from 'portfinder';
 import WebSocket from 'ws';
 import {
   changeParticipantUrlMiddleware,
@@ -94,8 +95,8 @@ const handleWsMessage = (message, ws) => {
   }
 };
 
-const setupWebSocket = wsPort => {
-  const wss = new WebSocket.Server({ port: wsPort });
+const setupWebSocket = () => {
+  const wss = new WebSocket.Server({ noServer: true });
 
   wss.on('connection', ws => {
     ws.on('message', message => handleWsMessage(message, ws));
@@ -118,7 +119,7 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
     absoluteAppIndexDir = '';
   }
 
-  newEdsConfig.plugins.push(wsPortPlugin(cwkConfig.wsPort));
+  newEdsConfig.plugins.push(wsPortPlugin(edsConfig.port));
   newEdsConfig.plugins.push(workshopImportPlugin(absoluteAppIndexDir));
   newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteAppIndexDir));
   newEdsConfig.middlewares.push(jwtMiddleware(absoluteAppIndexDir));
@@ -130,7 +131,7 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
     );
   }
   // Important that we place insert plugins after file control, if we want them to apply scripts to files that should be served empty to the user
-  newEdsConfig.plugins.push(followModePlugin(cwkConfig.wsPort));
+  newEdsConfig.plugins.push(followModePlugin(edsConfig.port));
   if (!cwkConfig.withoutAppShell) {
     newEdsConfig.plugins.push(appShellPlugin(cwkConfig.appIndex, cwkConfig.title));
     newEdsConfig.plugins.push(adminUIPlugin(absoluteAppIndexDir));
@@ -150,7 +151,6 @@ const getCwkConfig = opts => {
     enableCaching: false,
     alwaysServeFiles: false,
     appIndex: './index.html',
-    wsPort: 8001,
     title: '',
     ...opts,
   };
@@ -183,11 +183,6 @@ const getCwkConfig = opts => {
         description:
           'If set, disables the .html and .js file control middlewares that only serve files for the current participant',
       },
-      {
-        name: 'ws-port',
-        type: Number,
-        description: 'Port to run the WebSocket server on',
-      },
     ];
 
     cwkConfig = {
@@ -199,14 +194,13 @@ const getCwkConfig = opts => {
     cwkConfig.withoutAppShell = cwkConfig['without-app-shell'] || cwkConfig.withoutAppShell;
     cwkConfig.enableCaching = cwkConfig['enable-caching'] || cwkConfig.enableCaching;
     cwkConfig.alwaysServeFiles = cwkConfig['always-serve-files'] || cwkConfig.alwaysServeFiles;
-    cwkConfig.wsPort = cwkConfig['ws-port'] || cwkConfig.wsPort;
     cwkConfig.appIndex = cwkConfig['app-index'] || cwkConfig.appIndex;
   }
 
   return cwkConfig;
 };
 
-const getEdsConfig = (opts, cwkConfig) => {
+const getEdsConfig = (opts, cwkConfig, defaultPort) => {
   // eds defaults & middlewares
   let edsConfig = {
     open: false,
@@ -221,6 +215,7 @@ const getEdsConfig = (opts, cwkConfig) => {
     ...opts,
   };
 
+  edsConfig.port = edsConfig.port || defaultPort;
   edsConfig = addPluginsAndMiddlewares(edsConfig, cwkConfig);
   edsConfig = createConfig(edsConfig);
   return edsConfig;
@@ -228,10 +223,18 @@ const getEdsConfig = (opts, cwkConfig) => {
 
 export const startServer = async (opts = {}) => {
   const cwkConfig = getCwkConfig(opts);
-  const edsConfig = getEdsConfig(opts, cwkConfig);
+
+  const defaultPort = await portfinder.getPortPromise();
+  const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort);
 
   const { server } = await startEdsServer(edsConfig);
-  const wss = setupWebSocket(cwkConfig.wsPort);
+  const wss = setupWebSocket();
+
+  server.on('upgrade', function upgrade(request, socket, head) {
+    wss.handleUpgrade(request, socket, head, function done(ws) {
+      wss.emit('connection', ws, request);
+    });
+  });
 
   cwkState.state = { wss };
   setDefaultAdminConfig();
