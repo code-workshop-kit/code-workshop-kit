@@ -1,4 +1,5 @@
 import { css, html, LitElement, TemplateResult } from 'lit-element';
+import { render } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 
 class ParticipantCapsule extends LitElement {
@@ -82,11 +83,16 @@ class ParticipantCapsule extends LitElement {
     this.loading = true;
   }
 
-  async _fetchParticipantModule() {
+  async _fetchParticipantModule(timestamp) {
+    this.loadingComplete = new Promise(resolve => {
+      this.__loadingResolve = resolve;
+    });
+
     if (!this.usingParticipantIframes) {
       try {
         const participantModule = await import(
-          this.participantModuleImport || `/%dir%/participants/${this.name}/index.js`
+          this.participantModuleImport ||
+            `/%dir%/participants/${this.name}/index.js${timestamp ? `?mtime=${timestamp}` : ''}`
         );
         this.participantTemplate = participantModule.default;
       } catch (e) {
@@ -95,6 +101,13 @@ class ParticipantCapsule extends LitElement {
     }
     this.loading = false;
     this.__loadingResolve();
+    if (timestamp) {
+      render(html``, this.shadowRoot.querySelector('.participant-content-container'));
+      render(
+        html`${this.__participantContent}`,
+        this.shadowRoot.querySelector('.participant-content-container'),
+      );
+    }
   }
 
   get __participantContent() {
@@ -107,14 +120,34 @@ class ParticipantCapsule extends LitElement {
     return unsafeHTML(this.participantTemplate);
   }
 
+  setupWs() {
+    // %websocketport% gets replaced by CWK server
+    this.ws = new WebSocket(`ws://localhost:${this.websocketPort || '%websocketport%'}`);
+
+    this.ws.addEventListener('open', () => {
+      this.ws.send(
+        JSON.stringify({ type: 'authenticate', username: this.name, feature: 'reload-module' }),
+      );
+    });
+
+    this.ws.addEventListener('message', e => {
+      const { type, name, timestamp } = JSON.parse(e.data);
+      if (type === 'reload-module' && name === this.name) {
+        this._fetchParticipantModule(timestamp);
+      }
+    });
+  }
+
   connectedCallback() {
     if (super.connectedCallback) {
       super.connectedCallback();
     }
-    this.loadingComplete = new Promise(resolve => {
-      this.__loadingResolve = resolve;
-    });
     this._fetchParticipantModule();
+    this.loadingComplete.then(() => {
+      if (this.participantTemplate) {
+        this.setupWs();
+      }
+    });
   }
 
   render() {

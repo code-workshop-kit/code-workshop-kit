@@ -10,10 +10,14 @@ describe('start cwk server', () => {
     let wss;
     let cwkConfig;
     let edsConfig;
+    let moduleWatcher;
 
     afterEach(async () => {
       if (wss) {
         wss.close();
+      }
+      if (moduleWatcher) {
+        moduleWatcher.close();
       }
       if (server) {
         await new Promise(resolve => {
@@ -23,7 +27,7 @@ describe('start cwk server', () => {
     });
 
     it('has default settings', async () => {
-      ({ cwkConfig, edsConfig, server, wss } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
         dir: './test/utils/fixtures/simple',
       }));
 
@@ -36,7 +40,7 @@ describe('start cwk server', () => {
       expect(edsConfig.logStartup).to.be.true;
       expect(edsConfig.watch).to.be.false;
       expect(edsConfig.moduleDirs).to.be.undefined;
-      expect(edsConfig.plugins.length).to.equal(9);
+      expect(edsConfig.plugins.length).to.equal(10);
       expect(edsConfig.nodeResolve).to.eql({
         customResolveOptions: { moduleDirectory: ['node_modules'], preserveSymlinks: false },
       });
@@ -44,7 +48,7 @@ describe('start cwk server', () => {
     });
 
     it('supports overriding CWK server default settings', async () => {
-      ({ cwkConfig, edsConfig, server, wss } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
         port: 5000,
         title: 'Frontend Workshop',
         dir: './test/utils/fixtures/simple',
@@ -68,13 +72,13 @@ describe('start cwk server', () => {
       expect(edsConfig.logStartup).to.be.false;
       expect(edsConfig.watch).to.be.true;
       // app-shell/file-control turned off
-      expect(edsConfig.plugins.length).to.equal(7);
+      expect(edsConfig.plugins.length).to.equal(8);
       // caching middleware turned off
       expect(edsConfig.customMiddlewares.length).to.equal(2);
     });
 
     it('supports preventing certain plugins and middlewares from being added', async () => {
-      ({ cwkConfig, edsConfig, server, wss } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
         port: 5000,
         withoutAppShell: true,
         enableCaching: true,

@@ -7,6 +7,7 @@ describe('Participant Capsule Component', () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .websocketPort=${8000}
         .name=${'Joren'}
       ></cwk-participant-capsule>`,
     );
@@ -18,6 +19,7 @@ describe('Participant Capsule Component', () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         .name=${'Joren'}
+        .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
       ></cwk-participant-capsule>`,
     );
@@ -34,6 +36,7 @@ describe('Participant Capsule Component', () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         .name=${'Joren'}
+        .websocketPort=${8000}
         using-participant-iframes
       ></cwk-participant-capsule>`,
     );
@@ -47,6 +50,7 @@ describe('Participant Capsule Component', () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         .name=${'Joren'}
+        .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/DOMNode.js'}
       ></cwk-participant-capsule>`,
     );
@@ -61,6 +65,7 @@ describe('Participant Capsule Component', () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         .name=${'Joren'}
+        .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/lit.js'}
       ></cwk-participant-capsule>`,
     );
@@ -75,6 +80,7 @@ describe('Participant Capsule Component', () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         participant-index-html-exists
+        .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
         .name=${'Joren'}
       ></cwk-participant-capsule>`,

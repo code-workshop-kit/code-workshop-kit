@@ -1,3 +1,4 @@
+import path from 'path';
 import { cwkState } from '../utils/CwkStateSingleton.js';
 import { verifyJWT } from '../utils/verifyJWT.js';
 
@@ -36,17 +37,17 @@ export function fileControlPlugin(dir, exts) {
           .startsWith(participantName) &&
         !(authed && adminConfig.enableAdmin)
       ) {
-        const fileExt = context.url.substring(context.url.lastIndexOf('.') + 1, context.url.length);
+        const fileExt = path.extname(context.url).split('?')[0].replace('.', '');
         exts.forEach(ext => {
           if (ext === fileExt) {
             if (ext === 'html') {
               rewrittenBody = `
-              <body style="margin: 0; padding: 0">
-                <h3 style="font-family: Dank Mono, sans-serif; font-weight: lighter">
-                  🚧 Content hidden 🚧
-                </h3>
-              </body>
-            `;
+                <body style="margin: 0; padding: 0">
+                  <h3 style="font-family: Dank Mono, sans-serif; font-weight: lighter">
+                    🚧 Content hidden 🚧
+                  </h3>
+                </body>
+              `;
             } else {
               rewrittenBody = ``;
             }

@@ -1,3 +1,4 @@
+import chokidar from 'chokidar';
 import commandLineArgs from 'command-line-args';
 import {
   commandLineOptions,
@@ -19,6 +20,7 @@ import {
   componentReplacersPlugin,
   fileControlPlugin,
   followModePlugin,
+  queryTimestampModulesPlugin,
   wsPortPlugin,
 } from './plugins/plugins.js';
 import { cwkState } from './utils/CwkStateSingleton.js';
@@ -79,14 +81,18 @@ const handleWsMessage = (message, ws) => {
       break;
     }
     case 'authenticate': {
-      const { username } = parsedMessage;
+      const { username, feature } = parsedMessage;
       const { state } = cwkState;
       if (username) {
         if (!state.wsConnections) {
-          state.wsConnections = new Map();
+          state.wsConnections = {};
+        }
+
+        if (!state.wsConnections[feature]) {
+          state.wsConnections[feature] = new Map();
         }
         // Store the websocket connection for this user
-        state.wsConnections.set(username, ws);
+        state.wsConnections[feature].set(username, ws);
         cwkState.state = state;
         ws.send(
           JSON.stringify({
@@ -110,17 +116,15 @@ const setupWebSocket = () => {
   return wss;
 };
 
-const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
+const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
   const newEdsConfig = edsConfig;
   newEdsConfig.plugins = [...edsConfig.plugins];
   newEdsConfig.middlewares = [...edsConfig.middlewares];
 
-  if (cwkConfig.dir.startsWith('/')) {
-    // eslint-disable-next-line no-param-reassign
-    cwkConfig.dir = `.${cwkConfig.dir}`;
-  }
-  const absoluteDir = path.resolve(process.cwd(), cwkConfig.dir);
+  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteDir));
+  newEdsConfig.middlewares.push(jwtMiddleware(absoluteDir));
 
+  newEdsConfig.plugins.push(queryTimestampModulesPlugin(absoluteDir));
   newEdsConfig.plugins.push(wsPortPlugin(edsConfig.port));
   newEdsConfig.plugins.push(
     componentReplacersPlugin({
@@ -129,9 +133,6 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig) => {
       participantIndexHtmlExists: cwkConfig.participantIndexHtmlExists,
     }),
   );
-  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteDir));
-  newEdsConfig.middlewares.push(jwtMiddleware(absoluteDir));
-
   // Plugins & middlewares that can be turned off completely from the start through cwk flags
   if (!cwkConfig.alwaysServeFiles) {
     newEdsConfig.plugins.push(fileControlPlugin(absoluteDir, ['js', 'html']));
@@ -231,7 +232,7 @@ const getCwkConfig = opts => {
   return cwkConfig;
 };
 
-const getEdsConfig = (opts, cwkConfig, defaultPort) => {
+const getEdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
   // eds defaults & middlewares
   let edsConfig = {
     open: false,
@@ -254,16 +255,58 @@ const getEdsConfig = (opts, cwkConfig, defaultPort) => {
   }
 
   edsConfig.port = edsConfig.port || defaultPort;
-  edsConfig = addPluginsAndMiddlewares(edsConfig, cwkConfig);
+  edsConfig = addPluginsAndMiddlewares(edsConfig, cwkConfig, absoluteDir);
   edsConfig = createConfig(edsConfig);
   return edsConfig;
 };
 
+const setupHMR = absoluteDir => {
+  const moduleWatcher = chokidar.watch(path.resolve(absoluteDir, 'participants'));
+  moduleWatcher.on('change', filePath => {
+    // Get participant name from file path
+    const participantFolder = path.join(absoluteDir, 'participants/');
+
+    // Cancel out the participant folder from the filepath (Bob/index.js or Bob/nested/style.css),
+    // and get the top most dir name
+    const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
+
+    // Find websocket connection with that name
+    if (cwkState.state.wsConnections && cwkState.state.wsConnections['reload-module']) {
+      cwkState.state.wsConnections['reload-module'].forEach((connection, name) => {
+        if (name === participantName) {
+          // Store revalidation timestamp for the name, so that when re-imported (reloaded) modules import modules themselves,
+          // that we also ensure they are re-imported by changing the import path with the queryTimestamp.
+          const { state } = cwkState;
+          const queryTimestamp = Date.now();
+          if (!state.queryTimestamps) {
+            state.queryTimestamps = {};
+          }
+          state.queryTimestamps[name] = queryTimestamp;
+          cwkState.state = state;
+
+          // Send module-changed message to that connection so it reload the main module
+          connection.send(
+            JSON.stringify({ type: 'reload-module', name, timestamp: queryTimestamp }),
+          );
+        }
+      });
+    }
+  });
+  return moduleWatcher;
+};
+
 export const startServer = async (opts = {}) => {
   const cwkConfig = getCwkConfig(opts);
-
   const defaultPort = await portfinder.getPortPromise();
-  const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort);
+
+  if (cwkConfig.dir.startsWith('/')) {
+    // eslint-disable-next-line no-param-reassign
+    cwkConfig.dir = `.${cwkConfig.dir}`;
+  }
+  const absoluteDir = path.resolve(process.cwd(), cwkConfig.dir);
+
+  const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort, absoluteDir);
+  const moduleWatcher = setupHMR(absoluteDir);
 
   const { server } = await startEdsServer(edsConfig);
   const wss = setupWebSocket();
@@ -279,9 +322,10 @@ export const startServer = async (opts = {}) => {
 
   ['exit', 'SIGINT'].forEach(event => {
     process.on(event, () => {
+      moduleWatcher.close();
       wss.close();
     });
   });
 
-  return { server, edsConfig, cwkConfig, wss };
+  return { server, edsConfig, cwkConfig, wss, moduleWatcher };
 };

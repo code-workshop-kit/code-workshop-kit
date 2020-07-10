@@ -74,11 +74,15 @@ class SelectCookie extends LitElement {
       participants: {
         type: Array,
       },
+      dialogLoading: {
+        attribute: false,
+      },
     };
   }
 
   constructor() {
     super();
+    this.dialogLoading = true;
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
     });
@@ -173,9 +177,11 @@ class SelectCookie extends LitElement {
   // So that we don't load them unnecessarily if component is loaded but not rendered,
   // and don't make it block first paint..
   async fetchDialogComponents() {
-    await import('./CwkDialog.js');
     await import('./CwkDialogContent.js');
-    await this.requestUpdate();
+    await import('./CwkDialog.js');
+
+    this.dialogLoading = false;
+    await this.updateComplete;
     this.fetchDialogResolve();
   }
 
@@ -183,9 +189,13 @@ class SelectCookie extends LitElement {
     return html`
       <div class="wrapper">
         <h1>Who are you?</h1>
-        <cwk-dialog>
-          <cwk-dialog-content slot="content"></cwk-dialog-content>
-        </cwk-dialog>
+        ${this.dialogLoading
+          ? ''
+          : html`
+              <cwk-dialog>
+                <cwk-dialog-content slot="content"></cwk-dialog-content>
+              </cwk-dialog>
+            `}
         <ul class="name__list">
           ${this.participants
             ? this.participants.map(

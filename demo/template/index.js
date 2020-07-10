@@ -2,7 +2,7 @@ console.log('<%= intro %>');
 
 class <%= participantName %>Component extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = '<h2>Hii :)</h2>';
+    this.innerHTML = '<h2>Hello, World! :)</h2>';
   }
 }
 

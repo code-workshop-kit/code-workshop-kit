@@ -19,7 +19,11 @@ export function followModePlugin(port) {
     window.__cwkFollowModeWs.addEventListener('open', () => {
       if (participantCookie) {
         window.__cwkFollowModeWs.send(
-          JSON.stringify({ type: 'authenticate', username: participantName }),
+          JSON.stringify({
+            type: 'authenticate',
+            username: participantName,
+            feature: 'follow-mode',
+          }),
         );
       }
     });

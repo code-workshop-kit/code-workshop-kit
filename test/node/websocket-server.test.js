@@ -8,11 +8,12 @@ describe('websocket server', () => {
     let server;
     let wss;
     let ws;
+    let moduleWatcher;
     const serverPort = 5000;
     const wsHost = `ws://localhost:${serverPort}/`;
 
     beforeEach(async () => {
-      ({ server, wss } = await startServer({
+      ({ server, wss, moduleWatcher } = await startServer({
         port: serverPort,
         dir: './test/utils/fixtures/simple',
         rootDir: path.resolve(__dirname, 'utils', 'fixtures', 'simple'),
@@ -28,6 +29,9 @@ describe('websocket server', () => {
       }
       if (wss) {
         wss.close();
+      }
+      if (moduleWatcher) {
+        moduleWatcher.close();
       }
       if (server) {
         await new Promise(resolve => {

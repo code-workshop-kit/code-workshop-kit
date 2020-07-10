@@ -136,7 +136,6 @@ yarn cwk run
 #### Sharing the server in VS Code
 
 - Share the cwk server instance (by default port 8000)
-- Share the websockets port (by default port 8001)
 
 #### Flags
 

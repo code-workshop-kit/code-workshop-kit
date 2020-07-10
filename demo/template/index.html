@@ -9,8 +9,8 @@
 <body>
   <script type="module">
     import 'code-workshop-kit/dist/components/loadAndSetDankMonoFont.js';
-    import './index.js';
+    import tpl from './index.js';
 
-    document.body.appendChild(document.createElement('<%= participantNameLowercase %>-component'));
+    document.body.innerHTML = tpl;
   </script>
 </body>
