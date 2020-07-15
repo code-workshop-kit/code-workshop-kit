@@ -44,7 +44,7 @@
     "@open-wc/create": "^0.32.0",
     "command-line-args": "^5.1.1",
     "deepmerge": "^4.2.2",
-    "es-dev-server": "^1.51.0",
+    "es-dev-server": "^1.55.1",
     "esm": "^3.2.25",
     "glob": "^7.1.6",
     "is-plain-object": "^3.0.0",
