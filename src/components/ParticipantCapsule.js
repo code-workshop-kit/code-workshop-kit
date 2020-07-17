@@ -25,6 +25,16 @@ class ParticipantCapsule extends LitElement {
       loading: {
         attribute: false,
       },
+      noHeader: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'no-header',
+      },
+      noContainer: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'no-container',
+      },
     };
   }
 
@@ -53,6 +63,7 @@ class ParticipantCapsule extends LitElement {
       }
 
       .participant-content-container {
+        font-family: initial;
         min-width: 300px;
         width: 100%;
         height: 400px;
@@ -81,6 +92,8 @@ class ParticipantCapsule extends LitElement {
   constructor() {
     super();
     this.loading = true;
+    this.noHeader = false;
+    this.noContainer = false;
   }
 
   async _fetchParticipantModule(timestamp) {
@@ -150,33 +163,41 @@ class ParticipantCapsule extends LitElement {
     });
   }
 
+  get __capsuleTemplate() {
+    return html`
+      ${this.noHeader
+        ? ''
+        : html`<div class="header">
+            <h2 class="header__name">${this.name}</h2>
+            ${this.participantIndexHtmlExists
+              ? html`<a href="/%dir%/participants/${this.name}/index.html">
+                  <button class="button__fullscreen">
+                    View
+                  </button>
+                </a>`
+              : ''}
+          </div>`}
+      ${this.loading
+        ? html`<span>Loading....</span>`
+        : html`${this.participantTemplate
+            ? html`<div class="participant-content-container">${this.__participantContent}</div>`
+            : html`
+                <iframe
+                  class="participant-content-container"
+                  id="${this.name}"
+                  allow="fullscreen"
+                  src="/%dir%/participants/${this.name}/index.html"
+                ></iframe>
+              `}`}
+    `;
+  }
+
   render() {
     // TODO: Support other rendering engines? or let people make their extension app shell / etc.? Probably only React where you have issues..
     return html`
-      <div class="container">
-        <div class="header">
-          <h2 class="header__name">${this.name}</h2>
-          ${this.participantIndexHtmlExists
-            ? html`<a href="/%dir%/participants/${this.name}/index.html">
-                <button class="button__fullscreen">
-                  View
-                </button>
-              </a>`
-            : ''}
-        </div>
-        ${this.loading
-          ? html`<span>Loading....</span>`
-          : html`${this.participantTemplate
-              ? html`<div class="participant-content-container">${this.__participantContent}</div>`
-              : html`
-                  <iframe
-                    class="participant-content-container"
-                    id="${this.name}"
-                    allow="fullscreen"
-                    src="/%dir%/participants/${this.name}/index.html"
-                  ></iframe>
-                `}`}
-      </div>
+      ${this.noContainer
+        ? html`${this.__capsuleTemplate}`
+        : html`<div class="container">${this.__capsuleTemplate}</div>`}
     `;
   }
 }

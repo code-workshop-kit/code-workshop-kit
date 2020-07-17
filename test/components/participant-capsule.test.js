@@ -92,4 +92,41 @@ describe('Participant Capsule Component', () => {
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('.button__fullscreen')).to.be.null;
   });
+
+  it('has an undefined participant template if the participant module does not exist', async () => {
+    const el = await fixture(
+      html`<cwk-participant-capsule
+        participant-index-html-exists
+        .websocketPort=${8000}
+        .name=${'Joren'}
+      ></cwk-participant-capsule>`,
+    );
+    expect(el.participantTemplate).to.be.undefined;
+  });
+
+  it('renders without a container div if no-container is set to true', async () => {
+    const el = await fixture(
+      html`<cwk-participant-capsule
+        participant-index-html-exists
+        no-container
+        .websocketPort=${8000}
+        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .name=${'Joren'}
+      ></cwk-participant-capsule>`,
+    );
+    expect(el.shadowRoot.querySelector('.container')).to.be.null;
+  });
+
+  it('renders without a header div if no-header is set to true', async () => {
+    const el = await fixture(
+      html`<cwk-participant-capsule
+        participant-index-html-exists
+        no-header
+        .websocketPort=${8000}
+        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .name=${'Joren'}
+      ></cwk-participant-capsule>`,
+    );
+    expect(el.shadowRoot.querySelector('.header')).to.be.null;
+  });
 });

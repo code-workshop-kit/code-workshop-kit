@@ -3,11 +3,11 @@ module.exports = {
   coverageConfig: {
     report: true,
     reportDir: 'test-coverage',
-    thresholds: {
-      statements: 90,
-      branches: 90,
-      functions: 90,
-      lines: 90,
+    threshold: {
+      statements: 80,
+      branches: 70,
+      functions: 85,
+      lines: 85,
     },
   },
 };

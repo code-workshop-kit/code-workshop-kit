@@ -6,6 +6,7 @@ import {
   readCommandLineArgs,
   startServer as startEdsServer,
 } from 'es-dev-server';
+import _esmRequire from 'esm';
 import path from 'path';
 import portfinder from 'portfinder';
 import WebSocket from 'ws';
@@ -174,61 +175,27 @@ const getCwkConfig = opts => {
         description:
           'The directory to read the cwk.config.js from, the index.html for the app shell and the template folder for scaffolding',
       },
-      {
-        name: 'title',
-        type: String,
-        description: 'App Shell title that will be displayed',
-      },
-      {
-        name: 'without-app-shell',
-        type: Boolean,
-        description: `If set, do not inject the cwk-app-shell component into your app index html file`,
-      },
-      {
-        name: 'enable-caching',
-        type: Boolean,
-        description: `
-        If set, re-enable caching. By default it is turned off, since it's more often a hassle than a help in a workshop dev server
-        This also means that the file control middleware only has effect the upon first load, because the server serves cached responses
-      `,
-      },
-      {
-        name: 'always-serve-files',
-        type: Boolean,
-        description:
-          'If set, disables the .html and .js file control middlewares that only serve files for the current participant',
-      },
-      {
-        name: 'using-participant-iframes',
-        type: Boolean,
-        description: `
-          If set, ensures the app shell will not try to load participant index.js files as modules, which gets rid of duplicate console logs.
-          Use this when using iframes instead of having your participants export templates or nodes in their index.js for showing in the app shell participant capsules.
-        `,
-      },
-      {
-        name: 'no-participant-index-html',
-        type: Boolean,
-        description:
-          "If set to true, disables the app shell participant view buttons, useful when you don't scaffold index.html files for your participants to be shown in the overview",
-      },
     ];
 
     cwkConfig = {
       ...cwkConfig,
       ...commandLineArgs(cwkServerDefinitions, { argv: opts.argv }),
     };
-
-    // TODO: auto camelCase these kebab cased flags
-    cwkConfig.withoutAppShell = cwkConfig['without-app-shell'] || cwkConfig.withoutAppShell;
-    cwkConfig.enableCaching = cwkConfig['enable-caching'] || cwkConfig.enableCaching;
-    cwkConfig.alwaysServeFiles = cwkConfig['always-serve-files'] || cwkConfig.alwaysServeFiles;
-    cwkConfig.usingParticipantIframes =
-      cwkConfig['using-participant-iframes'] || cwkConfig.usingParticipantIframes;
-    cwkConfig.participantIndexHtmlExists =
-      !cwkConfig['no-participant-index-html'] || cwkConfig.participantIndexHtmlExists;
   }
 
+  if (cwkConfig.dir.startsWith('/')) {
+    // eslint-disable-next-line no-param-reassign
+    cwkConfig.dir = `.${cwkConfig.dir}`;
+  }
+  cwkConfig.absoluteDir = path.resolve(process.cwd(), cwkConfig.dir);
+
+  const esmRequire = _esmRequire(module);
+  const workshop = esmRequire(`${cwkConfig.absoluteDir}/cwk.config.js`).default;
+
+  cwkConfig = {
+    ...cwkConfig,
+    ...workshop,
+  };
   return cwkConfig;
 };
 
@@ -299,14 +266,8 @@ export const startServer = async (opts = {}) => {
   const cwkConfig = getCwkConfig(opts);
   const defaultPort = await portfinder.getPortPromise();
 
-  if (cwkConfig.dir.startsWith('/')) {
-    // eslint-disable-next-line no-param-reassign
-    cwkConfig.dir = `.${cwkConfig.dir}`;
-  }
-  const absoluteDir = path.resolve(process.cwd(), cwkConfig.dir);
-
-  const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort, absoluteDir);
-  const moduleWatcher = setupHMR(absoluteDir);
+  const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort, cwkConfig.absoluteDir);
+  const moduleWatcher = setupHMR(cwkConfig.absoluteDir);
 
   const { server } = await startEdsServer(edsConfig);
   const wss = setupWebSocket();
