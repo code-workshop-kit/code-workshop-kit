@@ -20,10 +20,12 @@ export function componentReplacersPlugin(opts) {
         if (
           context.path === '/node_modules/code-workshop-kit/dist/components/ParticipantCapsule.js'
         ) {
-          rewrittenBody = rewrittenBody.replace(
-            new RegExp('/%dir%/', 'g'),
-            `${path.resolve('/', pathRelativeToServer)}/`,
-          );
+          let replacement = `${path.resolve('/', pathRelativeToServer)}`;
+          // remove trailing slash
+          if (replacement.endsWith('/') || replacement.endsWith('\\')) {
+            replacement = replacement.substring(0, replacement.length - 1);
+          }
+          rewrittenBody = rewrittenBody.replace(new RegExp('%dir%', 'g'), replacement);
         }
 
         if (context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js') {
