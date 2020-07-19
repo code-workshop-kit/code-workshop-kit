@@ -31,7 +31,9 @@
     "format:prettier": "prettier \"**/*.js\" --write",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "format": "npm run format:eslint && npm run format:prettier",
-    "release": "standard-version --tag-prefix="
+    "release": "standard-version --tag-prefix=",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "keywords": [
     "workshop",
@@ -60,7 +62,8 @@
     "lit-element": "^2.2.1",
     "lit-html": "^1.2.1",
     "portfinder": "^1.0.26",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "snyk": "^1.362.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -105,5 +108,6 @@
       "prettier --write",
       "git add"
     ]
-  }
+  },
+  "snyk": true
 }
