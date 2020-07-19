@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.8.0...0.8.1) (2020-07-19)
+
+
+### Bug Fixes
+
+* remove trailing slash on dir replacer ([f1f923d](https://github.com/code-workshop-kit/cwk-frontend/commit/f1f923d5f47ebbd5956461e3043a8d3cf5f0cebc))
+
 ## [0.8.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.7.4...0.8.0) (2020-07-19)
 
 
