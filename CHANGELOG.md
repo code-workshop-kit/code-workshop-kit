@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.7.4...0.8.0) (2020-07-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* removes the flags --without-app-shell, --enable-caching, --always-serve-files, they are available now as options inside cwk.config.js
+* For a short time, specifying app-index through appIndex (--app-index) was allowed, but to keep things simple, you are only allowed to specify the directory to run CWK on, which should contain the index.html if you want a CWK App Shell, as well as the cwk.config.js. The option is called 'dir' or --dir in the CLI.
+* To keep things simpler, the --output-dir, --input-dir and --config-dir options have been removed from the scaffold command. To keep things simple, just specify --dir to your directory which should contain a template folder, and the output is always a participants folder. This keeps things a lot simpler than they were before, and prevents having to solve a bunch of problems that showed up when this was flexible.
+* wsPort option (--ws-port in CLI) is now removed from cwk server (cwk run command)
+
+### Features
+
+* add docs and reduce CLI flags, use cwk instead ([1d5df88](https://github.com/code-workshop-kit/cwk-frontend/commit/1d5df8817e464a6ff255f4b775a566e14096286e))
+* hot module reload on runtime for participant files/modules ([cf9c97d](https://github.com/code-workshop-kit/cwk-frontend/commit/cf9c97dd8279573484fd933dc41126ef0e2c1640))
+* load participant code as JS modules instead of iframe html ([e1d7a81](https://github.com/code-workshop-kit/cwk-frontend/commit/e1d7a81910102ade14e78e977680a6587b5e26e3))
+* no longer need to run websocket server on separate port ([2e4e357](https://github.com/code-workshop-kit/cwk-frontend/commit/2e4e357df4ad3df0780d2be13109e2ce5715f403))
+* supports only a single 'dir' arg, support iframe configurations now that we allow modules ([7e0f493](https://github.com/code-workshop-kit/cwk-frontend/commit/7e0f493a2055f7820ffe7a96839bdc6059165fb9))
+
 ### [0.7.4](https://github.com/code-workshop-kit/cwk-frontend/compare/0.7.3...0.7.4) (2020-07-14)
 
 ### [0.7.3](https://github.com/code-workshop-kit/cwk-frontend/compare/0.7.2...0.7.3) (2020-06-26)
