@@ -3,8 +3,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import babelPluginAppKey from './babel-plugin-app-key.js';
 
-export const generateAppKey = (workshopDir, len = 28) => {
-  const workshopCfg = `${workshopDir}/cwk.config.js`;
+export const generateAppKey = (dir, len = 28) => {
+  const workshopCfg = `${dir}/cwk.config.js`;
   let key;
   if (fs.existsSync(workshopCfg)) {
     key = crypto.randomBytes(len).toString('hex');
@@ -19,8 +19,8 @@ export const generateAppKey = (workshopDir, len = 28) => {
   return key;
 };
 
-export const clearAppKey = workshopDir => {
-  const workshopCfg = `${workshopDir}/cwk.config.js`;
+export const clearAppKey = dir => {
+  const workshopCfg = `${dir}/cwk.config.js`;
   if (fs.existsSync(workshopCfg)) {
     const cfgCode = fs.readFileSync(workshopCfg, 'utf8');
 

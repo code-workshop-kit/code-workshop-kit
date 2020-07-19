@@ -5,7 +5,7 @@ import '../../src/components/AppShell.js';
 /**
  * We mock the following things
  * 1) websocket port, which normally would be set by the server middleware
- * 2) workshop import, which normally would be set by the server which knows where the appIndexDir is
+ * 2) workshop import, which normally would be set by the server which knows where the 'dir' is
  */
 
 const workshopImport = '/test/utils/workshop-mock/cwk.config.js';
@@ -22,8 +22,9 @@ describe('App Shell Component', () => {
   it('has configurable a title attribute/prop', async () => {
     const el = await fixture(
       html`<cwk-app-shell
-        .websocketPort=${5001}
+        .websocketPort=${5000}
         .workshopImport=${workshopImport}
+        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
         title="Hello, World!"
       ></cwk-app-shell>`,
     );
@@ -36,7 +37,8 @@ describe('App Shell Component', () => {
     const el = await fixture(
       html`<cwk-app-shell
         .workshopImport=${workshopImport}
-        .websocketPort=${5001}
+        .websocketPort=${5000}
+        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
       ></cwk-app-shell>`,
     );
     el.currentParticipantName = null;
@@ -48,7 +50,8 @@ describe('App Shell Component', () => {
     const el = await fixture(
       html`<cwk-app-shell
         .workshopImport=${workshopImport}
-        .websocketPort=${5001}
+        .websocketPort=${5000}
+        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
       ></cwk-app-shell>`,
     );
 
@@ -61,7 +64,11 @@ describe('App Shell Component', () => {
 
   it('can fetch the workshop config if workshopImport is passed, or resolved by server', async () => {
     const el = await fixture(html`
-      <cwk-app-shell .websocketPort=${5001} .workshopImport=${workshopImport}></cwk-app-shell>
+      <cwk-app-shell
+        .websocketPort=${5000}
+        .workshopImport=${workshopImport}
+        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+      ></cwk-app-shell>
     `);
 
     const cfg = await el.fetchWorkshopConfig();
@@ -71,10 +78,15 @@ describe('App Shell Component', () => {
 
   it('renders a list of participant capsules for all participants', async () => {
     const el = await fixture(html`
-      <cwk-app-shell .websocketPort=${5001} .workshopImport=${workshopImport}></cwk-app-shell>
+      <cwk-app-shell
+        .websocketPort=${5000}
+        .workshopImport=${workshopImport}
+        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+      ></cwk-app-shell>
     `);
 
     await el.fetchConfigComplete;
+    await el.updateComplete;
     const capsules = Array.from(el.shadowRoot.querySelectorAll('cwk-participant-capsule'));
 
     expect(capsules.length).to.equal(3);

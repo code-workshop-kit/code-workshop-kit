@@ -24,6 +24,7 @@ yarn-error.log
 ## temp folders
 /.tmp/
 /coverage/
+/test-coverage/
 
 ## temp files
 local.log
@@ -33,3 +34,5 @@ browserstack.err
 
 ## Output folder containing the scaffolded files for the workshop participants
 demo/participants
+
+debug.log

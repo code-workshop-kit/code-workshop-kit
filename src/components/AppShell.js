@@ -1,3 +1,4 @@
+import { applyPolyfill } from 'custom-elements-hmr-polyfill';
 import { css, html, LitElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import './AdminSidebar.js';
@@ -92,11 +93,25 @@ class AppShell extends LitElement {
       currentParticipantName: {
         type: String,
       },
+      participantIndexHtmlExists: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'participant-index-html-exists',
+      },
+      usingParticipantIframes: {
+        type: Boolean,
+        reflect: true,
+        attribute: 'using-participant-iframes',
+      },
     };
   }
 
   constructor() {
     super();
+    window.HMR_SKIP_DEEP_PATCH = true;
+    applyPolyfill();
+    this.participantIndexHtmlExists = true;
+    this.usingParticipantIframes = false;
     setCustomCSSProps();
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
@@ -147,7 +162,13 @@ class AppShell extends LitElement {
                 ${this.participants
                   ? this.participants.map(
                       name =>
-                        html`<cwk-participant-capsule .name="${name}"></cwk-participant-capsule>`,
+                        html`<cwk-participant-capsule
+                          .participantModuleImport=${this.participantModuleImport}
+                          ?participant-index-html-exists=${this.participantIndexHtmlExists}
+                          ?using-participant-iframes=${this.usingParticipantIframes}
+                          .name="${name}"
+                          .websocketPort=${this.websocketPort}
+                        ></cwk-participant-capsule>`,
                     )
                   : html``}
               </div>

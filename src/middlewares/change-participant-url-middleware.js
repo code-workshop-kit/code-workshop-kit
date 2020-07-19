@@ -1,7 +1,7 @@
 import { cwkState } from '../utils/CwkStateSingleton.js';
 import { verifyJWT } from '../utils/verifyJWT.js';
 
-export const changeParticipantUrlMiddleware = appIndexDir => async (ctx, next) => {
+export const changeParticipantUrlMiddleware = dir => async (ctx, next) => {
   const fromIFrame = ctx.header['sec-fetch-dest'] === 'iframe';
 
   await next();
@@ -9,7 +9,7 @@ export const changeParticipantUrlMiddleware = appIndexDir => async (ctx, next) =
   if (ctx.status === 200 && ctx.response.is('html') && !fromIFrame) {
     const { state } = cwkState;
     const authToken = ctx.cookies.get('cwk_auth_token');
-    const authed = verifyJWT(appIndexDir, authToken, ctx);
+    const authed = verifyJWT(dir, authToken, ctx);
 
     if (authed && authed.username === cwkState.state.followModeInitiatedBy) {
       if (state.adminConfig.followMode && state.wss && state.wsConnections) {

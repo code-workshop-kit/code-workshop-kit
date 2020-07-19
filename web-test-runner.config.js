@@ -1,7 +1,13 @@
-const {
-  puppeteerLauncher,
-} = require('web-test-runner/dist/implementations/browser-launchers/puppeteer-launcher.js');
-
 module.exports = {
-  browsers: [puppeteerLauncher()],
+  nodeResolve: true,
+  coverageConfig: {
+    report: true,
+    reportDir: 'test-coverage',
+    threshold: {
+      statements: 80,
+      branches: 70,
+      functions: 85,
+      lines: 85,
+    },
+  },
 };

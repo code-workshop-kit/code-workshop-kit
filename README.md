@@ -3,8 +3,18 @@
 [![npm version](https://badge.fury.io/js/code-workshop-kit.svg)](https://badge.fury.io/js/code-workshop-kit)
 ![Publish NPM](https://github.com/code-workshop-kit/cwk-frontend/workflows/Publish%20NPM/badge.svg)
 
-Using [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) and Web Component magic to create a nice environment for remote frontend workshops.
-Leverage VS Code Live Share, by creating a session with your workshop participants. Scaffold files for them, then use the CWK server to create a shared server for your workshop.
+A **remote workshop environment** for frontend workshops. Get the classroom experience & interaction, in a remote session!
+
+Leveraging Visual Studio Live Share and [es-dev-server](https://www.npmjs.com/package/es-dev-server).
+
+## Features
+
+- 🔨 **Scaffolder**: Generate files for all your participants, from a given template directory.
+- 🖥️ **Dev Server**: A development server that can be shared through VS Live Share, to create a *shared output* for your workshop participants. Change config/settings on the fly without having to restart!
+- 🔒 **Authentication**: Authenticate your participants and workshop admins.
+- 🚧 **Loader**: Load only files that belong to the participant. So you don't get your output bloated by your peers' console logs.
+- 👀 **Follow Mode**: Know follow-mode in VS Live Share? Get the same thing but in the browser! Participants will follow you in the browser when you change URLs.
+- 🔥 **Hot Module Reload**: Never reload the browser again! If your participants edit their files, their content will reload automatically! Supports custom-elements. (Experimental!)
 
 ## Usage
 
@@ -20,22 +30,60 @@ Or with npm
 npm install code-workshop-kit
 ```
 
-Run the cwk executable that is installed in your node_modules .bin folder
+It may make sense to install it globally, so you can run it in any project without needing a package.json!
 
-### Configuration
+### Run it
 
-First of all, you will need a `cwk.config.js` file in your project root directory.
+> You will need a configuration file first, see [Configuration](https://github.com/code-workshop-kit/cwk-frontend#configuration)
+
+Scaffolder:
+
+```sh
+cwk scaffold
+```
+
+Server:
+
+```sh
+cwk run
+```
+
+If you have admins, generate an app key for JWT authentication first:
+
+```sh
+cwk generate-key
+```
+
+> To run a locally installed npm binary (cwk in this case), either use package.json scripts property, or run it directly using `yarn cwk` or `(npm bin)/cwk`.
+
+## Configuration
+
+First of all, you will need a `cwk.config.js` file in your workshop root directory.
 
 This will need to include a default export which contains a JavaScript Object with configuration options.
 
-Most important config keys are:
+### Participants
 
-- `participants`, which is an array of participant names that you want to add in your workshop. If you are the host of the workshop, you can add yourself too, this is easy if you want to demonstrate code during your workshop in your own folder
-- `templateData`, an object which accepts any data which can be used inside your template files to fill in variables. You can also put methods in here, and you can access other templateData variables through `this` directly.
+Most importantly, you should add the `participants` key which accepts an array of participant names. Also, add a title for you workshop if you like :)!
+
+```js
+export default {
+  participants: ['Joren', 'Felix'],
+  title: 'Frontend Workshop', // Title of the workshop displayed on the main page when launching CWK
+}
+```
+
+If you are the host of the workshop, you can add yourself too, this is easy if you want to demonstrate code during your workshop in your own folder.
+
+### Scaffolding data
+
+If you want to generate some starting files for your participants in their own dedicated folder, use `templateData`.
+
+This accepts an object which accepts any data which can be used inside your template files to fill in variables. You can also put methods in here, and you can access other templateData variables through `this` directly.
 
 There is also the special `this.participantName` that can be used, this is the name of the current participant that a file is being scaffolded for.
 
-> Usage of these templateData variables and methods can be found below in the Scaffolding participant files section
+Small note: templateData properties get flattened to the same level as `participants` property, so be careful of duplicate keys.
 
 ```js
 export default {
@@ -63,18 +111,16 @@ export default {
 };
 ```
 
-#### Additional configurations
+> More on how to use this `templateData` further down in the Scaffold section.
 
-Optionally add a title so your workshop app shell has a nice heading.
+### Admins configuration
 
-You can also add `admins`, `adminPassword`, and `appKey`, to add admins and admin authentication inside your workshop environment.
+You can also add `admins`, `adminPassword`, and `appKey`, to add admin users and authentication inside your workshop environment.
 
 This will allow admins to control some of the server's settings live, on the fly! It also allows the usage of in-browser follow mode, which mimicks VS Code Live Share's follow feature.
 
 ```js
 export default {
-  title: 'Frontend Workshop',
-  // Put your participant names here!
   participants: ['Joren', 'Felix'],
   admins: ['Joren'],
   adminPassword: 'pineapples',
@@ -82,21 +128,39 @@ export default {
 };
 ```
 
-### Scaffolding participant files
+You can generate an app key which places it automatically for you.
+
+```sh
+yarn cwk generate-key
+```
+
+### Advanced server config
+
+Below there are some more configuration settings for cwk that you can specify.
+
+```js
+export default {
+  withoutAppShell: true, // Will not insert CWK app shell, disables most CWK features. Default false
+  enableCaching: true, // Will re-enable browser caching, discouraged for workshops, and can break some of the CWK features like the file loader
+  alwaysServeFiles: true, // overrides the file loader to always serve files to everyone
+  usingParticipantIframes: true, // if you don't use module exports for your participants index.js file and use index.html instead, set this to true. Helps prevent duplicate console logs because app shell is trying to import the file as a module and additionally also loads it through iframe.
+  participantIndexHtmlExists: false, // Set this to false if there's no index.html for the participants. Will remove the "View" button in the participant views, because there is nothing to href to.
+};
+```
+
+The boolean settings are all false by default, which is the encouraged setting.
+
+## Scaffolding participant files
 
 ```sh
 yarn cwk scaffold
 ```
 
-Optionally pass `--force` to override already existing files.
+This will accept a `--dir` flag if you want to pass a different directly than the current working directory that you run it from.
 
-Also accepts:
+It expects a `cwk.config.js` file inside this directory, as well as a folder called `template` which is where you will store the file system that you want to scaffold for your participants.
 
-- `--config-dir` to change the folder where `cwk.config.js` is located. This is the current working directory by default.
-- `--input-dir` to change the folder where your template files are located. This is the current working directory --> `template` folder by default.
-- `--output-dir` to change the folder where your scaffold output should be dumped. This is the current working directory --> `participants` folder by default.
-
-Inside the input directory you can put any files or folders, and they will be copied for each of your participants.
+Optionally pass `--force` to override already existing participant files.
 
 You can create hooks for templateData properties by using the syntax: `<%= myVar %>`. The spaces are important here.
 
@@ -127,72 +191,93 @@ Which outputs for participant `Joren`:
 console.log('Hi Joren, welcome to Cool Frontend App!');
 ```
 
-### Running the server
+## Recommended scaffold
 
-```sh
-yarn cwk run
+The CWK app shell will render an overview of all the views of your participants.
+
+It is recommended to scaffold:
+
+- An `index.js` file in the root of the participant folder; the main entrypoint.
+- An `index.html` file in the root of the participant folder, to render and view the main entrypoint on its own.
+
+`index.js`
+
+```js
+export default `<p>Hello World!</p>`;
 ```
 
-#### Sharing the server in VS Code
+This means that the app shell will load this file as a module, and render the HTML string. This allows for the HMR (Hot Module Reload) feature to work, and means that whenever the file is changed, or other `.js` files that are imported, that the app shell will reload the module and re-render automatically.
 
-- Share the cwk server instance (by default port 8000)
-- Share the websockets port (by default port 8001)
+The following exports are supported:
 
-#### Flags
+- String, just a JavaScript string that has (unsanitized) html in it
+- DOM Node/Element, will simply be appended and rendered that way
+- TemplateResult from `lit-html`
 
-CWK accepts any flag that [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) accepts, and additionally:
+Ultimately, it is `lit-html` that does the rendering work in the CWK app shell, but it's rather easy to create wrappers for other engines. Feel free to create an issue for other framework/library templates, and I'm happy to collaborate to add support!
 
-- `--title`, the title of your workshop instance, which will be displayed on your index page in the app shell.
-- `--ws-port`, the port you want to run the websockets server on which is used for communication between your frontend and the cwk server.
-- `--without-app-shell`, if passed, will prevent injection of the cwk-shell component into your app index.html file.
-- `--always-serve-files`, if passed, will disable the default file control middlewares for `.js` and `.html` files inside participant folders.
-  This middleware ensures a participant is only served with their own files inside their own folder, in case you want the hide the output of the other participants.
-- `--enable-caching`, if passed, will re-enable the caching of EDS.
-  It is by default disabled because it interferes with the file control middlewares which try to conditionally return empty content rather than cached content.
-  Additionally, caching is not a great experience during development and debugging, when you are trying to debug an updated response.
+If you want your users to also be able to click on "View" for their own page, you need an `index.html` entrypoint as well.
 
-Make sure you have some HTML index file. By default the server will look for `./index.html`, but you can override this by passing the `--app-index` flag.
+`index.html`
 
-> Note: do not change the root directory (es-dev-server --root-dir flag) to a nested folder inside your project if you plan on using the CWK app shell.
-> CWK server needs access to your node_modules to fetch the app shell components.
-> If you want to insert it into a custom entry file, use --app-index flag.
-> The components for this app shell are located inside your node_modules, which the dev server can only access if node_modules is nested somewhere inside the root directory that it serves from.
-
-#### App Shell
-
-The app shell will render an admin UI to toggle settings on the dev server.
-
-It will also render an overview of all the views of your participants through iframes.
-In order for this to work properly, make sure to scaffold an `index.html` file for your participants, as the entry point for these iframes.
-
-## Using locally
-
-Clone the repo.
-
-Install dependencies (use yarn or npm install)
-
-```sh
-yarn
+```html
+<head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { setCapsule } from 'code-workshop-kit/dist/components/setCapsule.js';
+    setCapsule('Joren');
+  </script>
+</body>
 ```
 
-Run the server (use yarn or npm run):
+This `setCapsule` helper imports the `index.js` for `Joren` and sets it in a capsule which enables the HMR feature, in a custom-elements friendly way as well.
 
-```sh
-yarn start
+If you don't scaffold an `index.html`, you may want to disable `participantIndexHtmlExists` option in `cwk.config.js`, so there's no "View" button that tries to link people to it.
+
+### What if I don't use a JavaScript single entry-point file
+
+It is also possible to use plain old HTML for your participant workshop and not bother them too much with JavaScript, but in modern frontend most HTML is written inside a JavaScript template language, so a `.js` entrypoint file is the default in CWK.
+
+If you use plain old vanilla HTML/CSS/JS everywhere, that is fine, but then Hot Module Reload won't work, and you will require your participants to manually reload their page to see their file changes reflected. This is fine of course for beginner workshops :)!
+CWK will render the `index.html` through an iframe and not try to load and render `index.js` as a module. You should enable `usingParticipantIframes` option in `cwk.config.js`.
+
+> In the future, there will be a video showcasing both a super vanilla HTML CSS JS setup where we just use anchors with `href`, as well as a vanilla webcomponent/templating setup which assumes a single JS entrypoint. For now, please refer to the [demo folder](https://github.com/code-workshop-kit/cwk-frontend/tree/master/demo) which shows both.
+
+## I want to use the font of the app shell in my files
+
+In the app shell (main page) it is available and already loaded under the name `Dank mono`.
+
+To see it also in your `index.html` page itself, you may need to load the font first.
+
+Luckily, you can simply reuse the helper that CWK uses for that:
+
+```js
+import 'code-workshop-kit/dist/components/loadAndSetDankMonoFont.js';
 ```
 
-Scaffold files:
+or
 
-```sh
-yarn start:scaffold
+```html
+<script type="module">
+  import 'code-workshop-kit/dist/components/loadAndSetDankMonoFont.js';
+</script>
 ```
 
-Which will use the demo folder in this repo.
+## VS Live Share
 
-## File permissions
+This project leverages [VS Code Live Share](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare) plugin. It allows you collaborate in the VS Code editor, for workshops this is quite handy because you can see what your participants are doing, and do code demonstrations live. It also allows for shared server, meaning you get to share your output with everyone else. By default the CWK server runs on port 8000.
+
+### File permissions
 
 See [VS Code Live Share Security docs](https://docs.microsoft.com/en-us/visualstudio/liveshare/reference/security).
 
 Inside your repo, you should include a .vsls.json file, you can use this to add control over excluding or including files for your participants.
 
-> Important: if you exclude files e.g. your index.html, and you scaffold an index.html for your participants, you will need to add a .vsls.json file inside your participant folder that unexcludes index.html
+> Important: if you exclude files e.g. your index.html, and you scaffold an index.html for your participants, you will need to add a .vsls.json file inside your participant folder that unexcludes index.html. See the [demo folder](https://github.com/code-workshop-kit/cwk-frontend/tree/master/demo) for example.

@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 import path from 'path';
@@ -8,12 +9,10 @@ import { aTimeout } from '../utils/helpers.js';
 import { userAgents } from '../utils/user-agents.js';
 
 const hostPort = 5000;
-const wsPort = 5001;
 const host = `http://localhost:${hostPort}/`;
 const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
-  wsPort,
   logStartup: false,
   open: false,
 };
@@ -22,6 +21,7 @@ describe('CWK Server e2e', () => {
   context('', () => {
     let server;
     let wss;
+    let moduleWatcher;
     let browser;
 
     beforeEach(async () => {});
@@ -35,18 +35,21 @@ describe('CWK Server e2e', () => {
       if (wss) {
         wss.close();
       }
+      if (moduleWatcher) {
+        moduleWatcher.close();
+      }
       if (server) {
         await new Promise(resolve => {
-          server.close(() => resolve());
+          server.close(resolve);
         });
       }
     });
 
     // smoke test
     it('returns static files', async () => {
-      ({ server, wss } = await startServer({
+      ({ server, wss, moduleWatcher } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
       }));
 
@@ -60,9 +63,9 @@ describe('CWK Server e2e', () => {
     }).timeout(testTimeout);
 
     it('returns Content Hidden body for files that are in other participant folders', async () => {
-      ({ server, wss } = await startServer({
+      ({ server, wss, moduleWatcher } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
@@ -83,9 +86,9 @@ describe('CWK Server e2e', () => {
     }).timeout(testTimeout);
 
     it('inserts the app shell component by default', async () => {
-      ({ server, wss } = await startServer({
+      ({ server, wss, moduleWatcher } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
@@ -107,9 +110,9 @@ describe('CWK Server e2e', () => {
     }).timeout(testTimeout);
 
     it('applies follow-mode websocket hooks by default', async () => {
-      ({ server, wss } = await startServer({
+      ({ server, wss, moduleWatcher } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
@@ -126,13 +129,13 @@ describe('CWK Server e2e', () => {
         };
       });
 
-      expect(url).to.equal('ws://localhost:5001/');
+      expect(url).to.equal('ws://localhost:5000/');
     }).timeout(testTimeout);
 
     it('can select admin user using password', async () => {
-      ({ server, wss } = await startServer({
+      ({ server, wss, moduleWatcher } = await startServer({
         ...baseCfg,
-        appIndex: './test/utils/fixtures/admins/index.html',
+        dir: './test/utils/fixtures/admins',
       }));
 
       browser = await puppeteer.launch();
@@ -171,11 +174,75 @@ describe('CWK Server e2e', () => {
       expect(adminSidebarTagName).to.equal('CWK-ADMIN-SIDEBAR');
     }).timeout(testTimeout);
 
+    it('makes use of HMR when a participant file changes, which supports nested modules and custom elements', async () => {
+      ({ server, wss, moduleWatcher } = await startServer({
+        ...baseCfg,
+        dir: './test/utils/fixtures/simple',
+      }));
+
+      browser = await puppeteer.launch();
+      const page = await browser.newPage();
+
+      await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+      await page.evaluate(async () => {
+        const cookieElem = document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-select-cookie');
+
+        await cookieElem.fetchDialogComplete;
+        cookieElem.shadowRoot.querySelector('.name__item').click();
+      });
+
+      await aTimeout(3000);
+
+      let headingText = await page.evaluate(async () => {
+        const jorenCapsule = document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-participant-capsule');
+
+        return jorenCapsule.shadowRoot.querySelector('joren-component').innerText;
+      });
+
+      expect(headingText).to.equal('Hello, World!');
+
+      const jorenIndexFile = path.resolve(
+        process.cwd(),
+        path.join('test', 'utils', 'fixtures', 'simple', 'participants', 'Joren', 'module.js'),
+      );
+
+      if (fs.existsSync(jorenIndexFile)) {
+        const content = fs
+          .readFileSync(jorenIndexFile, 'utf8')
+          .replace('Hello, World!', 'Hi, Planet!');
+        fs.writeFileSync(jorenIndexFile, content, 'utf8');
+      }
+
+      // small timeout to make the module reload :)
+      await aTimeout(200);
+
+      headingText = await page.evaluate(async () => {
+        const jorenCapsule = document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-participant-capsule');
+
+        return jorenCapsule.shadowRoot.querySelector('joren-component').innerText;
+      });
+
+      expect(headingText).to.equal('Hi, Planet!');
+
+      if (fs.existsSync(jorenIndexFile)) {
+        const content = fs
+          .readFileSync(jorenIndexFile, 'utf8')
+          .replace('Hi, Planet!', 'Hello, World!');
+        fs.writeFileSync(jorenIndexFile, content, 'utf8');
+      }
+    }).timeout(testTimeout);
+
     describe('Admin UI Sidebar', () => {
       it('inserts admin ui sidebar component for admins', async () => {
-        ({ server, wss } = await startServer({
+        ({ server, wss, moduleWatcher } = await startServer({
           ...baseCfg,
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
         }));
 
         browser = await puppeteer.launch();
@@ -218,11 +285,11 @@ describe('CWK Server e2e', () => {
 
       it('can enable caching which enables the server to send cached responses', async () => {
         let lastWsMsg = '';
-        ({ server, wss } = await startServer({
+        ({ server, wss, moduleWatcher } = await startServer({
           ...baseCfg,
           compatibility:
             'none' /* TODO: Troubleshoot why this test only if compatibility is 'none'... */,
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
           plugins: [
             {
               transform(context) {
@@ -323,12 +390,13 @@ describe('CWK Server e2e', () => {
         expect(timestamps[2]).to.equal(timestamps[4]);
       }).timeout(testTimeout); // this test gets a little too close to 2000ms... so let's make the limit a bit higher;
 
-      it('can disable admin mode ensures only current participant files are loaded', async () => {
+      it('can disable admin mode to ensure only current participant files are loaded', async () => {
         let lastWsMsg = '';
-        ({ server, wss } = await startServer({
+        ({ server, wss, moduleWatcher } = await startServer({
           ...baseCfg,
           compatibility: 'none',
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
+          usingParticipantIframes: true,
         }));
 
         wss.on('connection', ws => {
@@ -393,10 +461,11 @@ describe('CWK Server e2e', () => {
 
       it('can enable always serve files which ensures all participant files are loaded', async () => {
         let lastWsMsg = '';
-        ({ server, wss } = await startServer({
+        ({ server, wss, moduleWatcher } = await startServer({
           ...baseCfg,
           compatibility: 'none',
-          appIndex: './test/utils/fixtures/admins/index.html',
+          dir: './test/utils/fixtures/admins',
+          usingParticipantIframes: true,
         }));
 
         wss.on('connection', ws => {

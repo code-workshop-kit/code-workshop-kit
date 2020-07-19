@@ -10,10 +10,14 @@ describe('start cwk server', () => {
     let wss;
     let cwkConfig;
     let edsConfig;
+    let moduleWatcher;
 
     afterEach(async () => {
       if (wss) {
         wss.close();
+      }
+      if (moduleWatcher) {
+        moduleWatcher.close();
       }
       if (server) {
         await new Promise(resolve => {
@@ -22,31 +26,65 @@ describe('start cwk server', () => {
       }
     });
 
+    it('has default settings', async () => {
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+        dir: './test/utils/fixtures/simple',
+      }));
+
+      expect(cwkConfig.withoutAppShell).to.be.false;
+      expect(cwkConfig.enableCaching).to.be.false;
+      expect(cwkConfig.alwaysServeFiles).to.be.false;
+      expect(cwkConfig.usingParticipantIframes).to.be.false;
+      expect(cwkConfig.participantIndexHtmlExists).to.be.true;
+      expect(cwkConfig.title).to.equal('');
+      expect(edsConfig.logStartup).to.be.true;
+      expect(edsConfig.watch).to.be.false;
+      expect(edsConfig.moduleDirs).to.be.undefined;
+      expect(edsConfig.plugins.length).to.equal(10);
+      expect(edsConfig.nodeResolve).to.eql({
+        customResolveOptions: { moduleDirectory: ['node_modules'], preserveSymlinks: false },
+      });
+      expect(edsConfig.customMiddlewares.length).to.equal(3);
+    });
+
     it('supports overriding CWK server default settings', async () => {
-      ({ cwkConfig, edsConfig, server, wss } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
         port: 5000,
-        wsPort: 5002,
         title: 'Frontend Workshop',
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
+        withoutAppShell: true,
+        enableCaching: true,
+        alwaysServeFiles: true,
+        usingParticipantIframes: true,
+        participantIndexHtmlExists: false,
         logStartup: false,
+        watch: true,
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         open: false,
       }));
 
-      expect(cwkConfig.wsPort).to.equal(5002);
-      expect(edsConfig.appIndex).to.equal('/./test/utils/fixtures/simple/index.html');
       expect(cwkConfig.title).to.equal('Frontend Workshop');
+      expect(cwkConfig.withoutAppShell).to.be.true;
+      expect(cwkConfig.enableCaching).to.be.true;
+      expect(cwkConfig.alwaysServeFiles).to.be.true;
+      expect(cwkConfig.usingParticipantIframes).to.be.true;
+      expect(cwkConfig.participantIndexHtmlExists).to.be.false;
+      expect(edsConfig.logStartup).to.be.false;
+      expect(edsConfig.watch).to.be.true;
+      // app-shell/file-control turned off
+      expect(edsConfig.plugins.length).to.equal(8);
+      // caching middleware turned off
+      expect(edsConfig.customMiddlewares.length).to.equal(2);
     });
 
     it('supports preventing certain plugins and middlewares from being added', async () => {
-      ({ cwkConfig, edsConfig, server, wss } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
         port: 5000,
-        wsPort: 5001,
         withoutAppShell: true,
         enableCaching: true,
         alwaysServeFiles: true,
         logStartup: false,
-        appIndex: './test/utils/fixtures/simple/index.html',
+        dir: './test/utils/fixtures/simple',
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         open: false,
       }));
@@ -60,7 +98,10 @@ describe('start cwk server', () => {
 
       const fileControlPluginFound = edsConfig.plugins.find(plugin => {
         if (plugin.transform) {
-          return plugin.transform.toString() === fileControlPlugin([]).transform.toString();
+          return (
+            plugin.transform.toString() ===
+            fileControlPlugin('./test/utils/fixtures/simple', []).transform.toString()
+          );
         }
         return false;
       });
