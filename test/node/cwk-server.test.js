@@ -193,7 +193,7 @@ describe('CWK Server e2e', () => {
         cookieElem.shadowRoot.querySelector('.name__item').click();
       });
 
-      await aTimeout(3000);
+      await aTimeout(6000);
 
       let headingText = await page.evaluate(async () => {
         const jorenCapsule = document
@@ -428,7 +428,7 @@ describe('CWK Server e2e', () => {
         }, token);
 
         await page.reload();
-        await aTimeout(100);
+        await aTimeout(200);
 
         await page.evaluate(() => {
           document
@@ -439,7 +439,7 @@ describe('CWK Server e2e', () => {
         });
 
         // Websocket config init + rerender takes some time
-        await aTimeout(50);
+        await aTimeout(100);
 
         await page.evaluate(() => {
           document
@@ -450,7 +450,7 @@ describe('CWK Server e2e', () => {
         });
 
         // Websocket message takes some time
-        await aTimeout(50);
+        await aTimeout(100);
 
         expect(lastWsMsg.type).to.equal('config-updated');
 
@@ -496,7 +496,7 @@ describe('CWK Server e2e', () => {
           document.cookie = `cwk_auth_token=${tok};path=/`;
         }, token);
         await page.reload();
-        await aTimeout(300);
+        await aTimeout(600);
         expect(felixCalled).to.equal(1);
         await page.evaluate(() => {
           document.cookie = 'participant_name=;path=/;max-age=0';
@@ -504,7 +504,7 @@ describe('CWK Server e2e', () => {
           document.cookie = 'participant_name=Alex;path=/';
         });
         await page.reload();
-        await aTimeout(300);
+        await aTimeout(600);
         expect(felixCalled).to.equal(1);
         await page.evaluate(tok => {
           document.cookie = 'participant_name=;path=/;max-age=0';
@@ -512,7 +512,7 @@ describe('CWK Server e2e', () => {
           document.cookie = `cwk_auth_token=${tok};path=/`;
         }, token);
         await page.reload();
-        await aTimeout(300);
+        await aTimeout(600);
         expect(felixCalled).to.equal(2);
         await page.evaluate(() => {
           document
