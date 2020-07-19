@@ -105,7 +105,7 @@ class ParticipantCapsule extends LitElement {
       try {
         const participantModule = await import(
           this.participantModuleImport ||
-            `/%dir%/participants/${this.name}/index.js${timestamp ? `?mtime=${timestamp}` : ''}`
+            `%dir%/participants/${this.name}/index.js${timestamp ? `?mtime=${timestamp}` : ''}`
         );
         this.participantTemplate = participantModule.default;
       } catch (e) {
@@ -170,7 +170,7 @@ class ParticipantCapsule extends LitElement {
         : html`<div class="header">
             <h2 class="header__name">${this.name}</h2>
             ${this.participantIndexHtmlExists
-              ? html`<a href="/%dir%/participants/${this.name}/index.html">
+              ? html`<a href="%dir%/participants/${this.name}/index.html">
                   <button class="button__fullscreen">
                     View
                   </button>
@@ -186,7 +186,7 @@ class ParticipantCapsule extends LitElement {
                   class="participant-content-container"
                   id="${this.name}"
                   allow="fullscreen"
-                  src="/%dir%/participants/${this.name}/index.html"
+                  src="%dir%/participants/${this.name}/index.html"
                 ></iframe>
               `}`}
     `;
