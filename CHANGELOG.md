@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.8.1...0.8.2) (2020-08-02)
+
+
+### Bug Fixes
+
+* generate-key to handle cwk config in root dir properly ([2bccefe](https://github.com/code-workshop-kit/cwk-frontend/commit/2bccefe3259065d8581f7ca914d1398c50be7797))
+
 ### [0.8.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.8.0...0.8.1) (2020-07-19)
 
 
