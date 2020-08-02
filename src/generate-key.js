@@ -32,6 +32,11 @@ export const generateKey = (opts = {}) => {
       ...cliConfig,
     };
 
-    generateAppKey(path.resolve(process.cwd(), generateConfig.dir), generateConfig.length);
+    if (generateConfig.dir.startsWith('/')) {
+      // eslint-disable-next-line no-param-reassign
+      generateConfig.dir = `.${generateConfig.dir}`;
+    }
+    const absoluteDir = path.resolve(process.cwd(), generateConfig.dir);
+    generateAppKey(path.resolve(process.cwd(), absoluteDir), generateConfig.length);
   }
 };
