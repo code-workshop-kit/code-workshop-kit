@@ -2,7 +2,7 @@ export default {
   participants: ['Joren', 'Felix', 'Alex'],
   admins: ['Joren'],
   adminPassword: 'pineapples',
-  appKey: "99829a5965082bf93980e8fd29f2e82d5a908fb201a1f16b7ec3cafa",
+  appKey: "e123493f6645f6d0319d32736b6d892d13e5dd4e1b1c0d1b915ca49b",
   title: 'Frontend Workshop',
   usingParticipantIframes: true,
   templateData: {
