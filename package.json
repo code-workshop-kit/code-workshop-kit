@@ -69,6 +69,7 @@
     "@open-wc/eslint-config": "^2.0.0",
     "@open-wc/testing": "^2.5.16",
     "@open-wc/testing-helpers": "^1.8.2",
+    "@web/test-runner-puppeteer": "^0.6.1",
     "chai": "^4.2.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.11.0",

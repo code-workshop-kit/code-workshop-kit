@@ -36,12 +36,10 @@ export function componentReplacersPlugin(opts) {
             );
           }
 
-          if (opts.usingParticipantIframes) {
-            rewrittenBody = rewrittenBody.replace(
-              new RegExp('this.usingParticipantIframes = false;', 'g'),
-              'this.usingParticipantIframes = true;',
-            );
-          }
+          rewrittenBody = rewrittenBody.replace(
+            new RegExp("this.mode = 'iframe';", 'g'),
+            `this.mode = '${opts.mode}';`,
+          );
         }
       }
       return { body: rewrittenBody };

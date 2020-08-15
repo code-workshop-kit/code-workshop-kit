@@ -9,6 +9,7 @@ describe('Participant Capsule Component', () => {
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
         .websocketPort=${8000}
         .name=${'Joren'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
 
@@ -21,6 +22,7 @@ describe('Participant Capsule Component', () => {
         .name=${'Joren'}
         .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
 
@@ -32,12 +34,11 @@ describe('Participant Capsule Component', () => {
     );
   });
 
-  it('falls back to rendering iframes if module import fails or if usingParticipantIframes is set to true', async () => {
+  it('renders iframes if module import fails or if mode is set to iframe', async () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         .name=${'Joren'}
         .websocketPort=${8000}
-        using-participant-iframes
       ></cwk-participant-capsule>`,
     );
 
@@ -52,6 +53,7 @@ describe('Participant Capsule Component', () => {
         .name=${'Joren'}
         .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/DOMNode.js'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
 
@@ -67,6 +69,7 @@ describe('Participant Capsule Component', () => {
         .name=${'Joren'}
         .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/lit.js'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
 
@@ -83,6 +86,7 @@ describe('Participant Capsule Component', () => {
         .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
         .name=${'Joren'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
 
@@ -93,15 +97,22 @@ describe('Participant Capsule Component', () => {
     expect(el.shadowRoot.querySelector('.button__fullscreen')).to.be.null;
   });
 
-  it('has an undefined participant template if the participant module does not exist', async () => {
+  it('has an error message participant template if the participant module does not exist', async () => {
     const el = await fixture(
       html`<cwk-participant-capsule
         participant-index-html-exists
         .websocketPort=${8000}
         .name=${'Joren'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
-    expect(el.participantTemplate).to.be.undefined;
+    expect(el.participantTemplate).to.equal(
+      `
+          <h3 style="font-family: Dank Mono, sans-serif; font-weight: lighter">
+            🚧 No default export with template or DOM node found in your index.js 🚧
+          </h3>
+        `,
+    );
   });
 
   it('renders without a container div if no-container is set to true', async () => {
@@ -112,6 +123,7 @@ describe('Participant Capsule Component', () => {
         .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
         .name=${'Joren'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
     expect(el.shadowRoot.querySelector('.container')).to.be.null;
@@ -125,6 +137,7 @@ describe('Participant Capsule Component', () => {
         .websocketPort=${8000}
         .participantModuleImport=${'../../test/utils/template-modules/string.js'}
         .name=${'Joren'}
+        mode="module"
       ></cwk-participant-capsule>`,
     );
     expect(el.shadowRoot.querySelector('.header')).to.be.null;

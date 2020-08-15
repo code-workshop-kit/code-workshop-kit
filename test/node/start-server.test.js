@@ -34,7 +34,7 @@ describe('start cwk server', () => {
       expect(cwkConfig.withoutAppShell).to.be.false;
       expect(cwkConfig.enableCaching).to.be.false;
       expect(cwkConfig.alwaysServeFiles).to.be.false;
-      expect(cwkConfig.usingParticipantIframes).to.be.false;
+      expect(cwkConfig.mode).to.equal('iframe');
       expect(cwkConfig.participantIndexHtmlExists).to.be.true;
       expect(cwkConfig.title).to.equal('');
       expect(edsConfig.logStartup).to.be.true;
@@ -55,10 +55,9 @@ describe('start cwk server', () => {
         withoutAppShell: true,
         enableCaching: true,
         alwaysServeFiles: true,
-        usingParticipantIframes: true,
+        mode: 'module',
         participantIndexHtmlExists: false,
         logStartup: false,
-        watch: true,
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         open: false,
       }));
@@ -67,14 +66,29 @@ describe('start cwk server', () => {
       expect(cwkConfig.withoutAppShell).to.be.true;
       expect(cwkConfig.enableCaching).to.be.true;
       expect(cwkConfig.alwaysServeFiles).to.be.true;
-      expect(cwkConfig.usingParticipantIframes).to.be.true;
+      expect(cwkConfig.mode).to.equal('module');
       expect(cwkConfig.participantIndexHtmlExists).to.be.false;
       expect(edsConfig.logStartup).to.be.false;
-      expect(edsConfig.watch).to.be.true;
       // app-shell/file-control turned off
-      expect(edsConfig.plugins.length).to.equal(8);
+      expect(edsConfig.plugins.length).to.equal(7);
       // caching middleware turned off
       expect(edsConfig.customMiddlewares.length).to.equal(2);
+    });
+
+    it('locks watch mode, compatibility and event stream to false|none, and is not overridable', async () => {
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+        dir: './test/utils/fixtures/simple',
+        rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
+        watch: true,
+        compatibility: 'always',
+        eventStream: true,
+        open: false,
+        logStartup: false,
+      }));
+
+      expect(edsConfig.watch).to.be.false;
+      expect(edsConfig.eventStream).to.be.false;
+      expect(edsConfig.compatibility).to.be.undefined;
     });
 
     it('supports preventing certain plugins and middlewares from being added', async () => {

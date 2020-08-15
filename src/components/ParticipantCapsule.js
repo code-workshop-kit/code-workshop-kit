@@ -14,10 +14,9 @@ class ParticipantCapsule extends LitElement {
         reflect: true,
         attribute: 'participant-index-html-exists',
       },
-      usingParticipantIframes: {
-        type: Boolean,
+      mode: {
+        type: String,
         reflect: true,
-        attribute: 'using-participant-iframes',
       },
       participantTemplate: {
         attribute: false,
@@ -101,7 +100,7 @@ class ParticipantCapsule extends LitElement {
       this.__loadingResolve = resolve;
     });
 
-    if (!this.usingParticipantIframes) {
+    if (this.mode === 'module') {
       try {
         const participantModule = await import(
           this.participantModuleImport ||
@@ -109,7 +108,15 @@ class ParticipantCapsule extends LitElement {
         );
         this.participantTemplate = participantModule.default;
       } catch (e) {
-        throw new Error(e);
+        console.error(e);
+      }
+
+      if (this.participantTemplate === undefined) {
+        this.participantTemplate = `
+          <h3 style="font-family: Dank Mono, sans-serif; font-weight: lighter">
+            🚧 No default export with template or DOM node found in your index.js 🚧
+          </h3>
+        `;
       }
     }
     this.loading = false;

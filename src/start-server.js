@@ -130,7 +130,7 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
   newEdsConfig.plugins.push(
     componentReplacersPlugin({
       dir: absoluteDir,
-      usingParticipantIframes: cwkConfig.usingParticipantIframes,
+      mode: cwkConfig.mode,
       participantIndexHtmlExists: cwkConfig.participantIndexHtmlExists,
     }),
   );
@@ -158,7 +158,7 @@ const getCwkConfig = opts => {
     withoutAppShell: false,
     enableCaching: false,
     alwaysServeFiles: false,
-    usingParticipantIframes: false,
+    mode: 'iframe',
     participantIndexHtmlExists: true,
     dir: '/',
     title: '',
@@ -204,11 +204,9 @@ const getEdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
   let edsConfig = {
     open: false,
     logStartup: true,
-    watch: false,
     moduleDirs: ['node_modules'],
     nodeResolve: true,
     logErrorsToBrowser: true,
-    compatibility: 'none',
     plugins: [],
     middlewares: [],
     ...opts,
@@ -223,6 +221,14 @@ const getEdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
 
   edsConfig.port = edsConfig.port || defaultPort;
   edsConfig = addPluginsAndMiddlewares(edsConfig, cwkConfig, absoluteDir);
+
+  edsConfig = {
+    ...edsConfig,
+    eventStream: false, // don't insert event stream as it crashes pages with lots of iframes
+    watch: false, // watch will not work with HMR
+    compatibility: 'none', // won't work without eventStream
+  };
+
   edsConfig = createConfig(edsConfig);
   return edsConfig;
 };

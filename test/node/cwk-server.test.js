@@ -178,6 +178,7 @@ describe('CWK Server e2e', () => {
       ({ server, wss, moduleWatcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/simple',
+        mode: 'module',
       }));
 
       browser = await puppeteer.launch();
@@ -396,7 +397,6 @@ describe('CWK Server e2e', () => {
           ...baseCfg,
           compatibility: 'none',
           dir: './test/utils/fixtures/admins',
-          usingParticipantIframes: true,
         }));
 
         wss.on('connection', ws => {
@@ -465,7 +465,6 @@ describe('CWK Server e2e', () => {
           ...baseCfg,
           compatibility: 'none',
           dir: './test/utils/fixtures/admins',
-          usingParticipantIframes: true,
         }));
 
         wss.on('connection', ws => {
