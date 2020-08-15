@@ -1,7 +1,7 @@
 import { applyPolyfill } from 'custom-elements-hmr-polyfill';
 import './ParticipantCapsule.js';
 
-export const setCapsule = name => {
+export const setCapsule = (name, module = true) => {
   window.HMR_SKIP_DEEP_PATCH = true;
   applyPolyfill();
 
@@ -9,5 +9,6 @@ export const setCapsule = name => {
   capsule.name = name;
   capsule.noHeader = true;
   capsule.noContainer = true;
+  capsule.mode = module ? 'module' : 'iframe';
   document.body.appendChild(capsule);
 };

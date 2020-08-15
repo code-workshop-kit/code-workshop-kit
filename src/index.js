@@ -1,3 +1,4 @@
+export { setCapsule } from './components/setCapsule.js';
 export { generateKey } from './generate-key.js';
 export * from './middlewares/middlewares.js';
 export * from './plugins/plugins.js';

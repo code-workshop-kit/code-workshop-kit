@@ -98,10 +98,9 @@ class AppShell extends LitElement {
         reflect: true,
         attribute: 'participant-index-html-exists',
       },
-      usingParticipantIframes: {
-        type: Boolean,
+      mode: {
+        type: String,
         reflect: true,
-        attribute: 'using-participant-iframes',
       },
     };
   }
@@ -111,7 +110,7 @@ class AppShell extends LitElement {
     window.HMR_SKIP_DEEP_PATCH = true;
     applyPolyfill();
     this.participantIndexHtmlExists = true;
-    this.usingParticipantIframes = false;
+    this.mode = 'iframe';
     setCustomCSSProps();
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
@@ -165,7 +164,7 @@ class AppShell extends LitElement {
                         html`<cwk-participant-capsule
                           .participantModuleImport=${this.participantModuleImport}
                           ?participant-index-html-exists=${this.participantIndexHtmlExists}
-                          ?using-participant-iframes=${this.usingParticipantIframes}
+                          .mode=${this.mode}
                           .name="${name}"
                           .websocketPort=${this.websocketPort}
                         ></cwk-participant-capsule>`,

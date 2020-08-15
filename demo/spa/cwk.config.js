@@ -6,6 +6,7 @@ export default {
   adminPassword: 'pineapples',
   appKey: 'c9b5cfe85ec154e2f21dc03074ac78a4d0689e2f6f083c421426871f',
   title: 'Frontend Workshop',
+  mode: 'module',
   // Put your data here to be used inside your scaffolding template files
   templateData: {
     appTitle: 'Cool Frontend App',
