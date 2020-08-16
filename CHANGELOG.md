@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.9.0...0.9.1) (2020-08-16)
+
+
+### Bug Fixes
+
+* allow event stream for module mode for error reporting ([d762d4d](https://github.com/code-workshop-kit/cwk-frontend/commit/d762d4d15fa87b8cf8df9dfc5a9d68067a1cf910))
+
 ## [0.9.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.8.2...0.9.0) (2020-08-15)
 
 
