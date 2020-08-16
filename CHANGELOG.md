@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.9.1...0.9.2) (2020-08-16)
+
+
+### Bug Fixes
+
+* reset capsule height to 100% if no container is set to true ([94e70c6](https://github.com/code-workshop-kit/cwk-frontend/commit/94e70c6e2db832fae2a75cc67292caaf6e933e0e))
+
 ### [0.9.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.9.0...0.9.1) (2020-08-16)
 
 
