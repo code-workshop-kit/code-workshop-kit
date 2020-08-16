@@ -40,6 +40,7 @@ class ParticipantCapsule extends LitElement {
   static get styles() {
     return css`
       :host {
+        --container-height: 400px;
         display: block;
       }
 
@@ -65,7 +66,7 @@ class ParticipantCapsule extends LitElement {
         font-family: initial;
         min-width: 300px;
         width: 100%;
-        height: 400px;
+        height: var(--container-height);
         overflow: auto;
         border: none;
       }
@@ -168,6 +169,18 @@ class ParticipantCapsule extends LitElement {
         this.setupWs();
       }
     });
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('noContainer')) {
+      if (this.noContainer) {
+        this.style.setProperty('--container-height', '100%');
+      } else {
+        this.style.setProperty('--container-height', '400px');
+      }
+    }
   }
 
   get __capsuleTemplate() {
