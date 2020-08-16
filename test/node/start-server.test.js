@@ -75,7 +75,7 @@ describe('start cwk server', () => {
       expect(edsConfig.customMiddlewares.length).to.equal(2);
     });
 
-    it('locks watch mode, compatibility and event stream to false|none, and is not overridable', async () => {
+    it('locks watch mode, compatibility, and event stream if mode is iframe, and is not overridable', async () => {
       ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
         dir: './test/utils/fixtures/simple',
         rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
@@ -88,6 +88,22 @@ describe('start cwk server', () => {
 
       expect(edsConfig.watch).to.be.false;
       expect(edsConfig.eventStream).to.be.false;
+      expect(edsConfig.compatibility).to.be.undefined;
+    });
+
+    it('allows eventStream for module mode', async () => {
+      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+        dir: './test/utils/fixtures/simple',
+        rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
+        watch: true,
+        mode: 'module',
+        compatibility: 'always',
+        open: false,
+        logStartup: false,
+      }));
+
+      expect(edsConfig.watch).to.be.false;
+      expect(edsConfig.eventStream).to.be.true;
       expect(edsConfig.compatibility).to.be.undefined;
     });
 

@@ -16,40 +16,46 @@ export function queryTimestampModulesPlugin(dir) {
         const timestamp = cwkState.state.queryTimestamps[context.cookies.get('participant_name')];
 
         if (timestamp) {
-          rewrittenBody = transformSync(rewrittenBody, {
-            plugins: [
-              [
-                ({ types: t }) => ({
-                  visitor: {
-                    ImportDeclaration(astPath, state) {
-                      if (
-                        astPath.node.source.value.startsWith('.') ||
-                        astPath.node.source.value.startsWith('/')
-                      ) {
-                        const participantFolderRelativeToServer = `${dir}/participants`.split(
-                          process.cwd(),
-                        )[1];
+          try {
+            rewrittenBody = transformSync(rewrittenBody, {
+              plugins: [
+                [
+                  ({ types: t }) => ({
+                    visitor: {
+                      ImportDeclaration(astPath, state) {
+                        if (
+                          astPath.node.source.value.startsWith('.') ||
+                          astPath.node.source.value.startsWith('/')
+                        ) {
+                          const participantFolderRelativeToServer = `${dir}/participants`.split(
+                            process.cwd(),
+                          )[1];
 
-                        const importAbsoluteToServer = path.resolve(
-                          state.opts.url,
-                          '../',
-                          astPath.node.source.value,
-                        );
-
-                        if (importAbsoluteToServer.startsWith(participantFolderRelativeToServer)) {
-                          // eslint-disable-next-line no-param-reassign
-                          astPath.node.source = t.stringLiteral(
-                            `${astPath.node.source.value}?mtime=${timestamp}`,
+                          const importAbsoluteToServer = path.resolve(
+                            state.opts.url,
+                            '../',
+                            astPath.node.source.value,
                           );
+
+                          if (
+                            importAbsoluteToServer.startsWith(participantFolderRelativeToServer)
+                          ) {
+                            // eslint-disable-next-line no-param-reassign
+                            astPath.node.source = t.stringLiteral(
+                              `${astPath.node.source.value}?mtime=${timestamp}`,
+                            );
+                          }
                         }
-                      }
+                      },
                     },
-                  },
-                }),
-                { url: context.url },
+                  }),
+                  { url: context.url },
+                ],
               ],
-            ],
-          }).code;
+            }).code;
+          } catch (e) {
+            // EDS will already throw this error to the browser because it also tries to do babel parsing on it
+          }
         }
       }
 

@@ -124,7 +124,6 @@ class SelectCookie extends LitElement {
     const changeCookie = async (_target, _participant, _authToken) => {
       _target.setAttribute('selected', true);
       document.cookie = `participant_name=${_participant};path=/`;
-      console.log(_participant);
       if (_authToken) {
         document.cookie = `cwk_auth_token=${_authToken};path=/`;
       }

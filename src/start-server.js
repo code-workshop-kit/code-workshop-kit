@@ -224,7 +224,8 @@ const getEdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
 
   edsConfig = {
     ...edsConfig,
-    eventStream: false, // don't insert event stream as it crashes pages with lots of iframes
+    // don't insert event stream as it crashes pages with lots of iframes, for modules it's ok
+    eventStream: cwkConfig.mode === 'iframe' ? false : edsConfig.eventStream,
     watch: false, // watch will not work with HMR
     compatibility: 'none', // won't work without eventStream
   };
@@ -249,8 +250,8 @@ const setupHMR = absoluteDir => {
         if (name === participantName) {
           // Store revalidation timestamp for the name, so that when re-imported (reloaded) modules import modules themselves,
           // that we also ensure they are re-imported by changing the import path with the queryTimestamp.
-          const { state } = cwkState;
           const queryTimestamp = Date.now();
+          const { state } = cwkState;
           if (!state.queryTimestamps) {
             state.queryTimestamps = {};
           }
@@ -273,6 +274,7 @@ export const startServer = async (opts = {}) => {
   const defaultPort = await portfinder.getPortPromise();
 
   const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort, cwkConfig.absoluteDir);
+
   const moduleWatcher = setupHMR(cwkConfig.absoluteDir);
 
   const { server } = await startEdsServer(edsConfig);
