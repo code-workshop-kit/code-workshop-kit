@@ -62,7 +62,7 @@ If you want your users to also be able to click on "View" for their own page, yo
 </head>
 <body>
   <script type="module">
-    import { setCapsule } from 'code-workshop-kit';
+    import { setCapsule } from 'code-workshop-kit/dist/components/setCapsule.js';
     setCapsule('Joren');
   </script>
 </body>
