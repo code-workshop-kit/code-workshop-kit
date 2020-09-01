@@ -1,11 +1,21 @@
 import { applyPolyfill } from 'custom-elements-hmr-polyfill';
-import './ParticipantCapsule.js';
+import './ParticipantFrontendCapsule.js';
+import './ParticipantTerminalCapsule.js';
+import { setCustomCSSProps } from './setCustomCSSProps.js';
 
-export const setCapsule = (name, module = true) => {
-  window.HMR_SKIP_DEEP_PATCH = true;
-  applyPolyfill();
+export const setCapsule = (name, { module = true, target = 'frontend' } = {}) => {
+  setCustomCSSProps();
 
-  const capsule = document.createElement('cwk-participant-capsule');
+  if (target === 'frontend') {
+    window.HMR_SKIP_DEEP_PATCH = true;
+    applyPolyfill();
+  }
+
+  if (target === 'terminal') {
+    document.body.style.setProperty('margin', '20px');
+  }
+
+  const capsule = document.createElement(`cwk-participant-${target}-capsule`);
   capsule.name = name;
   capsule.noHeader = true;
   capsule.noContainer = true;

@@ -33,6 +33,7 @@ local.log
 browserstack.err
 
 ## Output folder containing the scaffolded files for the workshop participants
-demo/participants
+demo/*/participants/*
+!demo/*/participants/.vsls.json
 
 debug.log

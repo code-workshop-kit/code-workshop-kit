@@ -25,6 +25,7 @@ import {
   wsPortPlugin,
 } from './plugins/plugins.js';
 import { cwkState } from './utils/CwkStateSingleton.js';
+import { runScript } from './runScript.js';
 
 const getAdminUIDefaults = () => {
   return {
@@ -81,8 +82,23 @@ const handleWsMessage = (message, ws) => {
       );
       break;
     }
+    case 'terminal-process-input': {
+      const { input, participantName } = parsedMessage;
+
+      if (cwkState.state.terminalScripts) {
+        const script = cwkState.state.terminalScripts.get(participantName);
+        if (script) {
+          script.stdin.write(`${input}\n`, err => {
+            if (err) {
+              throw new Error(`stdin error: ${err}`);
+            }
+          });
+        }
+      }
+      break;
+    }
     case 'authenticate': {
-      const { username, feature } = parsedMessage;
+      const { username, feature, participant } = parsedMessage;
       const { state } = cwkState;
       if (username) {
         if (!state.wsConnections) {
@@ -93,7 +109,7 @@ const handleWsMessage = (message, ws) => {
           state.wsConnections[feature] = new Map();
         }
         // Store the websocket connection for this user
-        state.wsConnections[feature].set(username, ws);
+        state.wsConnections[feature].set(`${participant}-${username}`, ws);
         cwkState.state = state;
         ws.send(
           JSON.stringify({
@@ -115,6 +131,21 @@ const setupWebSocket = () => {
   });
 
   return wss;
+};
+
+const getWsConnection = (participantName, feature, all = false) => {
+  let connection;
+
+  if (all) {
+    return Array.from(cwkState.state.wsConnections[feature].entries())
+      .filter(entry => entry[0].endsWith(participantName))
+      .map(entry => entry[1]);
+  }
+
+  if (cwkState.state.wsConnections && cwkState.state.wsConnections[feature]) {
+    connection = cwkState.state.wsConnections[feature].get(`${participantName}-${participantName}`);
+  }
+  return connection;
 };
 
 const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
@@ -141,7 +172,7 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
   // Important that we place insert plugins after file control, if we want them to apply scripts to files that should be served empty to the user
   newEdsConfig.plugins.push(followModePlugin(edsConfig.port));
   if (!cwkConfig.withoutAppShell) {
-    newEdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title));
+    newEdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
     newEdsConfig.plugins.push(adminUIPlugin(absoluteDir));
   }
 
@@ -159,6 +190,9 @@ const getCwkConfig = opts => {
     enableCaching: false,
     alwaysServeFiles: false,
     mode: 'iframe',
+    target: 'frontend',
+    terminalScript: undefined,
+    excludeFromWatch: [],
     participantIndexHtmlExists: true,
     dir: '/',
     title: '',
@@ -234,9 +268,21 @@ const getEdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
   return edsConfig;
 };
 
-const setupHMR = absoluteDir => {
-  const moduleWatcher = chokidar.watch(path.resolve(absoluteDir, 'participants'));
-  moduleWatcher.on('change', filePath => {
+const setupParticipantWatcher = absoluteDir => {
+  return chokidar.watch(path.resolve(absoluteDir, 'participants'));
+};
+
+const setupWatcherForTerminalProcess = (watcher, absoluteDir, terminalScript, excludeFromWatch) => {
+  const sendData = (data, type, participantName) => {
+    const connections = getWsConnection(participantName, 'terminal-process', true);
+    if (connections) {
+      connections.forEach(connection =>
+        connection.send(JSON.stringify({ type: `terminal-process-${type}`, data })),
+      );
+    }
+  };
+
+  watcher.on('change', filePath => {
     // Get participant name from file path
     const participantFolder = path.join(absoluteDir, 'participants/');
 
@@ -244,41 +290,98 @@ const setupHMR = absoluteDir => {
     // and get the top most dir name
     const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
 
-    // Find websocket connection with that name
-    if (cwkState.state.wsConnections && cwkState.state.wsConnections['reload-module']) {
-      cwkState.state.wsConnections['reload-module'].forEach((connection, name) => {
-        if (name === participantName) {
-          // Store revalidation timestamp for the name, so that when re-imported (reloaded) modules import modules themselves,
-          // that we also ensure they are re-imported by changing the import path with the queryTimestamp.
-          const queryTimestamp = Date.now();
-          const { state } = cwkState;
-          if (!state.queryTimestamps) {
-            state.queryTimestamps = {};
-          }
-          state.queryTimestamps[name] = queryTimestamp;
-          cwkState.state = state;
+    // If the file that was changed is not within exclude-list for file extensions
+    if (excludeFromWatch.every(ext => !filePath.endsWith(`.${ext}`))) {
+      const { processEmitter, process } = runScript(terminalScript, participantName, absoluteDir);
 
-          // Send module-changed message to that connection so it reload the main module
-          connection.send(
-            JSON.stringify({ type: 'reload-module', name, timestamp: queryTimestamp }),
-          );
+      // Save the current running script for participant
+      const { state } = cwkState;
+      if (!state.terminalScripts) {
+        state.terminalScripts = new Map();
+      }
+      state.terminalScripts.set(participantName, process);
+      cwkState.state = state;
+
+      // Open terminal input on the frontend.
+      const connections = getWsConnection(participantName, 'terminal-process', true);
+      connections.forEach(connection => {
+        if (connection) {
+          connection.send(JSON.stringify({ type: 'terminal-input-enable' }));
         }
+
+        // Close terminal input on the frontend
+        process.on('close', () => {
+          if (connection) {
+            connection.send(JSON.stringify({ type: 'terminal-input-disable' }));
+          }
+        });
+      });
+
+      processEmitter.on('out', data => {
+        sendData(data, 'output', participantName);
+      });
+
+      processEmitter.on('err', data => {
+        sendData(data, 'error', participantName);
       });
     }
   });
-  return moduleWatcher;
+};
+
+const setupHMR = (watcher, absoluteDir) => {
+  watcher.on('change', filePath => {
+    // Get participant name from file path
+    const participantFolder = path.join(absoluteDir, 'participants/');
+
+    // Cancel out the participant folder from the filepath (Bob/index.js or Bob/nested/style.css),
+    // and get the top most dir name
+    const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
+
+    const connections = getWsConnection(participantName, 'reload-module', true);
+    const queryTimestamp = Date.now();
+    const { state } = cwkState;
+    if (!state.queryTimestamps) {
+      state.queryTimestamps = {};
+    }
+    state.queryTimestamps[participantName] = queryTimestamp;
+    cwkState.state = state;
+
+    connections.forEach(connection => {
+      if (connection) {
+        // Send module-changed message to all participants for the folder that changed
+        connection.send(
+          JSON.stringify({
+            type: 'reload-module',
+            name: participantName,
+            timestamp: queryTimestamp,
+          }),
+        );
+      }
+    });
+  });
 };
 
 export const startServer = async (opts = {}) => {
   const cwkConfig = getCwkConfig(opts);
   const defaultPort = await portfinder.getPortPromise();
-
   const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort, cwkConfig.absoluteDir);
 
-  const moduleWatcher = setupHMR(cwkConfig.absoluteDir);
+  const watcher = setupParticipantWatcher(cwkConfig.absoluteDir);
+  if (cwkConfig.target === 'frontend') {
+    setupHMR(watcher, cwkConfig.absoluteDir);
+  } else if (cwkConfig.target === 'terminal') {
+    setupWatcherForTerminalProcess(
+      watcher,
+      cwkConfig.absoluteDir,
+      cwkConfig.terminalScript,
+      cwkConfig.excludeFromWatch,
+    );
+  }
 
   const { server } = await startEdsServer(edsConfig);
   const wss = setupWebSocket();
+  cwkState.state = { wss };
+  setDefaultAdminConfig();
 
   server.on('upgrade', function upgrade(request, socket, head) {
     wss.handleUpgrade(request, socket, head, function done(ws) {
@@ -286,15 +389,12 @@ export const startServer = async (opts = {}) => {
     });
   });
 
-  cwkState.state = { wss };
-  setDefaultAdminConfig();
-
   ['exit', 'SIGINT'].forEach(event => {
     process.on(event, () => {
-      moduleWatcher.close();
+      watcher.close();
       wss.close();
     });
   });
 
-  return { server, edsConfig, cwkConfig, wss, moduleWatcher };
+  return { server, edsConfig, cwkConfig, wss, watcher };
 };

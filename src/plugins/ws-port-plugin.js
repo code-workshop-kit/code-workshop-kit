@@ -4,7 +4,10 @@ export function wsPortPlugin(port) {
       let rewrittenBody = context.body;
       if (
         context.path === '/node_modules/code-workshop-kit/dist/components/AdminSidebar.js' ||
-        context.path === '/node_modules/code-workshop-kit/dist/components/ParticipantCapsule.js'
+        context.path ===
+          '/node_modules/code-workshop-kit/dist/components/ParticipantFrontendCapsule.js' ||
+        context.path ===
+          '/node_modules/code-workshop-kit/dist/components/ParticipantTerminalCapsule.js'
       ) {
         rewrittenBody = rewrittenBody.replace(new RegExp('%websocketport%', 'g'), port);
       }

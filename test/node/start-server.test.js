@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import path from 'path';
 import { noCacheMiddleware } from '../../src/middlewares/middlewares.js';
 import { appShellPlugin, fileControlPlugin } from '../../src/plugins/plugins.js';
 import { startServer } from '../../src/start-server.js';
@@ -10,14 +9,14 @@ describe('start cwk server', () => {
     let wss;
     let cwkConfig;
     let edsConfig;
-    let moduleWatcher;
+    let watcher;
 
     afterEach(async () => {
       if (wss) {
         wss.close();
       }
-      if (moduleWatcher) {
-        moduleWatcher.close();
+      if (watcher) {
+        watcher.close();
       }
       if (server) {
         await new Promise(resolve => {
@@ -27,7 +26,7 @@ describe('start cwk server', () => {
     });
 
     it('has default settings', async () => {
-      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
         dir: './test/utils/fixtures/simple',
       }));
 
@@ -37,6 +36,8 @@ describe('start cwk server', () => {
       expect(cwkConfig.mode).to.equal('iframe');
       expect(cwkConfig.participantIndexHtmlExists).to.be.true;
       expect(cwkConfig.title).to.equal('');
+      expect(cwkConfig.target).to.equal('frontend');
+      expect(cwkConfig.terminalScript).to.equal(undefined);
       expect(edsConfig.logStartup).to.be.true;
       expect(edsConfig.watch).to.be.false;
       expect(edsConfig.moduleDirs).to.be.undefined;
@@ -48,7 +49,7 @@ describe('start cwk server', () => {
     });
 
     it('supports overriding CWK server default settings', async () => {
-      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
         port: 5000,
         title: 'Frontend Workshop',
         dir: './test/utils/fixtures/simple',
@@ -56,9 +57,10 @@ describe('start cwk server', () => {
         enableCaching: true,
         alwaysServeFiles: true,
         mode: 'module',
+        target: 'terminal',
+        terminalScript: 'node index.js',
         participantIndexHtmlExists: false,
         logStartup: false,
-        rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         open: false,
       }));
 
@@ -68,6 +70,8 @@ describe('start cwk server', () => {
       expect(cwkConfig.alwaysServeFiles).to.be.true;
       expect(cwkConfig.mode).to.equal('module');
       expect(cwkConfig.participantIndexHtmlExists).to.be.false;
+      expect(cwkConfig.target).to.equal('terminal');
+      expect(cwkConfig.terminalScript).to.equal('node index.js');
       expect(edsConfig.logStartup).to.be.false;
       // app-shell/file-control turned off
       expect(edsConfig.plugins.length).to.equal(7);
@@ -76,9 +80,8 @@ describe('start cwk server', () => {
     });
 
     it('locks watch mode, compatibility, and event stream if mode is iframe, and is not overridable', async () => {
-      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
         dir: './test/utils/fixtures/simple',
-        rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         watch: true,
         compatibility: 'always',
         eventStream: true,
@@ -92,9 +95,8 @@ describe('start cwk server', () => {
     });
 
     it('allows eventStream for module mode', async () => {
-      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
         dir: './test/utils/fixtures/simple',
-        rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         watch: true,
         mode: 'module',
         compatibility: 'always',
@@ -108,14 +110,13 @@ describe('start cwk server', () => {
     });
 
     it('supports preventing certain plugins and middlewares from being added', async () => {
-      ({ cwkConfig, edsConfig, server, wss, moduleWatcher } = await startServer({
+      ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
         port: 5000,
         withoutAppShell: true,
         enableCaching: true,
         alwaysServeFiles: true,
         logStartup: false,
         dir: './test/utils/fixtures/simple',
-        rootDir: path.resolve(__dirname, '../utils', 'fixtures', 'simple'),
         open: false,
       }));
 

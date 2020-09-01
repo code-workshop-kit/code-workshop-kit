@@ -2,3 +2,5 @@ node_modules/
 test-coverage/
 dist/
 demo/
+
+test/utils/fixtures
