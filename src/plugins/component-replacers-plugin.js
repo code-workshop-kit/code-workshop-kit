@@ -18,6 +18,10 @@ export function componentReplacersPlugin(opts) {
         }
 
         if (
+          context.path ===
+            '/node_modules/code-workshop-kit/dist/components/ParticipantFrontendCapsule.js' ||
+          context.path ===
+            '/node_modules/code-workshop-kit/dist/components/ParticipantTerminalCapsule.js' ||
           context.path === '/node_modules/code-workshop-kit/dist/components/ParticipantCapsule.js'
         ) {
           let replacement = `${path.resolve('/', pathRelativeToServer)}`;

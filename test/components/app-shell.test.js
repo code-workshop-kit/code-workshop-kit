@@ -87,7 +87,7 @@ describe('App Shell Component', () => {
 
     await el.fetchConfigComplete;
     await el.updateComplete;
-    const capsules = Array.from(el.shadowRoot.querySelectorAll('cwk-participant-capsule'));
+    const capsules = Array.from(el.shadowRoot.querySelectorAll('cwk-participant-frontend-capsule'));
 
     expect(capsules.length).to.equal(3);
     expect(capsules[0].name).to.equal('Joren');

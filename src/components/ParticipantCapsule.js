@@ -1,28 +1,16 @@
-import { css, html, LitElement, TemplateResult } from 'lit-element';
-import { render } from 'lit-html';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { css, html, LitElement } from 'lit-element';
 
-class ParticipantCapsule extends LitElement {
+export class ParticipantCapsule extends LitElement {
   static get properties() {
     return {
-      name: {
-        type: String,
-        reflect: true,
-      },
       participantIndexHtmlExists: {
         type: Boolean,
         reflect: true,
         attribute: 'participant-index-html-exists',
       },
-      mode: {
+      name: {
         type: String,
         reflect: true,
-      },
-      participantTemplate: {
-        attribute: false,
-      },
-      loading: {
-        attribute: false,
       },
       noHeader: {
         type: Boolean,
@@ -71,7 +59,7 @@ class ParticipantCapsule extends LitElement {
         border: none;
       }
 
-      .button__fullscreen {
+      .action-button {
         font-family: Dank mono, sans-serif;
         color: white;
         background: linear-gradient(0.1turn, var(--cwk-color-primary), var(--cwk-color-secondary));
@@ -81,7 +69,7 @@ class ParticipantCapsule extends LitElement {
         border-radius: 4px;
       }
 
-      .button__fullscreen:hover {
+      .action-button:hover {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         transition: all 0.15s ease;
@@ -91,84 +79,8 @@ class ParticipantCapsule extends LitElement {
 
   constructor() {
     super();
-    this.loading = true;
     this.noHeader = false;
     this.noContainer = false;
-  }
-
-  async _fetchParticipantModule(timestamp) {
-    this.loadingComplete = new Promise(resolve => {
-      this.__loadingResolve = resolve;
-    });
-
-    if (this.mode === 'module') {
-      try {
-        const participantModule = await import(
-          this.participantModuleImport ||
-            `%dir%/participants/${this.name}/index.js${timestamp ? `?mtime=${timestamp}` : ''}`
-        );
-        this.participantTemplate = participantModule.default;
-      } catch (e) {
-        console.error(e);
-      }
-
-      if (this.participantTemplate === undefined) {
-        this.participantTemplate = `
-          <h3 style="font-family: Dank Mono, sans-serif; font-weight: lighter">
-            🚧 No default export with template or DOM node found in your index.js 🚧
-          </h3>
-        `;
-      }
-    }
-    this.loading = false;
-    this.__loadingResolve();
-    if (timestamp) {
-      render(html``, this.shadowRoot.querySelector('.participant-content-container'));
-      render(
-        html`${this.__participantContent}`,
-        this.shadowRoot.querySelector('.participant-content-container'),
-      );
-    }
-  }
-
-  get __participantContent() {
-    if (
-      this.participantTemplate instanceof HTMLElement ||
-      this.participantTemplate instanceof TemplateResult
-    ) {
-      return this.participantTemplate;
-    }
-    return unsafeHTML(this.participantTemplate);
-  }
-
-  setupWs() {
-    // %websocketport% gets replaced by CWK server
-    this.ws = new WebSocket(`ws://localhost:${this.websocketPort || '%websocketport%'}`);
-
-    this.ws.addEventListener('open', () => {
-      this.ws.send(
-        JSON.stringify({ type: 'authenticate', username: this.name, feature: 'reload-module' }),
-      );
-    });
-
-    this.ws.addEventListener('message', e => {
-      const { type, name, timestamp } = JSON.parse(e.data);
-      if (type === 'reload-module' && name === this.name) {
-        this._fetchParticipantModule(timestamp);
-      }
-    });
-  }
-
-  connectedCallback() {
-    if (super.connectedCallback) {
-      super.connectedCallback();
-    }
-    this._fetchParticipantModule();
-    this.loadingComplete.then(() => {
-      if (this.participantTemplate) {
-        this.setupWs();
-      }
-    });
   }
 
   updated(changedProperties) {
@@ -183,7 +95,7 @@ class ParticipantCapsule extends LitElement {
     }
   }
 
-  get __capsuleTemplate() {
+  get _capsuleTemplate() {
     return html`
       ${this.noHeader
         ? ''
@@ -191,34 +103,36 @@ class ParticipantCapsule extends LitElement {
             <h2 class="header__name">${this.name}</h2>
             ${this.participantIndexHtmlExists
               ? html`<a href="%dir%/participants/${this.name}/index.html">
-                  <button class="button__fullscreen">
-                    View
-                  </button>
+                  <button class="action-button">View</button>
                 </a>`
               : ''}
           </div>`}
-      ${this.loading
-        ? html`<span>Loading....</span>`
-        : html`${this.participantTemplate
-            ? html`<div class="participant-content-container">${this.__participantContent}</div>`
-            : html`
-                <iframe
-                  class="participant-content-container"
-                  id="${this.name}"
-                  allow="fullscreen"
-                  src="%dir%/participants/${this.name}/index.html"
-                ></iframe>
-              `}`}
     `;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  _getParticipantCookie() {
+    const allCookies = document.cookie.split(';').map(cookie => {
+      if (cookie) {
+        return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
+      }
+      return {};
+    });
+
+    let participantName = null;
+    const participantCookie = allCookies.find(cookie => cookie.participant_name);
+    if (participantCookie) {
+      participantName = participantCookie.participant_name;
+    }
+    return participantName;
   }
 
   render() {
     // TODO: Support other rendering engines? or let people make their extension app shell / etc.? Probably only React where you have issues..
     return html`
       ${this.noContainer
-        ? html`${this.__capsuleTemplate}`
-        : html`<div class="container">${this.__capsuleTemplate}</div>`}
+        ? html`${this._capsuleTemplate}`
+        : html`<div class="container">${this._capsuleTemplate}</div>`}
     `;
   }
 }
-customElements.define('cwk-participant-capsule', ParticipantCapsule);

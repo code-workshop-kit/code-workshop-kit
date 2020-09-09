@@ -11,6 +11,7 @@ Leveraging Visual Studio Live Share and [es-dev-server](https://www.npmjs.com/pa
 
 - 🔨 **Scaffolder**: Generate files for all your participants, from a given template directory.
 - 🖥️ **Dev Server**: A development server that can be shared through VS Live Share, to create a *shared output* for your workshop participants. Change config/settings on the fly without having to restart!
+- 📟 **Terminal Interaction**: Backend languages supported by porting terminal output and input. Control the script that runs for your participant, which re-runs on file changes.
 - 🔒 **Authentication**: Authenticate your participants and workshop admins.
 - 🚧 **Loader**: Load only files that belong to the participant. So you don't get your output bloated by your peers' console logs.
 - 👀 **Follow Mode**: Know follow-mode in VS Live Share? Get the same thing but in the browser! Participants will follow you in the browser when you change URLs.
@@ -18,16 +19,18 @@ Leveraging Visual Studio Live Share and [es-dev-server](https://www.npmjs.com/pa
 
 ## Usage
 
+> For prerequisites, check out our [prerequisite docs](https://github.com/code-workshop-kit/cwk-frontend/blob/master/docs/prerequisites.md)
+
 Install the package
 
 ```sh
-yarn add code-workshop-kit
+npm install code-workshop-kit
 ```
 
-Or with npm
+Or with yarn
 
 ```sh
-npm install code-workshop-kit
+yarn add code-workshop-kit
 ```
 
 It may make sense to install it globally, so you can run it in any project without needing a package.json!
@@ -73,6 +76,8 @@ You can choose between `iframe` and `module` mode. `iframe` is the default, but 
 For more information about `mode` option for using `module` and enabling the HMR feature, see [detailed explanation module mode](https://github.com/code-workshop-kit/cwk-frontend/tree/master/docs/module-mode.md)
 
 There are also a lot of other advanced configuration, like adding admins or changing file control behavior. [See full config docs](https://github.com/code-workshop-kit/cwk-frontend/tree/master/docs/config.md)
+
+Backend languages are supported in the sense that you can control the script that is ran in each participant's root folder. This will re-run on file-changes, for example compiling a Java file and executing the binary. The terminal output is displayed for that participant in the app shell, and you can even do terminal input through the app shell. [See how to use terminal target](https://github.com/code-workshop-kit/cwk-frontend/tree/master/docs/terminal.md)
 
 ## Scaffolding
 

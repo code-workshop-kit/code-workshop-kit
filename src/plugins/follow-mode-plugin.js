@@ -21,6 +21,7 @@ export function followModePlugin(port) {
         window.__cwkFollowModeWs.send(
           JSON.stringify({
             type: 'authenticate',
+            participant: participantName,
             username: participantName,
             feature: 'follow-mode',
           }),

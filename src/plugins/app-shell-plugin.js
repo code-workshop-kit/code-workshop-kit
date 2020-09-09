@@ -23,7 +23,7 @@ const findBrowserPath = dir => {
   return normalizedForWindows;
 };
 
-export function appShellPlugin(dir, title) {
+export function appShellPlugin(dir, title, target = 'frontend') {
   return {
     transform(context) {
       let rewrittenBody = context.body;
@@ -43,6 +43,7 @@ export function appShellPlugin(dir, title) {
               import '${browserPath}';
               const cwkAppShell = document.createElement('cwk-app-shell');
               cwkAppShell.title = '${title}';
+              cwkAppShell.target = '${target}';
               document.querySelector('body').appendChild(cwkAppShell);
             </script>
           `;

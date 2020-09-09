@@ -3,16 +3,13 @@ import { css, html, LitElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import './AdminSidebar.js';
 import { getParticipantCookie } from './getParticipantCookie.js';
+import { setCustomCSSProps } from './setCustomCSSProps.js';
 import './loadAndSetDankMonoFont.js';
-import './ParticipantCapsule.js';
+import './ParticipantFrontendCapsule.js';
+import './ParticipantTerminalCapsule.js';
 import './SelectCookie.js';
 
-const setCustomCSSProps = () => {
-  document.body.style.setProperty('--cwk-color-primary', '#4e88c2');
-  document.body.style.setProperty('--cwk-color-secondary', '#34618e');
-  document.body.style.setProperty('--cwk-color-white', '#ffffff');
-  document.body.style.setProperty('--cwk-color-primary-transparent', '#4e88c230');
-};
+setCustomCSSProps();
 
 class AppShell extends LitElement {
   static get styles() {
@@ -88,10 +85,10 @@ class AppShell extends LitElement {
         reflect: true,
       },
       participants: {
-        type: Array,
+        attribute: false,
       },
       currentParticipantName: {
-        type: String,
+        attribute: false,
       },
       participantIndexHtmlExists: {
         type: Boolean,
@@ -102,6 +99,9 @@ class AppShell extends LitElement {
         type: String,
         reflect: true,
       },
+      target: {
+        attribute: false,
+      },
     };
   }
 
@@ -111,6 +111,7 @@ class AppShell extends LitElement {
     applyPolyfill();
     this.participantIndexHtmlExists = true;
     this.mode = 'iframe';
+    this.target = 'frontend';
     setCustomCSSProps();
     this.fetchConfigComplete = new Promise(resolve => {
       this.fetchConfigResolve = resolve;
@@ -159,15 +160,18 @@ class AppShell extends LitElement {
             <div>
               <div class="participants-container">
                 ${this.participants
-                  ? this.participants.map(
-                      name =>
-                        html`<cwk-participant-capsule
-                          .participantModuleImport=${this.participantModuleImport}
-                          ?participant-index-html-exists=${this.participantIndexHtmlExists}
-                          .mode=${this.mode}
-                          .name="${name}"
-                          .websocketPort=${this.websocketPort}
-                        ></cwk-participant-capsule>`,
+                  ? this.participants.map(name =>
+                      this.target === 'terminal'
+                        ? html`<cwk-participant-terminal-capsule
+                            ?participant-index-html-exists=${this.participantIndexHtmlExists}
+                            .name="${name}"
+                          ></cwk-participant-terminal-capsule>`
+                        : html`<cwk-participant-frontend-capsule
+                            .participantModuleImport=${this.participantModuleImport}
+                            ?participant-index-html-exists=${this.participantIndexHtmlExists}
+                            .mode=${this.mode}
+                            .name="${name}"
+                          ></cwk-participant-frontend-capsule>`,
                     )
                   : html``}
               </div>
