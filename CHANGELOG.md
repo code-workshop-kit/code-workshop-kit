@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.10.1...0.10.2) (2020-09-09)
+
+
+### Bug Fixes
+
+* guard for non existent Websocket connections on file change ([785a313](https://github.com/code-workshop-kit/cwk-frontend/commit/785a3131b0f54cda5a8b83d735d15cd39f4924bc))
+
 ### [0.10.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.10.0...0.10.1) (2020-09-09)
 
 ## [0.10.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.9.2...0.10.0) (2020-09-09)
