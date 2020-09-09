@@ -136,6 +136,10 @@ const setupWebSocket = () => {
 const getWsConnection = (participantName, feature, all = false) => {
   let connection;
 
+  if (!cwkState.state.wsConnections[feature]) {
+    return null;
+  }
+
   if (all) {
     return Array.from(cwkState.state.wsConnections[feature].entries())
       .filter(entry => entry[0].endsWith(participantName))
@@ -304,18 +308,20 @@ const setupWatcherForTerminalProcess = (watcher, absoluteDir, terminalScript, ex
 
       // Open terminal input on the frontend.
       const connections = getWsConnection(participantName, 'terminal-process', true);
-      connections.forEach(connection => {
-        if (connection) {
-          connection.send(JSON.stringify({ type: 'terminal-input-enable' }));
-        }
-
-        // Close terminal input on the frontend
-        process.on('close', () => {
+      if (connections) {
+        connections.forEach(connection => {
           if (connection) {
-            connection.send(JSON.stringify({ type: 'terminal-input-disable' }));
+            connection.send(JSON.stringify({ type: 'terminal-input-enable' }));
           }
+
+          // Close terminal input on the frontend
+          process.on('close', () => {
+            if (connection) {
+              connection.send(JSON.stringify({ type: 'terminal-input-disable' }));
+            }
+          });
         });
-      });
+      }
 
       processEmitter.on('out', data => {
         sendData(data, 'output', participantName);
@@ -346,18 +352,20 @@ const setupHMR = (watcher, absoluteDir) => {
     state.queryTimestamps[participantName] = queryTimestamp;
     cwkState.state = state;
 
-    connections.forEach(connection => {
-      if (connection) {
-        // Send module-changed message to all participants for the folder that changed
-        connection.send(
-          JSON.stringify({
-            type: 'reload-module',
-            name: participantName,
-            timestamp: queryTimestamp,
-          }),
-        );
-      }
-    });
+    if (connections) {
+      connections.forEach(connection => {
+        if (connection) {
+          // Send module-changed message to all participants for the folder that changed
+          connection.send(
+            JSON.stringify({
+              type: 'reload-module',
+              name: participantName,
+              timestamp: queryTimestamp,
+            }),
+          );
+        }
+      });
+    }
   });
 };
 
