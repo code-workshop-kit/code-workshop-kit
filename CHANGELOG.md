@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.10.0...0.10.1) (2020-09-09)
+
 ## [0.10.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.9.2...0.10.0) (2020-09-09)
 
 
