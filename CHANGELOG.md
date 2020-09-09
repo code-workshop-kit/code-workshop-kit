@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.9.2...0.10.0) (2020-09-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* setCapsule now accepts object with options as second parameter, target / module, similar to cwk.config.js target / module properties
+
+### Features
+
+* POC of adding support for backend languages using terminal ([9b35058](https://github.com/code-workshop-kit/cwk-frontend/commit/9b3505801303f1395df32d261c922b46e222f78b))
+
 ### [0.9.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.9.1...0.9.2) (2020-08-16)
 
 
