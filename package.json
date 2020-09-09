@@ -48,8 +48,8 @@
   "dependencies": {
     "@babel/core": "^7.10.3",
     "@lion/dialog": "~0.7.11",
-    "@open-wc/create": "~0.32.0",
-    "@web/test-runner": "^0.6.33",
+    "@open-wc/create": "~0.33.0",
+    "@web/test-runner": "^0.7.2",
     "chokidar": "^3.4.0",
     "command-line-args": "^5.1.1",
     "custom-elements-hmr-polyfill": "^1.0.3",
