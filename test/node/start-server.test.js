@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { noCacheMiddleware } from '../../src/middlewares/middlewares.js';
-import { appShellPlugin, fileControlPlugin } from '../../src/plugins/plugins.js';
+import { appShellPlugin } from '../../src/plugins/plugins.js';
 import { startServer } from '../../src/start-server.js';
 
 describe('start cwk server', () => {
@@ -32,12 +32,15 @@ describe('start cwk server', () => {
 
       expect(cwkConfig.withoutAppShell).to.be.false;
       expect(cwkConfig.enableCaching).to.be.false;
-      expect(cwkConfig.alwaysServeFiles).to.be.false;
-      expect(cwkConfig.mode).to.equal('iframe');
-      expect(cwkConfig.participantIndexHtmlExists).to.be.true;
       expect(cwkConfig.title).to.equal('');
       expect(cwkConfig.target).to.equal('frontend');
-      expect(cwkConfig.terminalScript).to.equal(undefined);
+      expect(cwkConfig.targetOptions.mode).to.equal('iframe');
+      expect(cwkConfig.targetOptions.cmd).to.equal('');
+      expect(cwkConfig.targetOptions.autoReload).to.be.true;
+      expect(cwkConfig.targetOptions.fromParticipantFolder).to.be.true;
+      expect(cwkConfig.targetOptions.args).to.eql({});
+      expect(cwkConfig.targetOptions.excludeFromWatch).to.eql([]);
+      expect(cwkConfig.participantIndexHtmlExists).to.be.true;
       expect(edsConfig.logStartup).to.be.true;
       expect(edsConfig.watch).to.be.false;
       expect(edsConfig.moduleDirs).to.be.undefined;
@@ -49,16 +52,25 @@ describe('start cwk server', () => {
     });
 
     it('supports overriding CWK server default settings', async () => {
+      const randomNumber = Math.round(Math.random() * 4000);
       ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
         port: 5000,
         title: 'Frontend Workshop',
         dir: './test/utils/fixtures/simple',
         withoutAppShell: true,
         enableCaching: true,
-        alwaysServeFiles: true,
-        mode: 'module',
         target: 'terminal',
-        terminalScript: 'node index.js',
+        targetOptions: {
+          cmd: 'node index.js --port <%= port %>',
+          autoReload: false,
+          fromParticipantFolder: false,
+          args: {
+            port: 8000 + randomNumber,
+          },
+          excludeFromWatch: ['mjs'],
+
+          mode: 'module',
+        },
         participantIndexHtmlExists: false,
         logStartup: false,
         open: false,
@@ -67,11 +79,14 @@ describe('start cwk server', () => {
       expect(cwkConfig.title).to.equal('Frontend Workshop');
       expect(cwkConfig.withoutAppShell).to.be.true;
       expect(cwkConfig.enableCaching).to.be.true;
-      expect(cwkConfig.alwaysServeFiles).to.be.true;
-      expect(cwkConfig.mode).to.equal('module');
       expect(cwkConfig.participantIndexHtmlExists).to.be.false;
       expect(cwkConfig.target).to.equal('terminal');
-      expect(cwkConfig.terminalScript).to.equal('node index.js');
+      expect(cwkConfig.targetOptions.cmd).to.equal('node index.js --port <%= port %>');
+      expect(cwkConfig.targetOptions.autoReload).to.be.false;
+      expect(cwkConfig.targetOptions.fromParticipantFolder).to.be.false;
+      expect(cwkConfig.targetOptions.args).to.eql({ port: 8000 + randomNumber });
+      expect(cwkConfig.targetOptions.excludeFromWatch).to.eql(['mjs']);
+      expect(cwkConfig.targetOptions.mode).to.equal('module');
       expect(edsConfig.logStartup).to.be.false;
       // app-shell/file-control turned off
       expect(edsConfig.plugins.length).to.equal(7);
@@ -98,7 +113,9 @@ describe('start cwk server', () => {
       ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
         dir: './test/utils/fixtures/simple',
         watch: true,
-        mode: 'module',
+        targetOptions: {
+          mode: 'module',
+        },
         compatibility: 'always',
         open: false,
         logStartup: false,
@@ -114,7 +131,6 @@ describe('start cwk server', () => {
         port: 5000,
         withoutAppShell: true,
         enableCaching: true,
-        alwaysServeFiles: true,
         logStartup: false,
         dir: './test/utils/fixtures/simple',
         open: false,
@@ -123,16 +139,6 @@ describe('start cwk server', () => {
       const appShellPluginFound = edsConfig.plugins.find(plugin => {
         if (plugin.transform) {
           return plugin.transform.toString() === appShellPlugin().transform.toString();
-        }
-        return false;
-      });
-
-      const fileControlPluginFound = edsConfig.plugins.find(plugin => {
-        if (plugin.transform) {
-          return (
-            plugin.transform.toString() ===
-            fileControlPlugin('./test/utils/fixtures/simple', []).transform.toString()
-          );
         }
         return false;
       });
@@ -149,9 +155,6 @@ describe('start cwk server', () => {
 
       expect(cwkConfig.withoutAppShell).to.be.true;
       expect(appShellPluginFound).to.be.undefined;
-
-      expect(cwkConfig.alwaysServeFiles).to.be.true;
-      expect(fileControlPluginFound).to.be.undefined;
 
       expect(cwkConfig.enableCaching).to.be.true;
       expect(noCachingMiddlewareFound).to.be.undefined;

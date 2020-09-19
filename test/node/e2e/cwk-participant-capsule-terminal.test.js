@@ -47,8 +47,9 @@ describe('e2e: Participant Capsule Terminal', () => {
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',
-        terminalScript: 'node index.js',
-        alwaysServeFiles: true,
+        targetOptions: {
+          cmd: 'node index.js',
+        },
       }));
 
       browser = await puppeteer.launch();
@@ -67,8 +68,9 @@ describe('e2e: Participant Capsule Terminal', () => {
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',
-        terminalScript: 'node index.js',
-        alwaysServeFiles: true,
+        targetOptions: {
+          cmd: 'node index.js',
+        },
       }));
 
       browser = await puppeteer.launch();
@@ -107,8 +109,9 @@ describe('e2e: Participant Capsule Terminal', () => {
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',
-        terminalScript: 'node custom.js',
-        alwaysServeFiles: true,
+        targetOptions: {
+          cmd: 'node custom.js',
+        },
       }));
 
       browser = await puppeteer.launch();
@@ -147,8 +150,9 @@ describe('e2e: Participant Capsule Terminal', () => {
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',
-        terminalScript: 'node index.js',
-        alwaysServeFiles: true,
+        targetOptions: {
+          cmd: 'node index.js',
+        },
       }));
 
       browser = await puppeteer.launch();

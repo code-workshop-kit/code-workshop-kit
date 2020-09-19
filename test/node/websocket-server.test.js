@@ -59,8 +59,6 @@ describe('websocket server', () => {
       const response = await wsComplete;
       expect(response.type).to.equal('config-init');
       expect(response.config.enableCaching).to.be.false;
-      expect(response.config.alwaysServeFiles).to.be.false;
-      expect(response.config.enableAdmin).to.be.true;
       expect(response.config.followMode).to.be.false;
     });
 
@@ -104,8 +102,6 @@ describe('websocket server', () => {
       const response = await wsComplete;
       expect(response.type).to.equal('config-update-completed');
       expect(response.config).to.eql({
-        enableAdmin: true,
-        alwaysServeFiles: false,
         followMode: false,
         enableCaching: true,
       });

@@ -2,9 +2,12 @@ import { spawn } from 'child_process';
 import path from 'path';
 import EventEmitter from 'events';
 
-export const runScript = (cmd, participant, dir) => {
+export const runScript = ({ cmd, dir, participant, fromParticipantFolder = true } = {}) => {
   const processEmitter = new EventEmitter();
-  const pathToRunScriptIn = path.resolve(dir, 'participants', participant);
+  let pathToRunScriptIn = path.resolve(dir);
+  if (fromParticipantFolder) {
+    pathToRunScriptIn = path.resolve(dir, 'participants', participant);
+  }
   const script = spawn(cmd, [], {
     cwd: pathToRunScriptIn,
     shell: true,

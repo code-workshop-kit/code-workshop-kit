@@ -6,7 +6,9 @@ It is possible to set `mode` to `'module'` in the `cwk.config.js`:
 export default {
   participants: ['Joren', 'Felix'],
   title: 'Frontend Workshop',
-  mode: 'module',
+  targetOptions: {
+    mode: 'module',
+  },
   templateData: {
     appTitle: 'Cool Frontend App',
   },
@@ -39,7 +41,7 @@ export default `<joren-element></joren-element>`;
 
 The main benefit of module mode is that the filewatcher will instruct the app to reload the participant default exported module whenever files are changed.
 This works recursively in the sense that other imported modules will also be reloaded.
-It even works for `custom elements` because the app shell adds a ponyfill that allows for redefining custom elements to the `Custom Elements Registry`!
+It even works for `custom elements` because the app shell adds a [ponyfill](https://github.com/vegarringdal/custom-elements-hmr-polyfill/) that allows for redefining custom elements to the `Custom Elements Registry`!
 
 Even better, no more iframes! This will help with performance both on the server end, as well as for sharing resources like libraries/frameworks. This is a must if you are doing a workshop where your participants import 3rd party resources.
 

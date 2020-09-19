@@ -6,7 +6,7 @@ import glob from 'glob';
 import * as module from 'module';
 import path from 'path';
 
-// Fork from @open-wc/create to allow functions that return strings inside data obj
+// Fork from @open-wc/create to allow functions that return strings inside data obj. If we add this to @open-wc/create both forks can be deleted here.
 function processTemplate(_fileContent, data = {}) {
   let fileContent = _fileContent;
 
@@ -21,11 +21,10 @@ function processTemplate(_fileContent, data = {}) {
 }
 
 // Fork from @open-wc/create
-// TODO: Use open-wc directly when https://github.com/open-wc/open-wc/pull/1469 is merged
 function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
   return new Promise(resolve => {
-    glob(fromGlob, { dot: true }, (er, files) => {
-      const resultFiles = [];
+    glob(fromGlob, { dot: true }, (err, files) => {
+      const copiedFiles = [];
       files.forEach(filePath => {
         if (!fs.lstatSync(filePath).isDirectory()) {
           const fileContent = readFileFromPath(filePath);
@@ -37,11 +36,11 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
             const toPath = filePath.replace(replace, `${toDir}/`);
 
             // write file to path?
-            resultFiles.push({ toPath, processed });
+            copiedFiles.push({ toPath, processed });
           }
         }
       });
-      resolve(resultFiles);
+      resolve(copiedFiles);
     });
   });
 }

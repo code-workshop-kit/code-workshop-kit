@@ -1,6 +1,6 @@
 # FAQ
 
-## What if I don't use a JavaScript single entry-point file with a module export?
+## What if I don't use a JavaScript single entry-point file with a module export
 
 It is also possible to use plain old HTML for your participant workshop and not bother them too much with JavaScript and ES Modules, but in modern frontend most HTML is written inside a JavaScript template language, so a `.js` entrypoint file is pretty common. This is what `module` mode assumes.
 

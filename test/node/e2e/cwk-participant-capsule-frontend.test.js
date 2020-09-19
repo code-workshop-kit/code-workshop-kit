@@ -42,34 +42,13 @@ describe('e2e: Participant Capsule Frontend', () => {
       }
     });
 
-    it('returns Content Hidden body for files that are in other participant folders', async () => {
-      ({ server, wss, watcher } = await startServer({
-        ...baseCfg,
-        dir: './test/utils/fixtures/simple',
-      }));
-
-      browser = await puppeteer.launch();
-      const page = await browser.newPage();
-
-      await page.goto(`${host}test/utils/fixtures/simple/participants/Alex/index.html`);
-      await page.evaluate(() => {
-        document.cookie = `participant_name=Joren;path=/`;
-      });
-      await page.reload();
-      const { content } = await page.evaluate(() => {
-        return {
-          content: document.body.innerText,
-        };
-      });
-
-      expect(content).to.equal('🚧 Content hidden 🚧');
-    }).timeout(testTimeout);
-
     it('makes use of HMR when a participant file changes, which supports nested modules and custom elements', async () => {
       ({ server, wss, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/simple',
-        mode: 'module',
+        targetOptions: {
+          mode: 'module',
+        },
       }));
 
       browser = await puppeteer.launch();

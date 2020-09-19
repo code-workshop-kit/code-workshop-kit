@@ -152,8 +152,6 @@ class AdminSidebar extends LitElement {
 
     this.keyToStrings = {
       enableCaching: 'Caching',
-      alwaysServeFiles: 'Always Serve Files',
-      enableAdmin: 'Admin Mode',
       followMode: 'Follow Mode',
     };
   }
