@@ -1,6 +1,4 @@
 import { expect } from 'chai';
-import { noCacheMiddleware } from '../../src/middlewares/middlewares.js';
-import { appShellPlugin } from '../../src/plugins/plugins.js';
 import { startServer } from '../../src/start-server.js';
 
 describe('start cwk server', () => {
@@ -30,8 +28,6 @@ describe('start cwk server', () => {
         dir: './test/utils/fixtures/simple',
       }));
 
-      expect(cwkConfig.withoutAppShell).to.be.false;
-      expect(cwkConfig.enableCaching).to.be.false;
       expect(cwkConfig.title).to.equal('');
       expect(cwkConfig.target).to.equal('frontend');
       expect(cwkConfig.targetOptions.mode).to.equal('iframe');
@@ -57,8 +53,6 @@ describe('start cwk server', () => {
         port: 5000,
         title: 'Frontend Workshop',
         dir: './test/utils/fixtures/simple',
-        withoutAppShell: true,
-        enableCaching: true,
         target: 'terminal',
         targetOptions: {
           cmd: 'node index.js --port <%= port %>',
@@ -77,8 +71,6 @@ describe('start cwk server', () => {
       }));
 
       expect(cwkConfig.title).to.equal('Frontend Workshop');
-      expect(cwkConfig.withoutAppShell).to.be.true;
-      expect(cwkConfig.enableCaching).to.be.true;
       expect(cwkConfig.participantIndexHtmlExists).to.be.false;
       expect(cwkConfig.target).to.equal('terminal');
       expect(cwkConfig.targetOptions.cmd).to.equal('node index.js --port <%= port %>');
@@ -124,40 +116,6 @@ describe('start cwk server', () => {
       expect(edsConfig.watch).to.be.false;
       expect(edsConfig.eventStream).to.be.true;
       expect(edsConfig.compatibility).to.be.undefined;
-    });
-
-    it('supports preventing certain plugins and middlewares from being added', async () => {
-      ({ cwkConfig, edsConfig, server, wss, watcher } = await startServer({
-        port: 5000,
-        withoutAppShell: true,
-        enableCaching: true,
-        logStartup: false,
-        dir: './test/utils/fixtures/simple',
-        open: false,
-      }));
-
-      const appShellPluginFound = edsConfig.plugins.find(plugin => {
-        if (plugin.transform) {
-          return plugin.transform.toString() === appShellPlugin().transform.toString();
-        }
-        return false;
-      });
-
-      let noCachingMiddlewareFound;
-      if (edsConfig.customMiddlewares) {
-        noCachingMiddlewareFound = edsConfig.customMiddlewares.find(middleware => {
-          if (middleware.name === noCacheMiddleware.name) {
-            return true;
-          }
-          return false;
-        });
-      }
-
-      expect(cwkConfig.withoutAppShell).to.be.true;
-      expect(appShellPluginFound).to.be.undefined;
-
-      expect(cwkConfig.enableCaching).to.be.true;
-      expect(noCachingMiddlewareFound).to.be.undefined;
     });
   });
 });

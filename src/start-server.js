@@ -167,16 +167,11 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
     }),
   );
 
-  // Important that we place insert plugins after file control, if we want them to apply scripts to files that should be served empty to the user
   newEdsConfig.plugins.push(followModePlugin(edsConfig.port));
-  if (!cwkConfig.withoutAppShell) {
-    newEdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
-    newEdsConfig.plugins.push(adminUIPlugin(absoluteDir));
-  }
+  newEdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
+  newEdsConfig.plugins.push(adminUIPlugin(absoluteDir));
 
-  if (!cwkConfig.enableCaching) {
-    newEdsConfig.middlewares.push(noCacheMiddleware);
-  }
+  newEdsConfig.middlewares.push(noCacheMiddleware);
 
   return newEdsConfig;
 };
@@ -184,8 +179,6 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
 const getCwkConfig = opts => {
   // cwk defaults
   let cwkConfig = {
-    withoutAppShell: false,
-    enableCaching: false,
     participantIndexHtmlExists: true,
     dir: '/',
     title: '',

@@ -128,7 +128,6 @@ export class ParticipantCapsule extends LitElement {
   }
 
   render() {
-    // TODO: Support other rendering engines? or let people make their extension app shell / etc.? Probably only React where you have issues..
     return html`
       ${this.noContainer
         ? html`${this._capsuleTemplate}`
