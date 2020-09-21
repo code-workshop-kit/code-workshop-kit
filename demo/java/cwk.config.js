@@ -6,6 +6,6 @@ export default {
   target: 'terminal',
   targetOptions: {
     cmd: 'javac Foo.java && java Foo',
-    excludeFromWatch: ['class'],
+    excludeFromWatch: ['*.class'],
   },
 };

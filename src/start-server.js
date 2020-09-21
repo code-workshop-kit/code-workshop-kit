@@ -7,6 +7,7 @@ import {
   startServer as startEdsServer,
 } from 'es-dev-server';
 import _esmRequire from 'esm';
+import glob from 'glob';
 import path from 'path';
 import portfinder from 'portfinder';
 import WebSocket from 'ws';
@@ -133,7 +134,7 @@ const setupWebSocket = () => {
 const getWsConnection = (participantName, feature, all = false) => {
   let connection;
 
-  if (!cwkState.state.wsConnections[feature]) {
+  if (!cwkState.state.wsConnections || !cwkState.state.wsConnections[feature]) {
     return null;
   }
 
@@ -301,11 +302,23 @@ const setupWatcherForTerminalProcess = (watcher, cfg) => {
       // and get the top most dir name
       const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
 
-      // If the file that was changed is not within exclude-list for file extensions
-      if (cfg.targetOptions.excludeFromWatch.every(ext => !filePath.endsWith(`.${ext}`))) {
+      const excludeFilesArr = [
+        ...new Set(
+          cfg.targetOptions.excludeFromWatch
+            .map(pattern =>
+              glob.sync(pattern, { cwd: `${participantFolder}${participantName}`, dot: true }),
+            )
+            .flat(Infinity)
+            .map(file => path.resolve(cfg.absoluteDir, 'participants', participantName, file)),
+        ),
+      ];
+
+      // If the file that was changed is not within exclude-list
+      if (!excludeFilesArr.includes(filePath)) {
         const { processEmitter, process } = runScript({
           cmd: cfg.targetOptions.cmd,
           participant: participantName,
+          participantIndex: cfg.participants.indexOf(participantName),
           dir: cfg.absoluteDir,
         });
 

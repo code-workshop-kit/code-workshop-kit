@@ -15,7 +15,7 @@ export default {
   target: 'terminal', // default is 'frontend',
   targetOptions: {
     cmd: 'javac Main.java && java Main',
-    excludeFromWatch: ['class'],
+    excludeFromWatch: ['**/*.class'],
   },
 }
 ```
@@ -23,6 +23,10 @@ export default {
 Pass the target `terminal` and provide a script command that you want to run in each participants root folder, which will re-run on file-changes automatically!
 
 You can optionally turn off the auto-reload, and let your users control when the script is reran.
+
+You can also exclude files from being watched, e.g. Java `.class` files, since you don't want your compiled output "file-changes" to re-compile output and end in an infinite loop.
+It accepts an array of glob patterns and starts the glob search from the participant root folder.
+
 You can also make the script run from the workshop root folder instead of the participant root folder if you need to.
 
 ```js
@@ -63,3 +67,23 @@ You can create an index.html entry point and use the setCapsule util, that way a
 ```
 
 Though you would probably replace `'Joren'` with your participantName variable `<%= participantName %>`
+
+## Advanced script
+
+It is possible to pass dynamic arguments to your `cmd` by providing a function that returns a string instead of just providing a string.
+
+```js
+export default {
+  participants: ['Joren', 'Felix'],
+  targetOptions: {
+    cmd: (name, index) => `foo --participant ${name} --index ${index}`,
+  },
+}
+```
+
+In the parameters, the participant name and index are passed in case you need those.
+
+This may be useful, for example if your command actually needs the participant name or the participant index (as counted from 0, referencing the `participants` array in your `cwk.config.js`).
+Another example is when you need to pass in a randomly generated number that is different on each reload.
+
+I don't expect many people will actually need this, but this is something I ran into myself so I added it.
