@@ -15,7 +15,7 @@ export const runScript = ({
     pathToRunScriptIn = path.resolve(dir, 'participants', participant);
   }
 
-  const _cmd = typeof cmd === 'function' ? cmd.call(participant, participantIndex) : cmd;
+  const _cmd = typeof cmd === 'function' ? cmd.call(null, participant, participantIndex) : cmd;
   const script = spawn(_cmd, [], {
     cwd: pathToRunScriptIn,
     shell: true,
