@@ -14,23 +14,29 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
           margin: 0;
         }
 
-        /* Create offset from the clear button */
-        .entry:nth-child(2) {
-          margin-top: 40px;
-        }
-
         .entry--error {
           background-color: #ffdada;
         }
 
         .participant-content-container {
           position: relative;
+          overflow: hidden;
+        }
+
+        .participant-terminal-entries {
+          overflow-y: auto;
+          margin-top: 40px;
+          height: calc(100% - 70px);
         }
 
         .participant-terminal-input-container {
           display: flex;
           position: absolute;
           bottom: 0;
+        }
+
+        .terminal-input-form {
+          margin: 0;
         }
 
         .terminal-input-form label::before {
@@ -101,7 +107,7 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
           <button class="action-button" @click=${this.clearTerminal}>Clear</button>
           <button class="action-button" @click=${this.rerunScript}>Rerun</button>
         </div>
-        ${this.__participantContent}
+        <div class="participant-terminal-entries"></div>
         <div class="participant-terminal-input-container">
           <form
             class="terminal-input-form"
@@ -127,8 +133,8 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
       entryNode.classList.add('entry--error');
     }
 
-    const container = this.shadowRoot.querySelector('.participant-terminal-input-container');
-    container.insertAdjacentElement('beforebegin', entryNode);
+    const container = this.shadowRoot.querySelector('.participant-terminal-entries');
+    container.appendChild(entryNode);
     container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
   }
 
@@ -154,7 +160,7 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
   }
 
   clearTerminal() {
-    const container = this.shadowRoot.querySelector('.participant-content-container');
+    const container = this.shadowRoot.querySelector('.participant-terminal-entries');
     Array.from(container.children)
       .filter(child => child.classList.contains('entry'))
       .forEach(child => child.remove());
