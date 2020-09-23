@@ -100,8 +100,10 @@ const runScriptForParticipant = (participantName, cfg) => {
   }
 
   const sendData = (data, type) => {
-    if (connections) {
-      connections.forEach(connection =>
+    // Check connections again, as they may have changed since checking at the start of running the script
+    const _connections = getWsConnection(participantName, 'terminal-process', true);
+    if (_connections) {
+      _connections.forEach(connection =>
         connection.send(JSON.stringify({ type: `terminal-process-${type}`, data })),
       );
     }

@@ -75,6 +75,17 @@ describe('e2e: Participant Capsule Terminal', () => {
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
+
+      // Authenticate
+      await page.goto(`${host}test/utils/fixtures/terminal-node/index.html`);
+      await page.evaluate(async () => {
+        const cookieElem = document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-select-cookie');
+
+        cookieElem.shadowRoot.querySelector('.name__item').click();
+      });
+
       await page.goto(`${host}test/utils/fixtures/terminal-node/participants/Joren/index.html`);
 
       // Give websocket authentication some time
@@ -91,7 +102,7 @@ describe('e2e: Participant Capsule Terminal', () => {
         'index.js',
       );
       fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf8'));
-      await aTimeout(100);
+      await aTimeout(500);
 
       const { entry } = await page.evaluate(() => {
         return {
@@ -104,7 +115,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       expect(entry).to.equal('Joren\n');
     }).timeout(testTimeout);
 
-    it('accepts a terminalScript argument which is the script ran as a child process', async () => {
+    it('accepts a cmd argument which is the script ran as a child process', async () => {
       ({ server, wss, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
@@ -116,6 +127,17 @@ describe('e2e: Participant Capsule Terminal', () => {
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
+
+      // Authenticate
+      await page.goto(`${host}test/utils/fixtures/terminal-node/index.html`);
+      await page.evaluate(async () => {
+        const cookieElem = document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-select-cookie');
+
+        cookieElem.shadowRoot.querySelector('.name__item').click();
+      });
+
       await page.goto(`${host}test/utils/fixtures/terminal-node/participants/Joren/index.html`);
 
       // Give websocket authentication some time
@@ -132,7 +154,7 @@ describe('e2e: Participant Capsule Terminal', () => {
         'custom.js',
       );
       fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf8'));
-      await aTimeout(100);
+      await aTimeout(500);
 
       const { entry } = await page.evaluate(() => {
         return {
@@ -157,7 +179,19 @@ describe('e2e: Participant Capsule Terminal', () => {
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
+
+      // Authenticate
+      await page.goto(`${host}test/utils/fixtures/terminal-node/index.html`);
+      await page.evaluate(async () => {
+        const cookieElem = document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-select-cookie');
+
+        Array.from(cookieElem.shadowRoot.querySelectorAll('.name__item'))[1].click();
+      });
+
       await page.goto(`${host}test/utils/fixtures/terminal-node/participants/Felix/index.html`);
+
       // Give websocket authentication some time
       await aTimeout(10);
 
@@ -173,7 +207,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       );
       fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf8'));
 
-      await aTimeout(100);
+      await aTimeout(500);
 
       await page.evaluate(() => {
         const input = document
@@ -188,7 +222,7 @@ describe('e2e: Participant Capsule Terminal', () => {
 
         form.dispatchEvent(new Event('submit'));
       });
-      await aTimeout(100);
+      await aTimeout(500);
 
       const { entries } = await page.evaluate(() => {
         return {
