@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.10.2...0.11.0) (2020-09-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* excludeFromWatch no longer works by just passing an array of file extensions. Pass an array of globs instead.
+* withoutAppShell options removed. No point in this option for now, raise an issue if you have a use case. enableCaching option removed from CWK config, now only available as an admin control in the app shell. CWK plugins and middlewares are now always added.
+* Please check the README.md, particularly the config docs. Target-specific options have been moved into targetOptions property. alwaysServeFiles has been removed, no clear use case. Admin mode in admin sidebar has also been removed as a consequence.
+
+### Features
+
+* add rerun button in terminal capsule ([e9b2af3](https://github.com/code-workshop-kit/cwk-frontend/commit/e9b2af3fdb1d9a56ac779e3dc02e39ed4033467b))
+* allow turning off terminal auto reload, allow run from workshop root folder ([a405f66](https://github.com/code-workshop-kit/cwk-frontend/commit/a405f66210ea260bc72c22d0f6268f659210d5ad))
+* make cmd more flexible, excludeFromWatch to accept array of globs ([ae49303](https://github.com/code-workshop-kit/cwk-frontend/commit/ae49303b7dabb6232bccd1134f16421a979e5265))
+* middlewares and plugins are always added, withoutAppShell removed ([b573dfd](https://github.com/code-workshop-kit/cwk-frontend/commit/b573dfdf1a477a6b767a04da5df0322d738ab6d7))
+
+
+### Bug Fixes
+
+* improve styling of terminal capsule ([77896c8](https://github.com/code-workshop-kit/cwk-frontend/commit/77896c865ce90c250e9ebb257f9fa1802794c6b7))
+
 ### [0.10.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.10.1...0.10.2) (2020-09-09)
 
 
