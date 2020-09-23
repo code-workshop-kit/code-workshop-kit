@@ -29,9 +29,6 @@ Below there are some more configuration settings for cwk that you can specify. S
 
 ```js
 export default {
-  withoutAppShell: true, // Will not insert CWK app shell, disables most CWK features. Default false
-  enableCaching: true, // Will re-enable browser caching, discouraged for workshops, and can break some of the CWK features like the file loader
-  alwaysServeFiles: true, // overrides the file loader to always serve files to everyone
   mode: 'module', // if you want to use HMR (Hot Module Reload), set this to module and make sure participant index.js exports a template or DOM node.
   participantIndexHtmlExists: false, // Set this to false if there's no index.html for the participants. Will remove the "View" button in the participant views, because there is nothing to href to.
 };

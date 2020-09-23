@@ -13,9 +13,10 @@ Leveraging Visual Studio Live Share and [es-dev-server](https://www.npmjs.com/pa
 - 🖥️ **Dev Server**: A development server that can be shared through VS Live Share, to create a *shared output* for your workshop participants. Change config/settings on the fly without having to restart!
 - 📟 **Terminal Interaction**: Backend languages supported by porting terminal output and input. Control the script that runs for your participant, which re-runs on file changes.
 - 🔒 **Authentication**: Authenticate your participants and workshop admins.
-- 🚧 **Loader**: Load only files that belong to the participant. So you don't get your output bloated by your peers' console logs.
 - 👀 **Follow Mode**: Know follow-mode in VS Live Share? Get the same thing but in the browser! Participants will follow you in the browser when you change URLs.
 - 🔥 **Hot Module Reload**: Never reload the browser again! If your participants edit their files, their content will reload automatically! Supports custom-elements. (Experimental!)
+
+> 🚧 **Loader**: Load/serve only files that belong to the participant. Currently no proper use case, so this has been removed. Please raise an issue if you need this.
 
 ## Usage
 
@@ -33,7 +34,7 @@ Or with yarn
 yarn add code-workshop-kit
 ```
 
-It may make sense to install it globally, so you can run it in any project without needing a package.json!
+It may make sense to install it globally, so you can run it in any project without needing a `package.json`!
 
 ### Run it
 
@@ -51,7 +52,7 @@ Server:
 cwk run
 ```
 
-> To run a locally installed npm binary (cwk in this case), either use package.json scripts property, or run it directly using `yarn cwk` or `(npm bin)/cwk`.
+> To run a locally installed npm binary (`cwk` in this case), either use `package.json` scripts property, or run it directly using `yarn cwk` or `(npm bin)/cwk`.
 
 ## Configuration
 
@@ -67,15 +68,17 @@ If you are the host of the workshop, you can add yourself too, this is easy if y
 export default {
   participants: ['Joren', 'Felix'],
   title: 'Frontend Workshop', // Title of the workshop displayed on the main page when launching CWK
-  mode: 'module', // default is 'iframe'
+  targetOptions: {
+    mode: 'module', // default is 'iframe'
+  }
 }
 ```
 
-You can choose between `iframe` and `module` mode. `iframe` is the default, but generally speaking `module` is a way better experience, but the prerequisite is that your participant `index.js` contain a default export.
+When the target is `'frontend'` which is the default setting meant for frontend workshops, you can choose between `iframe` and `module` mode. `iframe` is the default, but generally speaking `module` is a way better experience, but the prerequisite is that your participant `index.js` contains a default export with an HTML string, DOM Node or similar.
 
 For more information about `mode` option for using `module` and enabling the HMR feature, see [detailed explanation module mode](https://github.com/code-workshop-kit/cwk-frontend/tree/master/docs/module-mode.md)
 
-There are also a lot of other advanced configuration, like adding admins or changing file control behavior. [See full config docs](https://github.com/code-workshop-kit/cwk-frontend/tree/master/docs/config.md)
+There are also a lot of other advanced configuration, like adding admins or disaling the CWK app shell altogether. [See full config docs](https://github.com/code-workshop-kit/cwk-frontend/tree/master/docs/config.md)
 
 Backend languages are supported in the sense that you can control the script that is ran in each participant's root folder. This will re-run on file-changes, for example compiling a Java file and executing the binary. The terminal output is displayed for that participant in the app shell, and you can even do terminal input through the app shell. [See how to use terminal target](https://github.com/code-workshop-kit/cwk-frontend/tree/master/docs/terminal.md)
 
@@ -124,7 +127,6 @@ See [VS Code Live Share Security docs](https://docs.microsoft.com/en-us/visualst
 Inside your repo, you should include a .vsls.json file, you can use this to add control over excluding or including files for your participants.
 
 > Important: if you exclude files e.g. your index.html, and you scaffold an index.html for your participants, you will need to add a .vsls.json file inside your participant folder that unexcludes index.html. See the [demo folder](https://github.com/code-workshop-kit/cwk-frontend/tree/master/demo/basic) for example.
-
 
 ## Frequently Asked Questions
 

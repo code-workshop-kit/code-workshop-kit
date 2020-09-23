@@ -4,6 +4,8 @@ export default {
   ...base,
   title: 'Backend Workshop',
   target: 'terminal',
-  terminalScript: 'javac Foo.java && java Foo',
-  excludeFromWatch: ['class'],
+  targetOptions: {
+    cmd: 'javac Foo.java && java Foo',
+    excludeFromWatch: ['*.class'],
+  },
 };

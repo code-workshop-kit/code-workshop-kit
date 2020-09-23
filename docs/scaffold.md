@@ -6,8 +6,6 @@ For example, you can also put methods in here, and you can access other template
 
 There is also the special `this.participantName` that can be used, this is the name of the current participant that a file is being scaffolded for.
 
-> templateData properties get flattened to the same level as `participants` property, so be careful of duplicate keys.
-
 ```js
 export default {
   participants: ['Joren', 'Felix'],
