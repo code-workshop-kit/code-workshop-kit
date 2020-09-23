@@ -76,7 +76,7 @@ It is possible to pass dynamic arguments to your `cmd` by providing a function t
 export default {
   participants: ['Joren', 'Felix'],
   targetOptions: {
-    cmd: (name, index) => `foo --participant ${name} --index ${index}`,
+    cmd: (name, index) => `foo --port --participant ${name} --index ${index}`,
   },
 }
 ```

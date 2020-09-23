@@ -47,6 +47,75 @@ const setDefaultAdminConfig = () => {
   cwkState.state = { adminConfig: getAdminUIDefaults() };
 };
 
+const getWsConnection = (participantName, feature, all = false) => {
+  let connection;
+
+  if (!cwkState.state.wsConnections || !cwkState.state.wsConnections[feature]) {
+    return null;
+  }
+
+  if (all) {
+    return Array.from(cwkState.state.wsConnections[feature].entries())
+      .filter(entry => entry[0].endsWith(participantName))
+      .map(entry => entry[1]);
+  }
+
+  if (cwkState.state.wsConnections && cwkState.state.wsConnections[feature]) {
+    connection = cwkState.state.wsConnections[feature].get(`${participantName}-${participantName}`);
+  }
+  return connection;
+};
+
+const runScriptForParticipant = (participantName, cfg) => {
+  const { processEmitter, process } = runScript({
+    cmd: cfg.targetOptions.cmd,
+    participant: participantName,
+    participantIndex: cfg.participants.indexOf(participantName),
+    dir: cfg.absoluteDir,
+  });
+
+  // Save the current running script for participant
+  const { state } = cwkState;
+  if (!state.terminalScripts) {
+    state.terminalScripts = new Map();
+  }
+  state.terminalScripts.set(participantName, process);
+  cwkState.state = state;
+
+  // Open terminal input on the frontend.
+  const connections = getWsConnection(participantName, 'terminal-process', true);
+  if (connections) {
+    connections.forEach(connection => {
+      if (connection) {
+        connection.send(JSON.stringify({ type: 'terminal-input-enable' }));
+      }
+
+      // Close terminal input on the frontend
+      process.on('close', () => {
+        if (connection) {
+          connection.send(JSON.stringify({ type: 'terminal-input-disable' }));
+        }
+      });
+    });
+  }
+
+  const sendData = (data, type) => {
+    if (connections) {
+      connections.forEach(connection =>
+        connection.send(JSON.stringify({ type: `terminal-process-${type}`, data })),
+      );
+    }
+  };
+
+  processEmitter.on('out', data => {
+    sendData(data, 'output');
+  });
+
+  processEmitter.on('err', data => {
+    sendData(data, 'error');
+  });
+};
+
 const handleWsMessage = (message, ws) => {
   const parsedMessage = JSON.parse(message);
   const { type } = parsedMessage;
@@ -95,6 +164,11 @@ const handleWsMessage = (message, ws) => {
       }
       break;
     }
+    case 'terminal-rerun': {
+      const { participantName } = parsedMessage;
+      runScriptForParticipant(participantName, cwkState.state.cwkConfig);
+      break;
+    }
     case 'authenticate': {
       const { username, feature, participant } = parsedMessage;
       const { state } = cwkState;
@@ -129,25 +203,6 @@ const setupWebSocket = () => {
   });
 
   return wss;
-};
-
-const getWsConnection = (participantName, feature, all = false) => {
-  let connection;
-
-  if (!cwkState.state.wsConnections || !cwkState.state.wsConnections[feature]) {
-    return null;
-  }
-
-  if (all) {
-    return Array.from(cwkState.state.wsConnections[feature].entries())
-      .filter(entry => entry[0].endsWith(participantName))
-      .map(entry => entry[1]);
-  }
-
-  if (cwkState.state.wsConnections && cwkState.state.wsConnections[feature]) {
-    connection = cwkState.state.wsConnections[feature].get(`${participantName}-${participantName}`);
-  }
-  return connection;
 };
 
 const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
@@ -284,29 +339,22 @@ const setupParticipantWatcher = absoluteDir => {
 };
 
 const setupWatcherForTerminalProcess = (watcher, cfg) => {
-  const sendData = (data, type, participantName) => {
-    const connections = getWsConnection(participantName, 'terminal-process', true);
-    if (connections) {
-      connections.forEach(connection =>
-        connection.send(JSON.stringify({ type: `terminal-process-${type}`, data })),
-      );
-    }
-  };
-
   if (cfg.targetOptions.autoReload) {
     watcher.on('change', filePath => {
       // Get participant name from file path
-      const participantFolder = path.join(cfg.absoluteDir, 'participants/');
-
       // Cancel out the participant folder from the filepath (Bob/index.js or Bob/nested/style.css),
       // and get the top most dir name
+      const participantFolder = path.join(cfg.absoluteDir, 'participants/');
       const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
 
       const excludeFilesArr = [
         ...new Set(
           cfg.targetOptions.excludeFromWatch
             .map(pattern =>
-              glob.sync(pattern, { cwd: `${participantFolder}${participantName}`, dot: true }),
+              glob.sync(pattern, {
+                cwd: path.resolve(cfg.absoluteDir, 'participants', participantName),
+                dot: true,
+              }),
             )
             .flat(Infinity)
             .map(file => path.resolve(cfg.absoluteDir, 'participants', participantName, file)),
@@ -315,45 +363,7 @@ const setupWatcherForTerminalProcess = (watcher, cfg) => {
 
       // If the file that was changed is not within exclude-list
       if (!excludeFilesArr.includes(filePath)) {
-        const { processEmitter, process } = runScript({
-          cmd: cfg.targetOptions.cmd,
-          participant: participantName,
-          participantIndex: cfg.participants.indexOf(participantName),
-          dir: cfg.absoluteDir,
-        });
-
-        // Save the current running script for participant
-        const { state } = cwkState;
-        if (!state.terminalScripts) {
-          state.terminalScripts = new Map();
-        }
-        state.terminalScripts.set(participantName, process);
-        cwkState.state = state;
-
-        // Open terminal input on the frontend.
-        const connections = getWsConnection(participantName, 'terminal-process', true);
-        if (connections) {
-          connections.forEach(connection => {
-            if (connection) {
-              connection.send(JSON.stringify({ type: 'terminal-input-enable' }));
-            }
-
-            // Close terminal input on the frontend
-            process.on('close', () => {
-              if (connection) {
-                connection.send(JSON.stringify({ type: 'terminal-input-disable' }));
-              }
-            });
-          });
-        }
-
-        processEmitter.on('out', data => {
-          sendData(data, 'output', participantName);
-        });
-
-        processEmitter.on('err', data => {
-          sendData(data, 'error', participantName);
-        });
+        runScriptForParticipant(participantName, cfg);
       }
     });
   }
@@ -362,10 +372,9 @@ const setupWatcherForTerminalProcess = (watcher, cfg) => {
 const setupHMR = (watcher, absoluteDir) => {
   watcher.on('change', filePath => {
     // Get participant name from file path
-    const participantFolder = path.join(absoluteDir, 'participants/');
-
     // Cancel out the participant folder from the filepath (Bob/index.js or Bob/nested/style.css),
     // and get the top most dir name
+    const participantFolder = path.join(absoluteDir, 'participants/');
     const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
 
     const connections = getWsConnection(participantName, 'reload-module', true);
@@ -408,7 +417,7 @@ export const startServer = async (opts = {}) => {
 
   const { server } = await startEdsServer(edsConfig);
   const wss = setupWebSocket();
-  cwkState.state = { wss };
+  cwkState.state = { wss, cwkConfig };
   setDefaultAdminConfig();
 
   server.on('upgrade', function upgrade(request, socket, head) {

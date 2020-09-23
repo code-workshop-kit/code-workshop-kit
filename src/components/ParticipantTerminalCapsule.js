@@ -43,8 +43,13 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
           color: rgba(0, 0, 0, 0);
         }
 
-        .clear-button {
+        .terminal-buttons {
           position: absolute;
+          top: 3px;
+        }
+
+        .terminal-buttons > button {
+          margin-right: 5px;
         }
       `,
     ];
@@ -92,7 +97,10 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
     return html`
       ${super._capsuleTemplate}
       <div class="participant-content-container">
-        <button class="action-button clear-button" @click=${this.clearTerminal}>Clear</button>
+        <div class="terminal-buttons">
+          <button class="action-button" @click=${this.clearTerminal}>Clear</button>
+          <button class="action-button" @click=${this.rerunScript}>Rerun</button>
+        </div>
         ${this.__participantContent}
         <div class="participant-terminal-input-container">
           <form
@@ -150,6 +158,17 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
     Array.from(container.children)
       .filter(child => child.classList.contains('entry'))
       .forEach(child => child.remove());
+  }
+
+  rerunScript() {
+    if (this.ws) {
+      this.ws.send(
+        JSON.stringify({
+          type: 'terminal-rerun',
+          participantName: this.name,
+        }),
+      );
+    }
   }
 }
 customElements.define('cwk-participant-terminal-capsule', ParticipantTerminalCapsule);
