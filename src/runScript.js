@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import path from 'path';
 import EventEmitter from 'events';
 
@@ -8,6 +8,7 @@ export const runScript = ({
   participant,
   participantIndex,
   fromParticipantFolder = true,
+  sync = false,
 } = {}) => {
   const processEmitter = new EventEmitter();
   let pathToRunScriptIn = path.resolve(dir);
@@ -16,20 +17,29 @@ export const runScript = ({
   }
 
   const _cmd = typeof cmd === 'function' ? cmd.call(null, participant, participantIndex) : cmd;
-  const script = spawn(_cmd, [], {
-    cwd: pathToRunScriptIn,
-    shell: true,
-  });
 
-  script.stdout.on('data', data => {
-    processEmitter.emit('out', `${data}`);
-  });
+  const script = sync
+    ? spawnSync(_cmd, [], {
+        shell: true,
+      })
+    : spawn(_cmd, [], {
+        cwd: pathToRunScriptIn,
+        shell: true,
+      });
 
-  script.stderr.on('data', data => {
-    processEmitter.emit('err', `${data}`);
-  });
+  if (!sync) {
+    script.stdout.on('data', data => {
+      processEmitter.emit('out', `${data}`);
+    });
 
-  script.on('close', () => processEmitter.emit('close'));
+    script.stderr.on('data', data => {
+      processEmitter.emit('err', `${data}`);
+    });
+
+    script.on('close', () => {
+      processEmitter.emit('close');
+    });
+  }
 
   return { processEmitter, process: script };
 };

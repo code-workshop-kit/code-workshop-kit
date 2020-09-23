@@ -66,7 +66,23 @@ const getWsConnection = (participantName, feature, all = false) => {
   return connection;
 };
 
-const runScriptForParticipant = (participantName, cfg) => {
+const runScriptForParticipant = async (participantName, cfg) => {
+  // Close already running script
+  if (cwkState.state.terminalScripts) {
+    const oldScript = cwkState.state.terminalScripts.get(participantName);
+    if (oldScript) {
+      oldScript.kill();
+      runScript({
+        cmd: cfg.targetOptions.cmdBeforeRerun,
+        participant: participantName,
+        participantIndex: cfg.participants.indexOf(participantName),
+        dir: cfg.absoluteDir,
+        sync: true,
+      });
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+
   const { processEmitter, process } = runScript({
     cmd: cfg.targetOptions.cmd,
     participant: participantName,
