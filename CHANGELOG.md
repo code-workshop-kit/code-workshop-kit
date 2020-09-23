@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.11.0...0.11.1) (2020-09-23)
+
+
+### Bug Fixes
+
+* run script call was not passing participant & index args properly ([20ae75b](https://github.com/code-workshop-kit/cwk-frontend/commit/20ae75bdc96225d2880d1cdd8b13f01224b3d789))
+
 ## [0.11.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.10.2...0.11.0) (2020-09-23)
 
 
