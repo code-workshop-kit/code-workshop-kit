@@ -19,6 +19,7 @@ export const runScript = ({
   const script = spawn(_cmd, [], {
     cwd: pathToRunScriptIn,
     shell: true,
+    detached: true,
   });
 
   script.stdout.on('data', data => {
@@ -31,5 +32,5 @@ export const runScript = ({
 
   script.on('close', () => processEmitter.emit('close'));
 
-  return { processEmitter, process: script };
+  return { processEmitter, script };
 };

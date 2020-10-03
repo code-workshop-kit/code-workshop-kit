@@ -66,8 +66,18 @@ const getWsConnection = (participantName, feature, all = false) => {
   return connection;
 };
 
-const runScriptForParticipant = (participantName, cfg) => {
-  const { processEmitter, process } = runScript({
+const runScriptForParticipant = async (participantName, cfg) => {
+  const { state } = cwkState;
+
+  if (state.terminalScripts) {
+    const oldScript = state.terminalScripts.get(participantName);
+    if (oldScript && oldScript.script && oldScript.script.pid) {
+      process.kill(-oldScript.script.pid);
+      await oldScript.hasClosed;
+    }
+  }
+
+  const { processEmitter, script } = runScript({
     cmd: cfg.targetOptions.cmd,
     participant: participantName,
     participantIndex: cfg.participants.indexOf(participantName),
@@ -75,14 +85,24 @@ const runScriptForParticipant = (participantName, cfg) => {
   });
 
   // Save the current running script for participant
-  const { state } = cwkState;
   if (!state.terminalScripts) {
     state.terminalScripts = new Map();
   }
-  state.terminalScripts.set(participantName, process);
-  cwkState.state = state;
+  let closeResolve;
+  const hasClosed = new Promise(resolve => {
+    closeResolve = resolve;
+  });
+  state.terminalScripts.set(participantName, { script, closeResolve, hasClosed });
 
-  // Open terminal input on the frontend.
+  script.on('close', () => {
+    const scriptData = state.terminalScripts.get(participantName);
+    if (scriptData) {
+      scriptData.closeResolve();
+      state.terminalScripts.delete(participantName);
+    }
+  });
+
+  // Open terminal input on the frontend
   const connections = getWsConnection(participantName, 'terminal-process', true);
   if (connections) {
     connections.forEach(connection => {
@@ -91,7 +111,7 @@ const runScriptForParticipant = (participantName, cfg) => {
       }
 
       // Close terminal input on the frontend
-      process.on('close', () => {
+      script.on('close', () => {
         if (connection) {
           connection.send(JSON.stringify({ type: 'terminal-input-disable' }));
         }
@@ -116,6 +136,8 @@ const runScriptForParticipant = (participantName, cfg) => {
   processEmitter.on('err', data => {
     sendData(data, 'error');
   });
+
+  cwkState.state = state;
 };
 
 const handleWsMessage = (message, ws) => {
@@ -155,9 +177,9 @@ const handleWsMessage = (message, ws) => {
       const { input, participantName } = parsedMessage;
 
       if (cwkState.state.terminalScripts) {
-        const script = cwkState.state.terminalScripts.get(participantName);
-        if (script) {
-          script.stdin.write(`${input}\n`, err => {
+        const scriptData = cwkState.state.terminalScripts.get(participantName);
+        if (scriptData && scriptData.script) {
+          scriptData.script.stdin.write(`${input}\n`, err => {
             if (err) {
               throw new Error(`stdin error: ${err}`);
             }
@@ -430,6 +452,15 @@ export const startServer = async (opts = {}) => {
 
   ['exit', 'SIGINT'].forEach(event => {
     process.on(event, () => {
+      // ensure that when we close CWK, terminal script subchildren are killed off too
+      if (cwkState.state.terminalScripts) {
+        cwkState.state.terminalScripts.forEach(script => {
+          if (script && script.script && script.script.pid) {
+            process.kill(-script.script.pid);
+          }
+        });
+      }
+
       watcher.close();
       wss.close();
     });
