@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.11.1...0.11.2) (2020-10-03)
+
+
+### Bug Fixes
+
+* properly kill old script on re-run, including its spawned sub-children ([2a540c2](https://github.com/code-workshop-kit/cwk-frontend/commit/2a540c22778a1045d18a13f133cfe101f59b7b17))
+
 ### [0.11.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.11.0...0.11.1) (2020-09-23)
 
 
