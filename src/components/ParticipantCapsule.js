@@ -88,7 +88,7 @@ export class ParticipantCapsule extends LitElement {
 
     if (changedProperties.has('noContainer')) {
       if (this.noContainer) {
-        this.style.setProperty('--container-height', '100%');
+        this.style.setProperty('--container-height', '100vh');
       } else {
         this.style.setProperty('--container-height', '400px');
       }
