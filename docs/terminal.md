@@ -41,10 +41,6 @@ export default {
 > Technically it would be possible to run it from any folder instead of just the two choices that are given, but I don't have a use case yet for this.
 > Please raise an issue if you have a use case, and I can make that feature available so that you can pass any path.
 
-## Dynamic args
-
-To be written.
-
 ## Index.html entrypoint
 
 You can create an index.html entry point and use the setCapsule util, that way a participant can click `view` on their box and view only their own process.
@@ -76,14 +72,22 @@ It is possible to pass dynamic arguments to your `cmd` by providing a function t
 export default {
   participants: ['Joren', 'Felix'],
   targetOptions: {
-    cmd: (name, index) => `foo --port --participant ${name} --index ${index}`,
+    cmd: (name, index) => {
+      if (index < 10) {
+        index = 0`${index}`;
+      }
+      return `web-dev-server --port 90${index}`
+    },
   },
 }
 ```
 
 In the parameters, the participant name and index are passed in case you need those.
-
 This may be useful, for example if your command actually needs the participant name or the participant index (as counted from 0, referencing the `participants` array in your `cwk.config.js`).
-Another example is when you need to pass in a randomly generated number that is different on each reload.
 
+For example, if your participants are starting a process on a certain port which has to be unique, in the above snippet.
+
+> Note: If you have your participants starting a process on ports, you will also need to add those ports to your Live Share session's shared servers, otherwise only the host has access. This has to be done manually.
+
+Another example is when you need to pass in a randomly generated number that is different on each reload.
 I don't expect many people will actually need this, but this is something I ran into myself so I added it.

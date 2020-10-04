@@ -10,6 +10,11 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
     return [
       super.styles,
       css`
+        :host {
+          --input-form-offset: 0;
+          --terminal-entries-offset: 70px;
+        }
+
         .entry {
           margin: 0;
         }
@@ -26,13 +31,13 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
         .participant-terminal-entries {
           overflow-y: auto;
           margin-top: 40px;
-          height: calc(100% - 70px);
+          height: calc(100% - var(--terminal-entries-offset));
         }
 
         .participant-terminal-input-container {
           display: flex;
           position: absolute;
-          bottom: 0;
+          bottom: var(--input-form-offset);
         }
 
         .terminal-input-form {
@@ -69,6 +74,19 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
   connectedCallback() {
     super.connectedCallback();
     this.setupWs();
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    if (changedProperties.has('noContainer')) {
+      if (this.noContainer) {
+        this.style.setProperty('--input-form-offset', '40px');
+        this.style.setProperty('--terminal-entries-offset', '120px');
+      } else {
+        this.style.setProperty('--input-form-offset', '0');
+        this.style.setProperty('--terminal-entries-offset', '70px');
+      }
+    }
   }
 
   setupWs() {
