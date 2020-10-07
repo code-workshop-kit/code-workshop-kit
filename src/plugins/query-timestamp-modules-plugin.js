@@ -54,7 +54,7 @@ export function queryTimestampModulesPlugin(dir) {
               ],
             }).code;
           } catch (e) {
-            // EDS will already throw this error to the browser because it also tries to do babel parsing on it
+            // WDS will already throw this error to the browser because it also tries to do babel parsing on it
           }
         }
       }

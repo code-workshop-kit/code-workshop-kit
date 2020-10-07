@@ -10,7 +10,6 @@ export const jwtMiddleware = dir => {
 
     if (ctx.url === '/api/login' && ctx.method === 'POST') {
       const providedPassword = ctx.headers['cwk-admin-password'];
-
       if (providedPassword && providedPassword === workshop.adminPassword) {
         // Mock user
         const username = ctx.headers['cwk-user'];

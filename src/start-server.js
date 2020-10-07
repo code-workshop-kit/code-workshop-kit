@@ -1,21 +1,15 @@
 import chokidar from 'chokidar';
 import commandLineArgs from 'command-line-args';
-import {
-  commandLineOptions,
-  createConfig,
-  readCommandLineArgs,
-  startServer as startEdsServer,
-} from 'es-dev-server';
+import { startDevServer } from '@web/dev-server';
 import _esmRequire from 'esm';
 import glob from 'glob';
 import path from 'path';
 import portfinder from 'portfinder';
-import WebSocket from 'ws';
 import {
   changeParticipantUrlMiddleware,
   jwtMiddleware,
   noCacheMiddleware,
-} from './middlewares/middlewares.js';
+} from './middleware/middleware.js';
 import {
   adminUIPlugin,
   appShellPlugin,
@@ -219,27 +213,17 @@ const handleWsMessage = (message, ws) => {
   }
 };
 
-const setupWebSocket = () => {
-  const wss = new WebSocket.Server({ noServer: true });
+const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
+  const newWdsConfig = wdsConfig;
+  newWdsConfig.plugins = [...wdsConfig.plugins];
+  newWdsConfig.middleware = [...wdsConfig.middleware];
 
-  wss.on('connection', ws => {
-    ws.on('message', message => handleWsMessage(message, ws));
-  });
+  newWdsConfig.middleware.push(changeParticipantUrlMiddleware(absoluteDir));
+  newWdsConfig.middleware.push(jwtMiddleware(absoluteDir));
 
-  return wss;
-};
-
-const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
-  const newEdsConfig = edsConfig;
-  newEdsConfig.plugins = [...edsConfig.plugins];
-  newEdsConfig.middlewares = [...edsConfig.middlewares];
-
-  newEdsConfig.middlewares.push(changeParticipantUrlMiddleware(absoluteDir));
-  newEdsConfig.middlewares.push(jwtMiddleware(absoluteDir));
-
-  newEdsConfig.plugins.push(queryTimestampModulesPlugin(absoluteDir));
-  newEdsConfig.plugins.push(wsPortPlugin(edsConfig.port));
-  newEdsConfig.plugins.push(
+  newWdsConfig.plugins.push(queryTimestampModulesPlugin(absoluteDir));
+  newWdsConfig.plugins.push(wsPortPlugin(wdsConfig.port));
+  newWdsConfig.plugins.push(
     componentReplacersPlugin({
       dir: absoluteDir,
       mode: cwkConfig.targetOptions.mode,
@@ -247,13 +231,13 @@ const addPluginsAndMiddlewares = (edsConfig, cwkConfig, absoluteDir) => {
     }),
   );
 
-  newEdsConfig.plugins.push(followModePlugin(edsConfig.port));
-  newEdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
-  newEdsConfig.plugins.push(adminUIPlugin(absoluteDir));
+  newWdsConfig.plugins.push(followModePlugin(wdsConfig.port));
+  newWdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
+  newWdsConfig.plugins.push(adminUIPlugin(absoluteDir));
 
-  newEdsConfig.middlewares.push(noCacheMiddleware);
+  newWdsConfig.middleware.push(noCacheMiddleware);
 
-  return newEdsConfig;
+  return newWdsConfig;
 };
 
 const getCwkConfig = opts => {
@@ -271,7 +255,6 @@ const getCwkConfig = opts => {
       autoReload: true,
       fromParticipantFolder: true,
       excludeFromWatch: [],
-      args: {},
 
       // frontend
       mode: 'iframe',
@@ -280,10 +263,9 @@ const getCwkConfig = opts => {
     },
   };
 
-  // If cli was used, read flags, both for cwk and eds flags
+  // If cli was used, read flags, both for cwk and wds flags
   if (opts.argv) {
     const cwkServerDefinitions = [
-      ...commandLineOptions,
       {
         name: 'dir',
         type: String,
@@ -294,7 +276,7 @@ const getCwkConfig = opts => {
 
     cwkConfig = {
       ...cwkConfig,
-      ...commandLineArgs(cwkServerDefinitions, { argv: opts.argv }),
+      ...commandLineArgs(cwkServerDefinitions, { argv: opts.argv, partial: true }),
     };
   }
 
@@ -314,48 +296,24 @@ const getCwkConfig = opts => {
     targetOptions: {
       ...(cwkConfig && cwkConfig.targetOptions),
       ...(workshop && workshop.targetOptions),
-      args: {
-        ...(cwkConfig && cwkConfig.targetOptions && cwkConfig.targetOptions.args),
-        ...(workshop && workshop.targetOptions && workshop.targetOptions.args),
-      },
     },
   };
   return cwkConfig;
 };
 
-const getEdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
-  // eds defaults & middlewares
-  let edsConfig = {
+const getWdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
+  // wds defaults & middleware
+  let wdsConfig = {
     open: false,
-    logStartup: true,
-    moduleDirs: ['node_modules'],
     nodeResolve: true,
-    logErrorsToBrowser: true,
     plugins: [],
-    middlewares: [],
+    middleware: [],
     ...opts,
   };
 
-  if (opts.argv) {
-    edsConfig = {
-      ...edsConfig,
-      ...readCommandLineArgs(opts.argv),
-    };
-  }
-
-  edsConfig.port = edsConfig.port || defaultPort;
-  edsConfig = addPluginsAndMiddlewares(edsConfig, cwkConfig, absoluteDir);
-
-  edsConfig = {
-    ...edsConfig,
-    // don't insert event stream as we don't need it and it tends to cause crashes
-    eventStream: false,
-    watch: false, // watch will not work with HMR
-    compatibility: 'none', // won't work without eventStream
-  };
-
-  edsConfig = createConfig(edsConfig);
-  return edsConfig;
+  wdsConfig.port = wdsConfig.port || defaultPort;
+  wdsConfig = addPluginsAndMiddleware(wdsConfig, cwkConfig, absoluteDir);
+  return wdsConfig;
 };
 
 const setupParticipantWatcher = absoluteDir => {
@@ -430,7 +388,7 @@ const setupHMR = (watcher, absoluteDir) => {
 export const startServer = async (opts = {}) => {
   const cwkConfig = getCwkConfig(opts);
   const defaultPort = await portfinder.getPortPromise();
-  const edsConfig = getEdsConfig(opts, cwkConfig, defaultPort, cwkConfig.absoluteDir);
+  const wdsConfig = getWdsConfig(opts, cwkConfig, defaultPort, cwkConfig.absoluteDir);
 
   const watcher = setupParticipantWatcher(cwkConfig.absoluteDir);
   if (cwkConfig.target === 'frontend' && cwkConfig.targetOptions.mode === 'module') {
@@ -439,16 +397,23 @@ export const startServer = async (opts = {}) => {
     setupWatcherForTerminalProcess(watcher, cwkConfig);
   }
 
-  const { server } = await startEdsServer(edsConfig);
-  const wss = setupWebSocket();
+  const server = await startDevServer({
+    config: {
+      ...wdsConfig,
+      watch: false,
+      clearTerminalOnReload: false,
+    },
+    logStartMessage: false,
+    argv: cwkConfig._unknown, // pass those options that were unknown to CWK definitions
+  });
+
+  const wss = server.webSockets.webSocketServer;
+  wss.on('connection', ws => {
+    ws.on('message', message => handleWsMessage(message, ws));
+  });
+
   cwkState.state = { wss, cwkConfig };
   setDefaultAdminConfig();
-
-  server.on('upgrade', function upgrade(request, socket, head) {
-    wss.handleUpgrade(request, socket, head, function done(ws) {
-      wss.emit('connection', ws, request);
-    });
-  });
 
   ['exit', 'SIGINT'].forEach(event => {
     process.on(event, () => {
@@ -462,9 +427,8 @@ export const startServer = async (opts = {}) => {
       }
 
       watcher.close();
-      wss.close();
     });
   });
 
-  return { server, edsConfig, cwkConfig, wss, watcher };
+  return { server, wdsConfig, cwkConfig, wss, watcher };
 };

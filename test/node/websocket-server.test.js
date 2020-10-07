@@ -6,18 +6,16 @@ import { startServer } from '../../src/start-server.js';
 describe('websocket server', () => {
   context('', () => {
     let server;
-    let wss;
     let ws;
     let watcher;
     const serverPort = 5000;
     const wsHost = `ws://localhost:${serverPort}/`;
 
     beforeEach(async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         port: serverPort,
         dir: './test/utils/fixtures/simple',
         rootDir: path.resolve(__dirname, 'utils', 'fixtures', 'simple'),
-        logStartup: false,
         open: false,
       }));
     });
@@ -27,16 +25,11 @@ describe('websocket server', () => {
         ws.send(JSON.stringify({ type: 'reset-state' }));
         ws.close();
       }
-      if (wss) {
-        wss.close();
-      }
       if (watcher) {
         watcher.close();
       }
       if (server) {
-        await new Promise(resolve => {
-          server.close(() => resolve());
-        });
+        await server.stop();
       }
     });
 
