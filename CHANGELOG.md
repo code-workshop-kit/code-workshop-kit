@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.11.3...0.12.0) (2020-10-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrated to @web/dev-server, so old es-dev-server CLI options and Node API options are gone now. See https://modern-web.dev/docs/dev-server
+
+### Features
+
+* migrate to web dev server ([fde2204](https://github.com/code-workshop-kit/cwk-frontend/commit/fde22040eaec1e90fc488516264d175f8a85b029))
+
 ### [0.11.3](https://github.com/code-workshop-kit/cwk-frontend/compare/0.11.2...0.11.3) (2020-10-04)
 
 
