@@ -10,14 +10,12 @@ const host = `http://localhost:${hostPort}/`;
 const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
-  logStartup: false,
   open: false,
 };
 
 describe('e2e: Participant Capsule Terminal', () => {
   context('', () => {
     let server;
-    let wss;
     let watcher;
     let browser;
 
@@ -29,21 +27,16 @@ describe('e2e: Participant Capsule Terminal', () => {
       if (browser) {
         await browser.close();
       }
-      if (wss) {
-        wss.close();
-      }
       if (watcher) {
         watcher.close();
       }
       if (server) {
-        await new Promise(resolve => {
-          server.close(resolve);
-        });
+        await server.stop();
       }
     });
 
     it('creates cwk-participant-capsule-terminal instead of frontend for terminal target', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',
@@ -64,7 +57,7 @@ describe('e2e: Participant Capsule Terminal', () => {
     }).timeout(testTimeout);
 
     it('delegates terminal output to the capsule output', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',
@@ -116,7 +109,7 @@ describe('e2e: Participant Capsule Terminal', () => {
     }).timeout(testTimeout);
 
     it('accepts a cmd argument which is the script ran as a child process', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',
@@ -168,7 +161,7 @@ describe('e2e: Participant Capsule Terminal', () => {
     }).timeout(testTimeout);
 
     it('delegates capsule input to the terminal input', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/terminal-node',
         target: 'terminal',

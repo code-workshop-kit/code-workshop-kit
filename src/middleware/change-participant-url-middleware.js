@@ -12,10 +12,15 @@ export const changeParticipantUrlMiddleware = dir => async (ctx, next) => {
     const authed = verifyJWT(dir, authToken, ctx);
 
     if (authed && authed.username === cwkState.state.followModeInitiatedBy) {
-      if (state.adminConfig.followMode && state.wss && state.wsConnections) {
+      if (
+        state.adminConfig.followMode &&
+        state.wss &&
+        state.wsConnections &&
+        state.wsConnections['follow-mode']
+      ) {
         // Send URL update message to all connections, which excludes follow mode initiator that changes the url
         // The websocket message is sent before the follow mode intiator has loaded the new page and established a new WS connection
-        for (const entry of state.wsConnections) {
+        for (const entry of state.wsConnections['follow-mode']) {
           const [, connection] = entry;
           connection.send(
             JSON.stringify({

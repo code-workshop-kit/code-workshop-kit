@@ -10,14 +10,12 @@ const host = `http://localhost:${hostPort}/`;
 const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
-  logStartup: false,
   open: false,
 };
 
 describe('e2e: CWK App Shell', () => {
   context('', () => {
     let server;
-    let wss;
     let watcher;
     let browser;
 
@@ -29,22 +27,17 @@ describe('e2e: CWK App Shell', () => {
       if (browser) {
         await browser.close();
       }
-      if (wss) {
-        wss.close();
-      }
       if (watcher) {
         watcher.close();
       }
       if (server) {
-        await new Promise(resolve => {
-          server.close(resolve);
-        });
+        await server.stop();
       }
     });
 
     // smoke test
     it('returns static files', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/simple',
       }));
@@ -59,7 +52,7 @@ describe('e2e: CWK App Shell', () => {
     }).timeout(testTimeout);
 
     it('inserts the app shell component by default', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/simple',
       }));
@@ -83,7 +76,7 @@ describe('e2e: CWK App Shell', () => {
     }).timeout(testTimeout);
 
     it('applies follow-mode websocket hooks by default', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/simple',
       }));
@@ -106,7 +99,7 @@ describe('e2e: CWK App Shell', () => {
     }).timeout(testTimeout);
 
     it('can select admin user using password', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/admins',
       }));

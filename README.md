@@ -5,7 +5,7 @@
 
 A **remote workshop environment** for frontend workshops. Get the classroom experience & interaction, in a remote session!
 
-Leveraging Visual Studio Live Share and [es-dev-server](https://www.npmjs.com/package/es-dev-server).
+Leveraging Visual Studio Live Share and [@web/dev-server](https://www.npmjs.com/package/@web/dev-server).
 
 ## Features
 

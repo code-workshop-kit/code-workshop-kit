@@ -3,7 +3,7 @@ import path from 'path';
 const findBrowserPath = dir => {
   const absolutePath = require.resolve('code-workshop-kit/dist/components/AppShell.js');
 
-  // Subtract working directory and resolve to root of the es-dev-server
+  // Subtract working directory and resolve to root of the @web/dev-server
   const componentPath = path.resolve('/', path.relative(process.cwd(), absolutePath));
 
   // Relative to the dir folder (usually root, but can be nested somewhere as well) and resolved again

@@ -10,14 +10,12 @@ const host = `http://localhost:${hostPort}/`;
 const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
-  logStartup: false,
   open: false,
 };
 
 describe('e2e: Participant Capsule Frontend', () => {
   context('', () => {
     let server;
-    let wss;
     let watcher;
     let browser;
 
@@ -29,21 +27,16 @@ describe('e2e: Participant Capsule Frontend', () => {
       if (browser) {
         await browser.close();
       }
-      if (wss) {
-        wss.close();
-      }
       if (watcher) {
         watcher.close();
       }
       if (server) {
-        await new Promise(resolve => {
-          server.close(resolve);
-        });
+        await server.stop();
       }
     });
 
     it('makes use of HMR when a participant file changes, which supports nested modules and custom elements', async () => {
-      ({ server, wss, watcher } = await startServer({
+      ({ server, watcher } = await startServer({
         ...baseCfg,
         dir: './test/utils/fixtures/simple',
         targetOptions: {
