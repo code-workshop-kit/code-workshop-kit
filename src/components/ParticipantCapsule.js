@@ -3,11 +3,6 @@ import { css, html, LitElement } from 'lit-element';
 export class ParticipantCapsule extends LitElement {
   static get properties() {
     return {
-      participantIndexHtmlExists: {
-        type: Boolean,
-        reflect: true,
-        attribute: 'participant-index-html-exists',
-      },
       name: {
         type: String,
         reflect: true,
@@ -101,11 +96,9 @@ export class ParticipantCapsule extends LitElement {
         ? ''
         : html`<div class="header">
             <h2 class="header__name">${this.name}</h2>
-            ${this.participantIndexHtmlExists
-              ? html`<a href="%dir%/participants/${this.name}/index.html">
-                  <button class="action-button">View</button>
-                </a>`
-              : ''}
+            <a href="%dir%/participants/${this.name}/index.html">
+              <button class="action-button">View</button>
+            </a>
           </div>`}
     `;
   }

@@ -1,4 +1,5 @@
 const readline = require('readline');
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -9,6 +10,6 @@ rl.question('Where do you live? ', country => {
   rl.close();
 });
 
-rl.on('close', function () {
+rl.on('close', () => {
   process.exit(0);
 });

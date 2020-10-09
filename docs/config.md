@@ -30,7 +30,6 @@ Below there are some more configuration settings for cwk that you can specify. S
 ```js
 export default {
   mode: 'module', // if you want to use HMR (Hot Module Reload), set this to module and make sure participant index.js exports a template or DOM node.
-  participantIndexHtmlExists: false, // Set this to false if there's no index.html for the participants. Will remove the "View" button in the participant views, because there is nothing to href to.
 };
 ```
 

@@ -8,7 +8,7 @@ import '../../src/components/AppShell.js';
  * 2) workshop import, which normally would be set by the server which knows where the 'dir' is
  */
 
-const workshopImport = '/test/utils/workshop-mock/cwk.config.js';
+const workshopImport = '/test/test-utils/workshop-mock/cwk.config.js';
 
 describe('App Shell Component', () => {
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('App Shell Component', () => {
       html`<cwk-app-shell
         .websocketPort=${5000}
         .workshopImport=${workshopImport}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
         title="Hello, World!"
       ></cwk-app-shell>`,
     );
@@ -38,7 +38,7 @@ describe('App Shell Component', () => {
       html`<cwk-app-shell
         .workshopImport=${workshopImport}
         .websocketPort=${5000}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
       ></cwk-app-shell>`,
     );
     el.currentParticipantName = null;
@@ -51,7 +51,7 @@ describe('App Shell Component', () => {
       html`<cwk-app-shell
         .workshopImport=${workshopImport}
         .websocketPort=${5000}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
       ></cwk-app-shell>`,
     );
 
@@ -67,7 +67,7 @@ describe('App Shell Component', () => {
       <cwk-app-shell
         .websocketPort=${5000}
         .workshopImport=${workshopImport}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
       ></cwk-app-shell>
     `);
 
@@ -81,7 +81,7 @@ describe('App Shell Component', () => {
       <cwk-app-shell
         .websocketPort=${5000}
         .workshopImport=${workshopImport}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
       ></cwk-app-shell>
     `);
 

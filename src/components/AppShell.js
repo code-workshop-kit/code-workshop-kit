@@ -90,11 +90,6 @@ class AppShell extends LitElement {
       currentParticipantName: {
         attribute: false,
       },
-      participantIndexHtmlExists: {
-        type: Boolean,
-        reflect: true,
-        attribute: 'participant-index-html-exists',
-      },
       mode: {
         type: String,
         reflect: true,
@@ -109,7 +104,6 @@ class AppShell extends LitElement {
     super();
     window.HMR_SKIP_DEEP_PATCH = true;
     applyPolyfill();
-    this.participantIndexHtmlExists = true;
     this.mode = 'iframe';
     this.target = 'frontend';
     setCustomCSSProps();
@@ -163,12 +157,10 @@ class AppShell extends LitElement {
                   ? this.participants.map(name =>
                       this.target === 'terminal'
                         ? html`<cwk-participant-terminal-capsule
-                            ?participant-index-html-exists=${this.participantIndexHtmlExists}
                             .name="${name}"
                           ></cwk-participant-terminal-capsule>`
                         : html`<cwk-participant-frontend-capsule
                             .participantModuleImport=${this.participantModuleImport}
-                            ?participant-index-html-exists=${this.participantIndexHtmlExists}
                             .mode=${this.mode}
                             .name="${name}"
                           ></cwk-participant-frontend-capsule>`,

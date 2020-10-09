@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer';
 import { startServer } from '../../../src/start-server.js';
-import { aTimeout } from '../../utils/helpers.js';
+import { aTimeout } from '../../test-utils/helpers.js';
 
 const hostPort = 5000;
 const host = `http://localhost:${hostPort}/`;
@@ -38,7 +38,7 @@ describe('e2e: Participant Capsule Terminal', () => {
     it('creates cwk-participant-capsule-terminal instead of frontend for terminal target', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/terminal-node',
+        dir: './test/test-utils/fixtures/terminal-node',
         target: 'terminal',
         targetOptions: {
           cmd: 'node index.js',
@@ -47,7 +47,20 @@ describe('e2e: Participant Capsule Terminal', () => {
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.goto(`${host}test/utils/fixtures/terminal-node/participants/Joren/index.html`);
+
+      // Authenticate
+      await page.goto(`${host}test/test-utils/fixtures/terminal-node/index.html`);
+      await page.evaluate(async () => {
+        const cookieElem = document
+          .querySelector('cwk-app-shell')
+          .shadowRoot.querySelector('cwk-select-cookie');
+
+        cookieElem.shadowRoot.querySelector('.name__item').click();
+      });
+
+      await page.goto(
+        `${host}test/test-utils/fixtures/terminal-node/participants/Joren/index.html`,
+      );
 
       const { capsuleTagName } = await page.evaluate(() => {
         return { capsuleTagName: document.body.lastElementChild.tagName.toLowerCase() };
@@ -59,7 +72,7 @@ describe('e2e: Participant Capsule Terminal', () => {
     it('delegates terminal output to the capsule output', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/terminal-node',
+        dir: './test/test-utils/fixtures/terminal-node',
         target: 'terminal',
         targetOptions: {
           cmd: 'node index.js',
@@ -70,7 +83,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       const page = await browser.newPage();
 
       // Authenticate
-      await page.goto(`${host}test/utils/fixtures/terminal-node/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/terminal-node/index.html`);
       await page.evaluate(async () => {
         const cookieElem = document
           .querySelector('cwk-app-shell')
@@ -79,7 +92,9 @@ describe('e2e: Participant Capsule Terminal', () => {
         cookieElem.shadowRoot.querySelector('.name__item').click();
       });
 
-      await page.goto(`${host}test/utils/fixtures/terminal-node/participants/Joren/index.html`);
+      await page.goto(
+        `${host}test/test-utils/fixtures/terminal-node/participants/Joren/index.html`,
+      );
 
       // Give websocket authentication some time
       await aTimeout(10);
@@ -87,7 +102,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       const filePath = path.resolve(
         process.cwd(),
         'test',
-        'utils',
+        'test-utils',
         'fixtures',
         'terminal-node',
         'participants',
@@ -111,7 +126,7 @@ describe('e2e: Participant Capsule Terminal', () => {
     it('accepts a cmd argument which is the script ran as a child process', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/terminal-node',
+        dir: './test/test-utils/fixtures/terminal-node',
         target: 'terminal',
         targetOptions: {
           cmd: 'node custom.js',
@@ -122,7 +137,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       const page = await browser.newPage();
 
       // Authenticate
-      await page.goto(`${host}test/utils/fixtures/terminal-node/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/terminal-node/index.html`);
       await page.evaluate(async () => {
         const cookieElem = document
           .querySelector('cwk-app-shell')
@@ -131,7 +146,9 @@ describe('e2e: Participant Capsule Terminal', () => {
         cookieElem.shadowRoot.querySelector('.name__item').click();
       });
 
-      await page.goto(`${host}test/utils/fixtures/terminal-node/participants/Joren/index.html`);
+      await page.goto(
+        `${host}test/test-utils/fixtures/terminal-node/participants/Joren/index.html`,
+      );
 
       // Give websocket authentication some time
       await aTimeout(10);
@@ -139,7 +156,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       const filePath = path.resolve(
         process.cwd(),
         'test',
-        'utils',
+        'test-utils',
         'fixtures',
         'terminal-node',
         'participants',
@@ -163,7 +180,7 @@ describe('e2e: Participant Capsule Terminal', () => {
     it('delegates capsule input to the terminal input', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/terminal-node',
+        dir: './test/test-utils/fixtures/terminal-node',
         target: 'terminal',
         targetOptions: {
           cmd: 'node index.js',
@@ -174,7 +191,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       const page = await browser.newPage();
 
       // Authenticate
-      await page.goto(`${host}test/utils/fixtures/terminal-node/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/terminal-node/index.html`);
       await page.evaluate(async () => {
         const cookieElem = document
           .querySelector('cwk-app-shell')
@@ -183,7 +200,9 @@ describe('e2e: Participant Capsule Terminal', () => {
         Array.from(cookieElem.shadowRoot.querySelectorAll('.name__item'))[1].click();
       });
 
-      await page.goto(`${host}test/utils/fixtures/terminal-node/participants/Felix/index.html`);
+      await page.goto(
+        `${host}test/test-utils/fixtures/terminal-node/participants/Felix/index.html`,
+      );
 
       // Give websocket authentication some time
       await aTimeout(10);
@@ -191,7 +210,7 @@ describe('e2e: Participant Capsule Terminal', () => {
       const filePath = path.resolve(
         process.cwd(),
         'test',
-        'utils',
+        'test-utils',
         'fixtures',
         'terminal-node',
         'participants',
