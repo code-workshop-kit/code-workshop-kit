@@ -8,6 +8,7 @@ import portfinder from 'portfinder';
 import {
   changeParticipantUrlMiddleware,
   jwtMiddleware,
+  missingIndexHtmlMiddleware,
   noCacheMiddleware,
 } from './middleware/middleware.js';
 import {
@@ -220,6 +221,9 @@ const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
 
   newWdsConfig.middleware.push(changeParticipantUrlMiddleware(absoluteDir));
   newWdsConfig.middleware.push(jwtMiddleware(absoluteDir));
+  newWdsConfig.middleware.push(
+    missingIndexHtmlMiddleware(absoluteDir, cwkConfig.target, cwkConfig.targetOptions.mode),
+  );
 
   newWdsConfig.plugins.push(queryTimestampModulesPlugin(absoluteDir));
   newWdsConfig.plugins.push(wsPortPlugin(wdsConfig.port));
@@ -227,7 +231,6 @@ const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
     componentReplacersPlugin({
       dir: absoluteDir,
       mode: cwkConfig.targetOptions.mode,
-      participantIndexHtmlExists: cwkConfig.participantIndexHtmlExists,
     }),
   );
 
@@ -243,7 +246,6 @@ const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
 const getCwkConfig = opts => {
   // cwk defaults
   let cwkConfig = {
-    participantIndexHtmlExists: true,
     dir: '/',
     title: '',
     target: 'frontend',

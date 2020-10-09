@@ -6,7 +6,7 @@ describe('Participant Capsule Component', () => {
   it('displays the name of the participant', async () => {
     const el = await fixture(
       html`<cwk-participant-frontend-capsule
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
         .websocketPort=${8000}
         .name=${'Joren'}
         mode="module"
@@ -21,7 +21,7 @@ describe('Participant Capsule Component', () => {
       html`<cwk-participant-frontend-capsule
         .name=${'Joren'}
         .websocketPort=${8000}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
         mode="module"
       ></cwk-participant-frontend-capsule>`,
     );
@@ -52,7 +52,7 @@ describe('Participant Capsule Component', () => {
       html`<cwk-participant-frontend-capsule
         .name=${'Joren'}
         .websocketPort=${8000}
-        .participantModuleImport=${'../../test/utils/template-modules/DOMNode.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/DOMNode.js'}
         mode="module"
       ></cwk-participant-frontend-capsule>`,
     );
@@ -68,7 +68,7 @@ describe('Participant Capsule Component', () => {
       html`<cwk-participant-frontend-capsule
         .name=${'Joren'}
         .websocketPort=${8000}
-        .participantModuleImport=${'../../test/utils/template-modules/lit.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/lit.js'}
         mode="module"
       ></cwk-participant-frontend-capsule>`,
     );
@@ -77,24 +77,6 @@ describe('Participant Capsule Component', () => {
     await el.loadingComplete;
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('.participant-content-container').innerText).to.equal('Hoi');
-  });
-
-  it('does not render a view button if participantIndexHtmlExists is set to false', async () => {
-    const el = await fixture(
-      html`<cwk-participant-frontend-capsule
-        participant-index-html-exists
-        .websocketPort=${8000}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
-        .name=${'Joren'}
-        mode="module"
-      ></cwk-participant-frontend-capsule>`,
-    );
-
-    expect(el.shadowRoot.querySelector('.action-button').innerText).to.equal('View');
-
-    el.participantIndexHtmlExists = false;
-    await el.updateComplete;
-    expect(el.shadowRoot.querySelector('.action-button')).to.be.null;
   });
 
   it('has an error message participant template if the participant module does not exist', async () => {
@@ -121,7 +103,7 @@ describe('Participant Capsule Component', () => {
         participant-index-html-exists
         no-container
         .websocketPort=${8000}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
         .name=${'Joren'}
         mode="module"
       ></cwk-participant-frontend-capsule>`,
@@ -135,7 +117,7 @@ describe('Participant Capsule Component', () => {
         participant-index-html-exists
         no-header
         .websocketPort=${8000}
-        .participantModuleImport=${'../../test/utils/template-modules/string.js'}
+        .participantModuleImport=${'../../test/test-utils/template-modules/string.js'}
         .name=${'Joren'}
         mode="module"
       ></cwk-participant-frontend-capsule>`,

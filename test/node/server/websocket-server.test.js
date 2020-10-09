@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import path from 'path';
 import WebSocket from 'ws';
-import { startServer } from '../../src/start-server.js';
+import { startServer } from '../../../src/start-server.js';
 
 describe('websocket server', () => {
   context('', () => {
@@ -14,8 +14,8 @@ describe('websocket server', () => {
     beforeEach(async () => {
       ({ server, watcher } = await startServer({
         port: serverPort,
-        dir: './test/utils/fixtures/simple',
-        rootDir: path.resolve(__dirname, 'utils', 'fixtures', 'simple'),
+        dir: './test/test-utils/fixtures/simple',
+        rootDir: path.resolve(__dirname, 'test-utils', 'fixtures', 'simple'),
         open: false,
       }));
     });

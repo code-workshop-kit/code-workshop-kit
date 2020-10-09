@@ -41,29 +41,6 @@ export default {
 > Technically it would be possible to run it from any folder instead of just the two choices that are given, but I don't have a use case yet for this.
 > Please raise an issue if you have a use case, and I can make that feature available so that you can pass any path.
 
-## Index.html entrypoint
-
-You can create an index.html entry point and use the setCapsule util, that way a participant can click `view` on their box and view only their own process.
-
-```html
-<head>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
-  </style>
-</head>
-<body>
-  <script type="module">
-    import { setCapsule } from 'code-workshop-kit/dist/components/setCapsule.js';
-    setCapsule('Joren', { target: 'terminal' });
-  </script>
-</body>
-```
-
-Though you would probably replace `'Joren'` with your participantName variable `<%= participantName %>`
-
 ## Advanced script
 
 It is possible to pass dynamic arguments to your `cmd` by providing a function that returns a string instead of just providing a string.

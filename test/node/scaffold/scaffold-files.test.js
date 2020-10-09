@@ -2,11 +2,11 @@ import { expect } from 'chai';
 import fs from 'fs';
 import path from 'path';
 import rimraf from 'rimraf';
-import { scaffoldFiles } from '../../src/scaffold-files.js';
+import { scaffoldFiles } from '../../../src/scaffold-files.js';
 
 const timeout = 500;
 const aTimeout = t => new Promise(resolve => setTimeout(() => resolve(), t));
-const workshopMockPath = './test/utils/workshop-mock';
+const workshopMockPath = './test/test-utils/workshop-mock';
 
 describe('scaffoldFiles', () => {
   beforeEach(() => {});

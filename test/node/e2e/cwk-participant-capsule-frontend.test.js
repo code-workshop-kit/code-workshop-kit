@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import puppeteer from 'puppeteer';
 import { startServer } from '../../../src/start-server.js';
-import { aTimeout } from '../../utils/helpers.js';
+import { aTimeout } from '../../test-utils/helpers.js';
 
 const hostPort = 5000;
 const host = `http://localhost:${hostPort}/`;
@@ -38,7 +38,7 @@ describe('e2e: Participant Capsule Frontend', () => {
     it('makes use of HMR when a participant file changes, which supports nested modules and custom elements', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/simple',
+        dir: './test/test-utils/fixtures/simple',
         targetOptions: {
           mode: 'module',
         },
@@ -47,7 +47,7 @@ describe('e2e: Participant Capsule Frontend', () => {
       browser = await puppeteer.launch();
       const page = await browser.newPage();
 
-      await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/simple/index.html`);
       await page.evaluate(async () => {
         const cookieElem = document
           .querySelector('cwk-app-shell')
@@ -71,7 +71,7 @@ describe('e2e: Participant Capsule Frontend', () => {
 
       const jorenIndexFile = path.resolve(
         process.cwd(),
-        path.join('test', 'utils', 'fixtures', 'simple', 'participants', 'Joren', 'module.js'),
+        path.join('test', 'test-utils', 'fixtures', 'simple', 'participants', 'Joren', 'module.js'),
       );
 
       if (fs.existsSync(jorenIndexFile)) {

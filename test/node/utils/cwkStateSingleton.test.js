@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { cwkState } from '../../src/utils/CwkStateSingleton.js';
+import { cwkState } from '../../../src/utils/CwkStateSingleton.js';
 
 describe('CwkStateSingleton', () => {
   beforeEach(() => {
