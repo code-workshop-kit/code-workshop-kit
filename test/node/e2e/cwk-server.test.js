@@ -11,6 +11,7 @@ const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
   open: false,
+  logStartup: false,
 };
 
 describe('e2e: CWK App Shell', () => {

@@ -15,6 +15,7 @@ describe('websocket server', () => {
       ({ server, watcher } = await startServer({
         port: serverPort,
         dir: './test/test-utils/fixtures/simple',
+        logStartup: false,
         rootDir: path.resolve(__dirname, 'test-utils', 'fixtures', 'simple'),
         open: false,
       }));

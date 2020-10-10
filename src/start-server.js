@@ -1,6 +1,7 @@
+import { startDevServer } from '@web/dev-server';
+import chalk from 'chalk';
 import chokidar from 'chokidar';
 import commandLineArgs from 'command-line-args';
-import { startDevServer } from '@web/dev-server';
 import _esmRequire from 'esm';
 import glob from 'glob';
 import path from 'path';
@@ -248,6 +249,7 @@ const getCwkConfig = opts => {
   let cwkConfig = {
     dir: '/',
     title: '',
+    logStartup: true,
     target: 'frontend',
     ...opts,
 
@@ -416,6 +418,20 @@ export const startServer = async (opts = {}) => {
 
   cwkState.state = { wss, cwkConfig };
   setDefaultAdminConfig();
+
+  if (cwkConfig.logStartup !== false) {
+    console.log(chalk.bold('code-workshop-kit server started...'));
+    console.log('');
+    console.log(
+      `${chalk.white('Visit:')}    ${chalk.cyanBright(
+        `http://localhost:${server.config.port}/${path.relative(
+          process.cwd(),
+          cwkConfig.absoluteDir,
+        )}/`,
+      )}`,
+    );
+    console.log('');
+  }
 
   ['exit', 'SIGINT'].forEach(event => {
     process.on(event, () => {

@@ -51,6 +51,7 @@
     "@lion/dialog": "~0.7.11",
     "@open-wc/create": "~0.33.0",
     "@web/dev-server": "^0.0.13",
+    "chalk": "^4.1.0",
     "chokidar": "^3.4.0",
     "command-line-args": "^5.1.1",
     "custom-elements-hmr-polyfill": "^1.0.3",

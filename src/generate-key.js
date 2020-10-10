@@ -1,10 +1,20 @@
+import chalk from 'chalk';
 import commandLineArgs from 'command-line-args';
 import path from 'path';
 import { generateAppKey } from './app-key/generateAppKey.js';
 
 export const generateKey = (opts = {}) => {
+  const logger = str => {
+    if (opts.logStartup !== false) {
+      console.log(str);
+    }
+  };
+  logger(chalk.bold('code-workshop-kit generate-key started...'));
+  logger('');
+
   let generateConfig = {
     dir: '/',
+    logStartup: true,
     length: 28,
     ...opts,
   };
@@ -31,12 +41,18 @@ export const generateKey = (opts = {}) => {
       ...generateConfig,
       ...cliConfig,
     };
-
-    if (generateConfig.dir.startsWith('/')) {
-      // eslint-disable-next-line no-param-reassign
-      generateConfig.dir = `.${generateConfig.dir}`;
-    }
-    const absoluteDir = path.resolve(process.cwd(), generateConfig.dir);
-    generateAppKey(path.resolve(process.cwd(), absoluteDir), generateConfig.length);
   }
+
+  if (generateConfig.dir.startsWith('/')) {
+    // eslint-disable-next-line no-param-reassign
+    generateConfig.dir = `.${generateConfig.dir}`;
+  }
+  const absoluteDir = path.resolve(process.cwd(), generateConfig.dir);
+  generateAppKey(absoluteDir, generateConfig.length);
+  logger(
+    `${chalk.white('Key generated, pasted in:')} ${chalk.cyanBright(
+      `${path.resolve(process.cwd(), absoluteDir)}/cwk.config.js`,
+    )}`,
+  );
+  logger('');
 };

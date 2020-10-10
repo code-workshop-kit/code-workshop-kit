@@ -20,6 +20,7 @@ describe('start cwk server', () => {
     it('has default settings', async () => {
       ({ cwkConfig, wdsConfig, server, watcher } = await startServer({
         dir: './test/test-utils/fixtures/simple',
+        logStartup: false,
       }));
 
       expect(cwkConfig.title).to.equal('');
@@ -41,6 +42,7 @@ describe('start cwk server', () => {
         port: 5000,
         title: 'Frontend Workshop',
         dir: './test/test-utils/fixtures/simple',
+        logStartup: false,
         target: 'terminal',
         targetOptions: {
           cmd: 'node index.js',
@@ -66,6 +68,7 @@ describe('start cwk server', () => {
     it('locks watch mode clearTerminalOnReload, and is not overridable', async () => {
       ({ cwkConfig, wdsConfig, server, watcher } = await startServer({
         dir: './test/test-utils/fixtures/simple',
+        logStartup: false,
         watch: true,
         clearTerminalOnReload: true,
       }));
