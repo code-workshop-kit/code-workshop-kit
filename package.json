@@ -48,7 +48,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.10.3",
-    "@lion/dialog": "~0.7.11",
+    "@lion/dialog": "~0.8.1",
     "@open-wc/create": "~0.33.0",
     "@web/dev-server": "^0.0.13",
     "chokidar": "^3.4.0",
