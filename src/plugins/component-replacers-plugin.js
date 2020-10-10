@@ -33,13 +33,6 @@ export function componentReplacersPlugin(opts) {
         }
 
         if (context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js') {
-          if (!opts.participantIndexHtmlExists) {
-            rewrittenBody = rewrittenBody.replace(
-              new RegExp('this.participantIndexHtmlExists = true;', 'g'),
-              'this.participantIndexHtmlExists = false;',
-            );
-          }
-
           rewrittenBody = rewrittenBody.replace(
             new RegExp("this.mode = 'iframe';", 'g'),
             `this.mode = '${opts.mode}';`,

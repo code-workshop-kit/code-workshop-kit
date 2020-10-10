@@ -20,11 +20,3 @@ Luckily, you can simply reuse the helper that CWK uses for that:
 ```js
 import 'code-workshop-kit/dist/components/loadAndSetDankMonoFont.js';
 ```
-
-or
-
-```html
-<script type="module">
-  import 'code-workshop-kit/dist/components/loadAndSetDankMonoFont.js';
-</script>
-```

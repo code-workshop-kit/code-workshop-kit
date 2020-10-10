@@ -3,8 +3,8 @@ import { html } from 'lit-html';
 import sinon from 'sinon';
 import '../../src/components/SelectCookie.js';
 
-const workshopImport = '/test/utils/workshop-mock/cwk.config.js';
-const workshopAdminImport = '/test/utils/fixtures/admins/cwk.config.js';
+const workshopImport = '/test/test-utils/workshop-mock/cwk.config.js';
+const workshopAdminImport = '/test/test-utils/fixtures/admins/cwk.config.js';
 
 describe('Select Cookie Component', () => {
   it('it has a method fetchNames that returns participants from the workshop config file', async () => {

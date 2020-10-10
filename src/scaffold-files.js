@@ -1,4 +1,5 @@
 import { readFileFromPath, writeFileToPathOnDisk } from '@open-wc/create/dist/core.js';
+import chalk from 'chalk';
 import commandLineArgs from 'command-line-args';
 import _esmRequire from 'esm';
 import fs from 'fs';
@@ -46,6 +47,15 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 }
 
 export const scaffold = async opts => {
+  const logger = str => {
+    if (opts.logStartup !== false) {
+      console.log(str);
+    }
+  };
+
+  logger(chalk.bold('code-workshop-kit scaffold started...'));
+  logger('');
+
   if (opts.dir.startsWith('/')) {
     // eslint-disable-next-line no-param-reassign
     opts.dir = `.${opts.dir}`;
@@ -66,6 +76,7 @@ export const scaffold = async opts => {
     const { participants, templateData } = workshop;
 
     participants.forEach(name => {
+      logger(`${chalk.white('Scaffolding for:')} ${chalk.cyanBright(name)}`);
       copyTemplates(
         path.resolve(process.cwd(), `${pathToInputDir}/**/*`),
         path.resolve(process.cwd(), `${pathToOutputDir}/${name}`),
@@ -85,12 +96,16 @@ export const scaffold = async opts => {
   } else {
     throw new Error(`Error: Cannot find cwk.config.js at ${pathToWorkshop}`);
   }
+  if (opts.logStartup !== false) {
+    logger('');
+  }
 };
 
 export const scaffoldFiles = (opts = {}) => {
   let scaffoldConfig = {
     dir: '/',
     force: false,
+    logStartup: true,
     ...opts,
   };
 

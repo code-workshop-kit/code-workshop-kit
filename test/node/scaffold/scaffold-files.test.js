@@ -2,11 +2,11 @@ import { expect } from 'chai';
 import fs from 'fs';
 import path from 'path';
 import rimraf from 'rimraf';
-import { scaffoldFiles } from '../../src/scaffold-files.js';
+import { scaffoldFiles } from '../../../src/scaffold-files.js';
 
 const timeout = 500;
 const aTimeout = t => new Promise(resolve => setTimeout(() => resolve(), t));
-const workshopMockPath = './test/utils/workshop-mock';
+const workshopMockPath = './test/test-utils/workshop-mock';
 
 describe('scaffoldFiles', () => {
   beforeEach(() => {});
@@ -20,6 +20,7 @@ describe('scaffoldFiles', () => {
   it('uses an input folder and creates an output folder', async () => {
     scaffoldFiles({
       dir: `${workshopMockPath}`,
+      logStartup: false,
     });
     await aTimeout(timeout);
 
@@ -30,6 +31,7 @@ describe('scaffoldFiles', () => {
   it('creates a participant folder with contents for each participant', async () => {
     scaffoldFiles({
       dir: `${workshopMockPath}`,
+      logStartup: false,
     });
     await aTimeout(timeout);
 
@@ -49,6 +51,7 @@ describe('scaffoldFiles', () => {
   it('allows passing a workshop object imperatively instead of looking for it inside dir', async () => {
     scaffoldFiles({
       dir: `${workshopMockPath}`,
+      logStartup: false,
       workshop: {
         participants: ['Joren'],
         templateData: {
@@ -84,6 +87,7 @@ describe('scaffoldFiles', () => {
   it('supports using methods and using current participantName inside templateData', async () => {
     scaffoldFiles({
       dir: `${workshopMockPath}`,
+      logStartup: false,
     });
 
     await aTimeout(timeout);

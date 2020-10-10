@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import jwt from 'jsonwebtoken';
 import puppeteer from 'puppeteer';
 import { startServer } from '../../../src/start-server.js';
-import { aTimeout } from '../../utils/helpers.js';
+import { aTimeout } from '../../test-utils/helpers.js';
 
 const hostPort = 5000;
 const host = `http://localhost:${hostPort}/`;
@@ -10,6 +10,7 @@ const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
   open: false,
+  logStartup: false,
 };
 
 describe('e2e: Admin UI Sidebar', () => {
@@ -38,13 +39,13 @@ describe('e2e: Admin UI Sidebar', () => {
     it('inserts admin ui sidebar component for admins', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/admins',
+        dir: './test/test-utils/fixtures/admins',
       }));
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
 
-      await page.goto(`${host}test/utils/fixtures/admins/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/admins/index.html`);
 
       await page.evaluate(async () => {
         const cookieElem = document
@@ -85,13 +86,13 @@ describe('e2e: Admin UI Sidebar', () => {
         ...baseCfg,
         compatibility:
           'none' /* TODO: Troubleshoot why this test only if compatibility is 'none'... */,
-        dir: './test/utils/fixtures/admins',
+        dir: './test/test-utils/fixtures/admins',
         plugins: [
           {
             transform(context) {
               let rewrittenBody = context.body;
 
-              if (context.url === '/test/utils/fixtures/admins/index.html') {
+              if (context.url === '/test/test-utils/fixtures/admins/index.html') {
                 rewrittenBody = rewrittenBody.replace(
                   '<body>',
                   `<body><p id="unixTimestamp">${Date.now()}</p>`,
@@ -114,7 +115,7 @@ describe('e2e: Admin UI Sidebar', () => {
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.goto(`${host}test/utils/fixtures/admins/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/admins/index.html`);
 
       const timestamps = [];
       let timestamp;

@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import fetch from 'node-fetch';
 import puppeteer from 'puppeteer';
 import { startServer } from '../../../src/start-server.js';
-import { aTimeout } from '../../utils/helpers.js';
-import { userAgents } from '../../utils/user-agents.js';
+import { aTimeout } from '../../test-utils/helpers.js';
+import { userAgents } from '../../test-utils/user-agents.js';
 
 const hostPort = 5000;
 const host = `http://localhost:${hostPort}/`;
@@ -11,6 +11,7 @@ const testTimeout = 20000;
 const baseCfg = {
   port: hostPort,
   open: false,
+  logStartup: false,
 };
 
 describe('e2e: CWK App Shell', () => {
@@ -39,10 +40,10 @@ describe('e2e: CWK App Shell', () => {
     it('returns static files', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/simple',
+        dir: './test/test-utils/fixtures/simple',
       }));
 
-      const response = await fetch(`${host}test/utils/fixtures/simple/index.html`, {
+      const response = await fetch(`${host}test/test-utils/fixtures/simple/index.html`, {
         headers: { 'user-agent': userAgents['Chrome 78'] },
       });
       const responseText = await response.text();
@@ -54,13 +55,13 @@ describe('e2e: CWK App Shell', () => {
     it('inserts the app shell component by default', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/simple',
+        dir: './test/test-utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
 
-      await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/simple/index.html`);
 
       await page.evaluate(() => {
         document.cookie = `participant_name=Joren;path=/`;
@@ -78,13 +79,13 @@ describe('e2e: CWK App Shell', () => {
     it('applies follow-mode websocket hooks by default', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/simple',
+        dir: './test/test-utils/fixtures/simple',
       }));
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
 
-      await page.goto(`${host}test/utils/fixtures/simple/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/simple/index.html`);
       await page.evaluate(() => {
         document.cookie = `participant_name=Joren;path=/`;
       });
@@ -101,13 +102,13 @@ describe('e2e: CWK App Shell', () => {
     it('can select admin user using password', async () => {
       ({ server, watcher } = await startServer({
         ...baseCfg,
-        dir: './test/utils/fixtures/admins',
+        dir: './test/test-utils/fixtures/admins',
       }));
 
       browser = await puppeteer.launch();
       const page = await browser.newPage();
 
-      await page.goto(`${host}test/utils/fixtures/admins/index.html`);
+      await page.goto(`${host}test/test-utils/fixtures/admins/index.html`);
       await page.evaluate(async () => {
         const cookieElem = document
           .querySelector('cwk-app-shell')

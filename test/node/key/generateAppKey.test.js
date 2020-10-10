@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import fs from 'fs';
 import path from 'path';
-import { clearAppKey, generateAppKey } from '../../src/app-key/generateAppKey.js';
+import { clearAppKey, generateAppKey } from '../../../src/app-key/generateAppKey.js';
 
-const workshopMockPath = './test/utils/workshop-mock';
+const workshopMockPath = './test/test-utils/workshop-mock';
 
 describe('generateAppKey', () => {
   afterEach(() => {
