@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.12.0...0.13.0) (2020-10-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* participantIndexHtmlExists is removed now that it is no longer necessary.
+
+### Features
+
+* add prettier console feedback ([119a01f](https://github.com/code-workshop-kit/cwk-frontend/commit/119a01f044022ff152a5edba88037b02c991f852))
+* fills out index.html if missing in root or participant root folder ([00788f1](https://github.com/code-workshop-kit/cwk-frontend/commit/00788f1ec42657e464220f4cc00750717f6a381f))
+
 ## [0.12.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.11.3...0.12.0) (2020-10-09)
 
 
