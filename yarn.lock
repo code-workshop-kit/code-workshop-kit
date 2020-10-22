@@ -855,30 +855,30 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@lion/core@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@lion/core/-/core-0.10.0.tgz#034dda936d48791d3976bb25f51c9d245064d2e9"
-  integrity sha512-cZfQPXyIRilQ70wEcxQVmiKAIgoOEGqHeZJPK16x/CFL7AvmDVCjkG4ZEng//jqJgRiQWkbdZIUAJ+FvqKG3YA==
+"@lion/core@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@lion/core/-/core-0.13.1.tgz#81314b76c04e5ae414015d606d62b1eff5872415"
+  integrity sha512-HmvfX9tk6VItvaNVpb3bi2qfFTsYp/fWYrZdwXBigQTMjzF5qKSW/hm2mvAuxkIIK5OQX/2ewD/rz5qjfRObAg==
   dependencies:
     "@open-wc/dedupe-mixin" "^1.2.18"
-    "@open-wc/scoped-elements" "^1.0.3"
+    "@open-wc/scoped-elements" "^1.2.2"
     lit-element "~2.4.0"
     lit-html "^1.3.0"
 
-"@lion/dialog@~0.7.11":
-  version "0.7.14"
-  resolved "https://registry.yarnpkg.com/@lion/dialog/-/dialog-0.7.14.tgz#2054fae2b5817e7a480710075616e0296e9de16a"
-  integrity sha512-bVMTOfnlgOs3Nl1z8FsLtR6UaUkIMP3O4OQ6452uSkEQokgieH49YvuzSRTGBsleRsBmJ/wIomQDWQm6ZY+PWg==
+"@lion/dialog@~0.9.0":
+  version "0.9.2"
+  resolved "https://registry.yarnpkg.com/@lion/dialog/-/dialog-0.9.2.tgz#96bd11c6b856f190f5e673db1e15facca4ffb3ab"
+  integrity sha512-yyWrZYM16K0fwy1TouZhx1+DjtAnoWw4TQMd1Pa7pYpNnRql3PsQCRg9h5BjlP4p7ZIbEmJFrdSd8npXJpuy/A==
   dependencies:
-    "@lion/core" "0.10.0"
-    "@lion/overlays" "0.17.0"
+    "@lion/core" "0.13.1"
+    "@lion/overlays" "0.21.1"
 
-"@lion/overlays@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@lion/overlays/-/overlays-0.17.0.tgz#e4cffd3f1f415fbe11ed9e6bb2e0becf71998b3c"
-  integrity sha512-3Oorfb7IVdn+xAcPER9rb+XbXve57eIw5w9tJofeph+IGbvtSossNTUQyk7ym2kuJlMZBzF5WtIh6pWf8INXWw==
+"@lion/overlays@0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@lion/overlays/-/overlays-0.21.1.tgz#e68e0ef9536634a94b407dc7d2f3e21c9b4d0caa"
+  integrity sha512-FPEnolSp9J58Aset0ed0ulji1xalcXTV7MC+c1AMdr1wZf02kowyZgLXlQR21Il7v2dRc4p7E3M+3uwS3VuBGg==
   dependencies:
-    "@lion/core" "0.10.0"
+    "@lion/core" "0.13.1"
     popper.js "^1.15.0"
     singleton-manager "1.1.2"
 
@@ -944,7 +944,7 @@
     eslint-plugin-no-only-tests "^2.4.0"
     eslint-plugin-wc "^1.2.0"
 
-"@open-wc/scoped-elements@^1.0.3", "@open-wc/scoped-elements@^1.2.2":
+"@open-wc/scoped-elements@^1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@open-wc/scoped-elements/-/scoped-elements-1.2.2.tgz#e1eb9fbbedf2ba56ca07174bf17e7910da9964a7"
   integrity sha512-C3JU79gNBmcxqKqZ8aTargPmBBwQvyws6lhfZ+9I0NH8SKk0k6ExjzyUwsDa2i/kbhBuUE5NebaDZJM5Jw4/6w==
