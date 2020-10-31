@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.13.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.13.0...0.13.1) (2020-10-31)
+
+
+### Bug Fixes
+
+* remove duplicate / in startup message localhost link ([bfc66bd](https://github.com/code-workshop-kit/cwk-frontend/commit/bfc66bda581917473071ac4bbb6247a2ae18db40))
+* root index.html not being inserted properly ([f916a79](https://github.com/code-workshop-kit/cwk-frontend/commit/f916a79b8dada50dc892dfd4a102d5856d56c673))
+
 ## [0.13.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.12.0...0.13.0) (2020-10-10)
 
 
