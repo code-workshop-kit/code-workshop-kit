@@ -68,8 +68,16 @@ const runScriptForParticipant = async (participantName, cfg) => {
   if (state.terminalScripts) {
     const oldScript = state.terminalScripts.get(participantName);
     if (oldScript && oldScript.script && oldScript.script.pid) {
-      process.kill(-oldScript.script.pid);
-      await oldScript.hasClosed;
+      try {
+        process.kill(-oldScript.script.pid);
+        await oldScript.hasClosed;
+      } catch (e) {
+        console.log(`
+          Error: problem killing a participant terminal script, this could be related to a bug on Windows where the wrong PID is given.
+          CWK is working on a fix or workaround.. In the meantime, we advise using WSL for windows users hosting CWK workshops,
+          or only doing participant scripts that are self-terminating.
+        `);
+      }
     }
   }
 
@@ -90,6 +98,8 @@ const runScriptForParticipant = async (participantName, cfg) => {
   });
   state.terminalScripts.set(participantName, { script, closeResolve, hasClosed });
 
+  // We will set a close listener for each participant, which can easily exceed 10.
+  script.setMaxListeners(0);
   script.on('close', () => {
     const scriptData = state.terminalScripts.get(participantName);
     if (scriptData) {
@@ -218,26 +228,26 @@ const handleWsMessage = (message, ws) => {
 const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
   const newWdsConfig = wdsConfig;
 
-  newWdsConfig.middleware = [...wdsConfig.middleware];
-  newWdsConfig.middleware.push(changeParticipantUrlMiddleware(absoluteDir));
-  newWdsConfig.middleware.push(jwtMiddleware(absoluteDir));
-  newWdsConfig.middleware.push(noCacheMiddleware);
+  newWdsConfig.middleware = [
+    ...wdsConfig.middleware,
+    changeParticipantUrlMiddleware(absoluteDir),
+    jwtMiddleware(absoluteDir),
+    noCacheMiddleware,
+  ];
 
-  newWdsConfig.plugins = [...wdsConfig.plugins];
-  newWdsConfig.plugins.push(queryTimestampModulesPlugin(absoluteDir));
-  newWdsConfig.plugins.push(
+  newWdsConfig.plugins = [
+    ...wdsConfig.plugins,
+    queryTimestampModulesPlugin(absoluteDir),
     missingIndexHtmlPlugin(absoluteDir, cwkConfig.target, cwkConfig.targetOptions.mode),
-  );
-  newWdsConfig.plugins.push(wsPortPlugin(wdsConfig.port));
-  newWdsConfig.plugins.push(
+    wsPortPlugin(wdsConfig.port),
     componentReplacersPlugin({
       dir: absoluteDir,
       mode: cwkConfig.targetOptions.mode,
     }),
-  );
-  newWdsConfig.plugins.push(followModePlugin(wdsConfig.port));
-  newWdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
-  newWdsConfig.plugins.push(adminUIPlugin(absoluteDir));
+    followModePlugin(wdsConfig.port),
+    appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target),
+    adminUIPlugin(absoluteDir),
+  ];
 
   return newWdsConfig;
 };
@@ -437,7 +447,15 @@ export const startServer = async (opts = {}) => {
       if (cwkState.state.terminalScripts) {
         cwkState.state.terminalScripts.forEach(script => {
           if (script && script.script && script.script.pid) {
-            process.kill(-script.script.pid);
+            try {
+              process.kill(-script.script.pid);
+            } catch (e) {
+              console.log(`
+                Error: problem killing a participant terminal script, this could be related to a bug on Windows where the wrong PID is given.
+                CWK is working on a fix or workaround.. In the meantime, we advise using WSL for windows users hosting CWK workshops,
+                or only doing participant scripts that are self-terminating.
+              `);
+            }
           }
         });
       }

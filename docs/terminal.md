@@ -51,7 +51,7 @@ export default {
   targetOptions: {
     cmd: (name, index) => {
       if (index < 10) {
-        index = 0`${index}`;
+        index = `0${index}`;
       }
       return `web-dev-server --port 90${index}`
     },

@@ -29,7 +29,7 @@ export function missingIndexHtmlPlugin(dir, target, mode) {
           `;
         } else if (
           // Case 2: participant root index.html
-          path.resolve(dir.split(process.cwd())[1], 'participants') ===
+          path.posix.resolve(`${dir.split(process.cwd())[1]}/`, 'participants') ===
           path.dirname(path.dirname(normalizedPath))
         ) {
           const participantFolder = path.basename(path.dirname(normalizedPath));

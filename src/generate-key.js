@@ -51,7 +51,7 @@ export const generateKey = (opts = {}) => {
   generateAppKey(absoluteDir, generateConfig.length);
   logger(
     `${chalk.white('Key generated, pasted in:')} ${chalk.cyanBright(
-      `${path.resolve(process.cwd(), absoluteDir)}/cwk.config.js`,
+      path.resolve(process.cwd(), absoluteDir, 'cwk.config.js'),
     )}`,
   );
   logger('');
