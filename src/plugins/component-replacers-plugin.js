@@ -13,7 +13,7 @@ export function componentReplacersPlugin(opts) {
         ) {
           rewrittenBody = rewrittenBody.replace(
             new RegExp('placeholder-import.js', 'g'),
-            path.resolve('/', `${pathRelativeToServer}/cwk.config.js`),
+            path.posix.resolve('/', `${pathRelativeToServer}/cwk.config.js`),
           );
         }
 
@@ -24,7 +24,7 @@ export function componentReplacersPlugin(opts) {
             '/node_modules/code-workshop-kit/dist/components/ParticipantTerminalCapsule.js' ||
           context.path === '/node_modules/code-workshop-kit/dist/components/ParticipantCapsule.js'
         ) {
-          let replacement = `${path.resolve('/', pathRelativeToServer)}`;
+          let replacement = `${path.posix.resolve('/', pathRelativeToServer)}`;
           // remove trailing slash
           if (replacement.endsWith('/') || replacement.endsWith('\\')) {
             replacement = replacement.substring(0, replacement.length - 1);

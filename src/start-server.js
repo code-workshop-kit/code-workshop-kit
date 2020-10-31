@@ -68,8 +68,16 @@ const runScriptForParticipant = async (participantName, cfg) => {
   if (state.terminalScripts) {
     const oldScript = state.terminalScripts.get(participantName);
     if (oldScript && oldScript.script && oldScript.script.pid) {
-      process.kill(-oldScript.script.pid);
-      await oldScript.hasClosed;
+      try {
+        process.kill(-oldScript.script.pid);
+        await oldScript.hasClosed;
+      } catch (e) {
+        console.log(`
+          Error: problem killing a participant terminal script, this could be related to a bug on Windows where the wrong PID is given.
+          CWK is working on a fix or workaround.. In the meantime, we advise using WSL for windows users hosting CWK workshops,
+          or only doing participant scripts that are self-terminating.
+        `);
+      }
     }
   }
 
@@ -437,7 +445,15 @@ export const startServer = async (opts = {}) => {
       if (cwkState.state.terminalScripts) {
         cwkState.state.terminalScripts.forEach(script => {
           if (script && script.script && script.script.pid) {
-            process.kill(-script.script.pid);
+            try {
+              process.kill(-script.script.pid);
+            } catch (e) {
+              console.log(`
+                Error: problem killing a participant terminal script, this could be related to a bug on Windows where the wrong PID is given.
+                CWK is working on a fix or workaround.. In the meantime, we advise using WSL for windows users hosting CWK workshops,
+                or only doing participant scripts that are self-terminating.
+              `);
+            }
           }
         });
       }

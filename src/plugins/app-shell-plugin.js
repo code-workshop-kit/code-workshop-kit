@@ -4,15 +4,15 @@ const findBrowserPath = dir => {
   const absolutePath = require.resolve('code-workshop-kit/dist/components/AppShell.js');
 
   // Subtract working directory and resolve to root of the @web/dev-server
-  const componentPath = path.resolve('/', path.relative(process.cwd(), absolutePath));
+  const componentPath = path.posix.resolve('/', path.relative(process.cwd(), absolutePath));
 
   // Relative to the dir folder (usually root, but can be nested somewhere as well) and resolved again
-  let relativeComponentPath = path.relative(path.resolve('/', dir), componentPath);
+  let relativeComponentPath = path.relative(path.posix.resolve('/', dir), componentPath);
 
   // Check if the relative component path is bare... this can happen with path.relative
   // Then we just assume we can resolve it to root
   if (!relativeComponentPath.startsWith('.') && !relativeComponentPath.startsWith('/')) {
-    relativeComponentPath = path.resolve('/', relativeComponentPath);
+    relativeComponentPath = path.posix.resolve('/', relativeComponentPath);
   }
   // Normalize for Windows
   const normalizedForWindows = relativeComponentPath.replace(
