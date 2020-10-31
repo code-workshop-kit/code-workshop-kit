@@ -4,6 +4,7 @@ import { componentReplacersPlugin } from './component-replacers-plugin.js';
 import { followModePlugin } from './follow-mode-plugin.js';
 import { queryTimestampModulesPlugin } from './query-timestamp-modules-plugin.js';
 import { wsPortPlugin } from './ws-port-plugin.js';
+import { missingIndexHtmlPlugin } from './missing-index-html-plugin.js';
 
 export {
   wsPortPlugin,
@@ -12,4 +13,5 @@ export {
   adminUIPlugin,
   appShellPlugin,
   queryTimestampModulesPlugin,
+  missingIndexHtmlPlugin,
 };

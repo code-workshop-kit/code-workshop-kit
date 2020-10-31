@@ -9,7 +9,6 @@ import portfinder from 'portfinder';
 import {
   changeParticipantUrlMiddleware,
   jwtMiddleware,
-  missingIndexHtmlMiddleware,
   noCacheMiddleware,
 } from './middleware/middleware.js';
 import {
@@ -19,6 +18,7 @@ import {
   followModePlugin,
   queryTimestampModulesPlugin,
   wsPortPlugin,
+  missingIndexHtmlPlugin,
 } from './plugins/plugins.js';
 import { cwkState } from './utils/CwkStateSingleton.js';
 import { runScript } from './runScript.js';
@@ -217,16 +217,17 @@ const handleWsMessage = (message, ws) => {
 
 const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
   const newWdsConfig = wdsConfig;
-  newWdsConfig.plugins = [...wdsConfig.plugins];
-  newWdsConfig.middleware = [...wdsConfig.middleware];
 
+  newWdsConfig.middleware = [...wdsConfig.middleware];
   newWdsConfig.middleware.push(changeParticipantUrlMiddleware(absoluteDir));
   newWdsConfig.middleware.push(jwtMiddleware(absoluteDir));
-  newWdsConfig.middleware.push(
-    missingIndexHtmlMiddleware(absoluteDir, cwkConfig.target, cwkConfig.targetOptions.mode),
-  );
+  newWdsConfig.middleware.push(noCacheMiddleware);
 
+  newWdsConfig.plugins = [...wdsConfig.plugins];
   newWdsConfig.plugins.push(queryTimestampModulesPlugin(absoluteDir));
+  newWdsConfig.plugins.push(
+    missingIndexHtmlPlugin(absoluteDir, cwkConfig.target, cwkConfig.targetOptions.mode),
+  );
   newWdsConfig.plugins.push(wsPortPlugin(wdsConfig.port));
   newWdsConfig.plugins.push(
     componentReplacersPlugin({
@@ -234,12 +235,9 @@ const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
       mode: cwkConfig.targetOptions.mode,
     }),
   );
-
   newWdsConfig.plugins.push(followModePlugin(wdsConfig.port));
   newWdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
   newWdsConfig.plugins.push(adminUIPlugin(absoluteDir));
-
-  newWdsConfig.middleware.push(noCacheMiddleware);
 
   return newWdsConfig;
 };
