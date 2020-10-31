@@ -98,6 +98,8 @@ const runScriptForParticipant = async (participantName, cfg) => {
   });
   state.terminalScripts.set(participantName, { script, closeResolve, hasClosed });
 
+  // We will set a close listener for each participant, which can easily exceed 10.
+  script.setMaxListeners(0);
   script.on('close', () => {
     const scriptData = state.terminalScripts.get(participantName);
     if (scriptData) {
