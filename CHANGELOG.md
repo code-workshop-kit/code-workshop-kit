@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.13.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.13.1...0.13.2) (2020-10-31)
+
+
+### Bug Fixes
+
+* make it work for windows ([359b492](https://github.com/code-workshop-kit/cwk-frontend/commit/359b4927991d6a9b3249f2bd079a280f627c9c9b))
+* silence max event listeners for script close event ([ef25b1a](https://github.com/code-workshop-kit/cwk-frontend/commit/ef25b1a5b3f11ce8e3c100260d371ae4a48cffdd))
+
 ### [0.13.1](https://github.com/code-workshop-kit/cwk-frontend/compare/0.13.0...0.13.1) (2020-10-31)
 
 
