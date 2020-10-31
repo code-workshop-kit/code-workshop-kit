@@ -228,26 +228,26 @@ const handleWsMessage = (message, ws) => {
 const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
   const newWdsConfig = wdsConfig;
 
-  newWdsConfig.middleware = [...wdsConfig.middleware];
-  newWdsConfig.middleware.push(changeParticipantUrlMiddleware(absoluteDir));
-  newWdsConfig.middleware.push(jwtMiddleware(absoluteDir));
-  newWdsConfig.middleware.push(noCacheMiddleware);
+  newWdsConfig.middleware = [
+    ...wdsConfig.middleware,
+    changeParticipantUrlMiddleware(absoluteDir),
+    jwtMiddleware(absoluteDir),
+    noCacheMiddleware,
+  ];
 
-  newWdsConfig.plugins = [...wdsConfig.plugins];
-  newWdsConfig.plugins.push(queryTimestampModulesPlugin(absoluteDir));
-  newWdsConfig.plugins.push(
+  newWdsConfig.plugins = [
+    ...wdsConfig.plugins,
+    queryTimestampModulesPlugin(absoluteDir),
     missingIndexHtmlPlugin(absoluteDir, cwkConfig.target, cwkConfig.targetOptions.mode),
-  );
-  newWdsConfig.plugins.push(wsPortPlugin(wdsConfig.port));
-  newWdsConfig.plugins.push(
+    wsPortPlugin(wdsConfig.port),
     componentReplacersPlugin({
       dir: absoluteDir,
       mode: cwkConfig.targetOptions.mode,
     }),
-  );
-  newWdsConfig.plugins.push(followModePlugin(wdsConfig.port));
-  newWdsConfig.plugins.push(appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target));
-  newWdsConfig.plugins.push(adminUIPlugin(absoluteDir));
+    followModePlugin(wdsConfig.port),
+    appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target),
+    adminUIPlugin(absoluteDir),
+  ];
 
   return newWdsConfig;
 };
