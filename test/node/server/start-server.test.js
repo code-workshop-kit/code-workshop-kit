@@ -32,9 +32,9 @@ describe('start cwk server', () => {
       expect(cwkConfig.targetOptions.args).to.be.undefined;
       expect(cwkConfig.targetOptions.excludeFromWatch).to.eql([]);
       expect(server.config.watch).to.be.false;
-      expect(server.config.plugins.length).to.equal(9);
+      expect(server.config.plugins.length).to.equal(10);
       expect(server.config.nodeResolve).to.be.true;
-      expect(server.config.middleware.length).to.equal(4);
+      expect(server.config.middleware.length).to.equal(3);
     });
 
     it('supports overriding CWK server default settings', async () => {
@@ -61,8 +61,8 @@ describe('start cwk server', () => {
       expect(cwkConfig.targetOptions.fromParticipantFolder).to.be.false;
       expect(cwkConfig.targetOptions.excludeFromWatch).to.eql(['mjs']);
       expect(cwkConfig.targetOptions.mode).to.equal('module');
-      expect(wdsConfig.plugins.length).to.equal(6);
-      expect(wdsConfig.middleware.length).to.equal(4);
+      expect(wdsConfig.plugins.length).to.equal(7);
+      expect(wdsConfig.middleware.length).to.equal(3);
     });
 
     it('locks watch mode clearTerminalOnReload, and is not overridable', async () => {
