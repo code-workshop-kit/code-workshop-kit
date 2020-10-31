@@ -422,14 +422,14 @@ export const startServer = async (opts = {}) => {
   if (cwkConfig.logStartup !== false) {
     console.log(chalk.bold('code-workshop-kit server started...'));
     console.log('');
-    console.log(
-      `${chalk.white('Visit:')}    ${chalk.cyanBright(
-        `http://localhost:${server.config.port}/${path.relative(
-          process.cwd(),
-          cwkConfig.absoluteDir,
-        )}/`,
-      )}`,
-    );
+    let url = `http://localhost:${server.config.port}/${path.relative(
+      process.cwd(),
+      cwkConfig.absoluteDir,
+    )}`;
+    if (!url.endsWith('/')) {
+      url += '/';
+    }
+    console.log(`${chalk.white('Visit:')}    ${chalk.cyanBright(url)}`);
     console.log('');
   }
 
