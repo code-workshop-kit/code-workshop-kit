@@ -47,7 +47,7 @@
   "author": "Joren Broekema <joren.broekema@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@babel/core": "^7.10.3",
+    "@babel/core": "^7.12.0",
     "@lion/dialog": "~0.7.11",
     "@open-wc/create": "~0.33.0",
     "@web/dev-server": "^0.0.13",
