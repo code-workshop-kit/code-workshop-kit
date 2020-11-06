@@ -1260,10 +1260,10 @@
     rollup "^2.20.0"
     whatwg-url "^8.1.0"
 
-"@web/dev-server@^0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@web/dev-server/-/dev-server-0.0.13.tgz#56b3cedc054ffaf667bca92cac333572506ad23f"
-  integrity sha512-J9oJzm8x3lt5T/W36p5dEhNhZS5Z/9ltU3Xk0zp7cuCaZIJBJ6lhdYYAXiVQU+LsO6uSvxUQW7IGmdqiZPcicQ==
+"@web/dev-server@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@web/dev-server/-/dev-server-0.0.14.tgz#c1d7390d3dd1c7945b1e29f4bd8ffe53871db56a"
+  integrity sha512-prNytGwwU0g0rodWu4nejqxbIYR6+ycX/VEY4HKZMZ2tTydIL9Ds7ZGxez+MNnNbFuJPc5qeTRzGqmXFyKxHVA==
   dependencies:
     "@babel/code-frame" "^7.10.4"
     "@rollup/plugin-node-resolve" "^8.4.0"
