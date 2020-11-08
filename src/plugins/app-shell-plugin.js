@@ -23,13 +23,13 @@ const findBrowserPath = dir => {
   return normalizedForWindows;
 };
 
-export function appShellPlugin(dir, title, target = 'frontend') {
+export function appShellPlugin(cfg) {
   return {
     transform(context) {
       let rewrittenBody = context.body;
       if (context.status === 200) {
         // subtract the current working dir from absolute dir to get the dir relative to the server root
-        const pathRelativeToServer = dir.split(process.cwd())[1];
+        const pathRelativeToServer = cfg.absoluteDir.split(process.cwd())[1];
 
         // Extra check because the url could be ending with / and then we should be serving /index.html (browser behavior)
         if (
@@ -42,8 +42,8 @@ export function appShellPlugin(dir, title, target = 'frontend') {
             <script type="module">
               import '${browserPath}';
               const cwkAppShell = document.createElement('cwk-app-shell');
-              cwkAppShell.title = '${title}';
-              cwkAppShell.target = '${target}';
+              cwkAppShell.title = '${cfg.title}';
+              cwkAppShell.target = '${cfg.target || 'frontend'}';
               document.querySelector('body').appendChild(cwkAppShell);
             </script>
           `;

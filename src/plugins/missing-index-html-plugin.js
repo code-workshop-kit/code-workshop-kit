@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-export function missingIndexHtmlPlugin(dir, target, mode) {
+export function missingIndexHtmlPlugin(cfg) {
   return {
     name: 'missing-index-html-plugin',
     serve(ctx) {
@@ -12,9 +12,9 @@ export function missingIndexHtmlPlugin(dir, target, mode) {
 
         // Case 1: root index.html
         if (
-          (dir.split(process.cwd())[1] === path.dirname(normalizedPath) ||
+          (cfg.absoluteDir.split(process.cwd())[1] === path.dirname(normalizedPath) ||
             path.dirname(normalizedPath) === '/') &&
-          !fs.existsSync(path.resolve(dir, 'index.html'))
+          !fs.existsSync(path.resolve(cfg.absoluteDir, 'index.html'))
         ) {
           rewrittenBody = `
             <head>
@@ -29,10 +29,10 @@ export function missingIndexHtmlPlugin(dir, target, mode) {
           `;
         } else if (
           // Case 2: participant root index.html
-          path.posix.resolve(`${dir.split(process.cwd())[1]}/`, 'participants') ===
+          path.posix.resolve(`${cfg.absoluteDir.split(process.cwd())[1]}/`, 'participants') ===
           path.dirname(path.dirname(normalizedPath))
         ) {
-          const participantFolder = path.basename(path.dirname(normalizedPath));
+          const participantFolder = path.basename(path.dirname(decodeURI(normalizedPath)));
 
           /**
            * For basic frontend with iframes, don't insert anything.
@@ -41,8 +41,10 @@ export function missingIndexHtmlPlugin(dir, target, mode) {
            * Checking for 404 status won't work, as this plugin is ran before static file middleware
            */
           if (
-            !(target === 'frontend' && mode === 'iframe') &&
-            !fs.existsSync(path.resolve(dir, 'participants', participantFolder, 'index.html'))
+            !(cfg.target === 'frontend' && cfg.targetOptions.mode === 'iframe') &&
+            !fs.existsSync(
+              path.resolve(cfg.absoluteDir, 'participants', participantFolder, 'index.html'),
+            )
           ) {
             rewrittenBody = `
               <head>
@@ -56,7 +58,7 @@ export function missingIndexHtmlPlugin(dir, target, mode) {
               <body>
                 <script type="module">
                   import { setCapsule } from 'code-workshop-kit/dist/components/setCapsule.js';
-                  setCapsule('${participantFolder}', { target: '${target}' });
+                  setCapsule('${participantFolder}', { target: '${cfg.target}' });
                 </script>
               </body>
             `;

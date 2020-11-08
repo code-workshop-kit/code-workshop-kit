@@ -23,6 +23,13 @@ import {
 import { cwkState } from './utils/CwkStateSingleton.js';
 import { runScript } from './runScript.js';
 
+const logger = (str, opts) => {
+  if (opts.logStartup !== false) {
+    // eslint-disable-next-line no-console
+    console.log(str);
+  }
+};
+
 const getAdminUIDefaults = () => {
   return {
     enableCaching: false,
@@ -62,7 +69,7 @@ const getWsConnection = (participantName, feature, all = false) => {
   return connection;
 };
 
-const runScriptForParticipant = async (participantName, cfg) => {
+const runScriptForParticipant = async (participantName, cfg, opts) => {
   const { state } = cwkState;
 
   if (state.terminalScripts) {
@@ -72,11 +79,14 @@ const runScriptForParticipant = async (participantName, cfg) => {
         process.kill(-oldScript.script.pid);
         await oldScript.hasClosed;
       } catch (e) {
-        console.log(`
+        logger(
+          `
           Error: problem killing a participant terminal script, this could be related to a bug on Windows where the wrong PID is given.
           CWK is working on a fix or workaround.. In the meantime, we advise using WSL for windows users hosting CWK workshops,
           or only doing participant scripts that are self-terminating.
-        `);
+        `,
+          opts,
+        );
       }
     }
   }
@@ -146,7 +156,7 @@ const runScriptForParticipant = async (participantName, cfg) => {
   cwkState.state = state;
 };
 
-const handleWsMessage = (message, ws) => {
+const handleWsMessage = (message, ws, opts) => {
   const parsedMessage = JSON.parse(message);
   const { type } = parsedMessage;
 
@@ -196,7 +206,7 @@ const handleWsMessage = (message, ws) => {
     }
     case 'terminal-rerun': {
       const { participantName } = parsedMessage;
-      runScriptForParticipant(participantName, cwkState.state.cwkConfig);
+      runScriptForParticipant(participantName, cwkState.state.cwkConfig, opts);
       break;
     }
     case 'authenticate': {
@@ -225,28 +235,25 @@ const handleWsMessage = (message, ws) => {
   }
 };
 
-const addPluginsAndMiddleware = (wdsConfig, cwkConfig, absoluteDir) => {
+const addPluginsAndMiddleware = (wdsConfig, cwkConfig) => {
   const newWdsConfig = wdsConfig;
 
   newWdsConfig.middleware = [
     ...wdsConfig.middleware,
-    changeParticipantUrlMiddleware(absoluteDir),
-    jwtMiddleware(absoluteDir),
+    changeParticipantUrlMiddleware(cwkConfig.absoluteDir),
+    jwtMiddleware(cwkConfig.absoluteDir),
     noCacheMiddleware,
   ];
 
   newWdsConfig.plugins = [
     ...wdsConfig.plugins,
-    queryTimestampModulesPlugin(absoluteDir),
-    missingIndexHtmlPlugin(absoluteDir, cwkConfig.target, cwkConfig.targetOptions.mode),
+    queryTimestampModulesPlugin(cwkConfig.absoluteDir),
+    missingIndexHtmlPlugin(cwkConfig),
     wsPortPlugin(wdsConfig.port),
-    componentReplacersPlugin({
-      dir: absoluteDir,
-      mode: cwkConfig.targetOptions.mode,
-    }),
+    componentReplacersPlugin(cwkConfig),
     followModePlugin(wdsConfig.port),
-    appShellPlugin(absoluteDir, cwkConfig.title, cwkConfig.target),
-    adminUIPlugin(absoluteDir),
+    appShellPlugin(cwkConfig),
+    adminUIPlugin(cwkConfig.absoluteDir),
   ];
 
   return newWdsConfig;
@@ -313,7 +320,7 @@ const getCwkConfig = opts => {
   return cwkConfig;
 };
 
-const getWdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
+const getWdsConfig = (opts, cwkConfig, port) => {
   // wds defaults & middleware
   let wdsConfig = {
     open: false,
@@ -323,8 +330,8 @@ const getWdsConfig = (opts, cwkConfig, defaultPort, absoluteDir) => {
     ...opts,
   };
 
-  wdsConfig.port = wdsConfig.port || defaultPort;
-  wdsConfig = addPluginsAndMiddleware(wdsConfig, cwkConfig, absoluteDir);
+  wdsConfig.port = port;
+  wdsConfig = addPluginsAndMiddleware(wdsConfig, cwkConfig);
   return wdsConfig;
 };
 
@@ -332,7 +339,7 @@ const setupParticipantWatcher = absoluteDir => {
   return chokidar.watch(path.resolve(absoluteDir, 'participants'));
 };
 
-const setupWatcherForTerminalProcess = (watcher, cfg) => {
+const setupWatcherForTerminalProcess = (watcher, cfg, opts) => {
   if (cfg.targetOptions.autoReload) {
     watcher.on('change', filePath => {
       // Get participant name from file path
@@ -357,7 +364,7 @@ const setupWatcherForTerminalProcess = (watcher, cfg) => {
 
       // If the file that was changed is not within exclude-list
       if (!excludeFilesArr.includes(filePath)) {
-        runScriptForParticipant(participantName, cfg);
+        runScriptForParticipant(participantName, cfg, opts);
       }
     });
   }
@@ -397,16 +404,41 @@ const setupHMR = (watcher, absoluteDir) => {
   });
 };
 
-export const startServer = async (opts = {}) => {
-  const cwkConfig = getCwkConfig(opts);
+const getPort = async opts => {
+  /**
+   * Pre-determine the port, since we have to pass it to our middleware and plugins before
+   * the dev server is instantiated. We either take the CLI flag port, the Node API's port
+   * property, or as a fallback, portfinder's default first found port.
+   */
   const defaultPort = await portfinder.getPortPromise();
-  const wdsConfig = getWdsConfig(opts, cwkConfig, defaultPort, cwkConfig.absoluteDir);
+  const port =
+    commandLineArgs(
+      [
+        {
+          name: 'port',
+          alias: 'p',
+          description: 'Port to bind the server to.',
+          type: Number,
+        },
+      ],
+      { argv: opts.argv, partial: true },
+    ).port ||
+    opts.port ||
+    defaultPort;
+
+  return port;
+};
+
+export const startServer = async (opts = {}) => {
+  const port = await getPort(opts);
+  const cwkConfig = getCwkConfig(opts);
+  const wdsConfig = getWdsConfig(opts, cwkConfig, port);
 
   const watcher = setupParticipantWatcher(cwkConfig.absoluteDir);
   if (cwkConfig.target === 'frontend' && cwkConfig.targetOptions.mode === 'module') {
     setupHMR(watcher, cwkConfig.absoluteDir);
   } else if (cwkConfig.target === 'terminal') {
-    setupWatcherForTerminalProcess(watcher, cwkConfig);
+    setupWatcherForTerminalProcess(watcher, cwkConfig, opts);
   }
 
   const server = await startDevServer({
@@ -421,15 +453,15 @@ export const startServer = async (opts = {}) => {
 
   const wss = server.webSockets.webSocketServer;
   wss.on('connection', ws => {
-    ws.on('message', message => handleWsMessage(message, ws));
+    ws.on('message', message => handleWsMessage(message, ws, opts));
   });
 
   cwkState.state = { wss, cwkConfig };
   setDefaultAdminConfig();
 
   if (cwkConfig.logStartup !== false) {
-    console.log(chalk.bold('code-workshop-kit server started...'));
-    console.log('');
+    logger(chalk.bold('code-workshop-kit server started...'), opts);
+    logger('', opts);
     let url = `http://localhost:${server.config.port}/${path.relative(
       process.cwd(),
       cwkConfig.absoluteDir,
@@ -437,8 +469,8 @@ export const startServer = async (opts = {}) => {
     if (!url.endsWith('/')) {
       url += '/';
     }
-    console.log(`${chalk.white('Visit:')}    ${chalk.cyanBright(url)}`);
-    console.log('');
+    logger(`${chalk.white('Visit:')}    ${chalk.cyanBright(url)}`, opts);
+    logger('', opts);
   }
 
   ['exit', 'SIGINT'].forEach(event => {
@@ -450,11 +482,14 @@ export const startServer = async (opts = {}) => {
             try {
               process.kill(-script.script.pid);
             } catch (e) {
-              console.log(`
+              logger.log(
+                `
                 Error: problem killing a participant terminal script, this could be related to a bug on Windows where the wrong PID is given.
                 CWK is working on a fix or workaround.. In the meantime, we advise using WSL for windows users hosting CWK workshops,
                 or only doing participant scripts that are self-terminating.
-              `);
+              `,
+                opts,
+              );
             }
           }
         });

@@ -49,6 +49,7 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
 export const scaffold = async opts => {
   const logger = str => {
     if (opts.logStartup !== false) {
+      // eslint-disable-next-line no-console
       console.log(str);
     }
   };
