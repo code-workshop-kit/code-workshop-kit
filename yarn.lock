@@ -911,10 +911,10 @@
     "@open-wc/semantic-dom-diff" "^0.13.16"
     "@types/chai" "^4.1.7"
 
-"@open-wc/create@~0.33.0":
-  version "0.33.2"
-  resolved "https://registry.yarnpkg.com/@open-wc/create/-/create-0.33.2.tgz#27a4a3061c58abac227a118b2bd2d60bc72f7793"
-  integrity sha512-ZsvPbo21M52LK+0rOQ5BMRCAabplrCHRhR1gZXiEGMJVGwQ6QgZC9g2DHjUS2U3II+i/GfO2bs8Pi0lIi5KiWg==
+"@open-wc/create@~0.37.0":
+  version "0.37.3"
+  resolved "https://registry.yarnpkg.com/@open-wc/create/-/create-0.37.3.tgz#c63b00cf819be6798458052bde9100fa66c3672a"
+  integrity sha512-krQX2LOKwRlIV2B7KKGcOr44Dv1Wtj/y+wyGXrP4qtf9iSFQ54vaV5QxdjgKPhyVstDh0x8Ma7W7TQpB3baOIQ==
   dependencies:
     chalk "^2.4.2"
     command-line-args "^5.0.2"
