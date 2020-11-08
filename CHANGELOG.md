@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.13.3](https://github.com/code-workshop-kit/cwk-frontend/compare/0.13.2...0.13.3) (2020-11-08)
+
+
+### Bug Fixes
+
+* allow overriding port to work properly ([4a767fd](https://github.com/code-workshop-kit/cwk-frontend/commit/4a767fd3fcb32651e40096d30b89d88561831acc))
+* decodeURI where needed to allow special char names ([ff05e25](https://github.com/code-workshop-kit/cwk-frontend/commit/ff05e25e114418db39471a9855b4910a6b9b76c1))
+
 ### [0.13.2](https://github.com/code-workshop-kit/cwk-frontend/compare/0.13.1...0.13.2) (2020-10-31)
 
 
