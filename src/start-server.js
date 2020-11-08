@@ -206,7 +206,7 @@ const handleWsMessage = (message, ws, opts) => {
     }
     case 'terminal-rerun': {
       const { participantName } = parsedMessage;
-      runScriptForParticipant(participantName, cwkState.state.cwkConfig.opts, opts);
+      runScriptForParticipant(participantName, cwkState.state.cwkConfig, opts);
       break;
     }
     case 'authenticate': {
