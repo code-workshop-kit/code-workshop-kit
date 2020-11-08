@@ -43,7 +43,6 @@ describe('e2e: CWK App Shell', () => {
         dir: './test/test-utils/fixtures/simple',
       }));
 
-      console.log(`${host}test/test-utils/fixtures/simple/index.html`);
       const response = await fetch(`${host}test/test-utils/fixtures/simple/index.html`, {
         headers: { 'user-agent': userAgents['Chrome 78'] },
       });

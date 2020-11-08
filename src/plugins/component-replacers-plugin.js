@@ -1,8 +1,8 @@
 import path from 'path';
 
-export function componentReplacersPlugin(opts) {
+export function componentReplacersPlugin(cfg) {
   // subtract the current working dir from absolute dir to get the dir relative to the server root
-  const pathRelativeToServer = opts.dir.split(process.cwd())[1];
+  const pathRelativeToServer = cfg.absoluteDir.split(process.cwd())[1];
   return {
     transform(context) {
       let rewrittenBody = context.body;
@@ -35,7 +35,7 @@ export function componentReplacersPlugin(opts) {
         if (context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js') {
           rewrittenBody = rewrittenBody.replace(
             new RegExp("this.mode = 'iframe';", 'g'),
-            `this.mode = '${opts.mode}';`,
+            `this.mode = '${cfg.targetOptions.mode}';`,
           );
         }
       }
