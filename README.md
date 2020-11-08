@@ -52,7 +52,7 @@ Server:
 cwk run
 ```
 
-> To run a locally installed npm binary (`cwk` in this case), either use `package.json` scripts property, or run it directly using `yarn cwk` or `(npm bin)/cwk`.
+> To run a locally installed npm binary (`cwk` in this case), either use `package.json` scripts property, or run it directly using `npx cwk` or `yarn cwk`.
 
 ## Configuration
 
