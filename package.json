@@ -1,6 +1,6 @@
 {
   "name": "code-workshop-kit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The future of remote code workshops & training",
   "repository": "https://github.com/code-workshop-kit/cwk-frontend",
   "main": "./dist/index.js",
