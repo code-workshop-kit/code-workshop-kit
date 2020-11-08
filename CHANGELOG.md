@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [1.0.1](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.0...1.0.1) (2020-11-08)
 
+### [1.0.0](https://github.com/code-workshop-kit/cwk-frontend/compare/0.13.3...1.0.0) (2020-11-08)
+
 ### [0.13.3](https://github.com/code-workshop-kit/cwk-frontend/compare/0.13.2...0.13.3) (2020-11-08)
 
 
