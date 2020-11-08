@@ -29,7 +29,7 @@ class ParticipantFrontendCapsule extends ParticipantCapsule {
   }
 
   async _fetchParticipantModule(timestamp) {
-    this.loadingComplete = new Promise(resolve => {
+    this.loadingComplete = new Promise((resolve) => {
       this.__loadingResolve = resolve;
     });
 
@@ -88,7 +88,7 @@ class ParticipantFrontendCapsule extends ParticipantCapsule {
       );
     });
 
-    this.ws.addEventListener('message', e => {
+    this.ws.addEventListener('message', (e) => {
       const { type, name, timestamp } = JSON.parse(e.data);
       if (type === 'reload-module' && name === this.name) {
         this._fetchParticipantModule(timestamp);

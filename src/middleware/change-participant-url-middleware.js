@@ -1,7 +1,7 @@
 import { cwkState } from '../utils/CwkStateSingleton.js';
 import { verifyJWT } from '../utils/verifyJWT.js';
 
-export const changeParticipantUrlMiddleware = dir => async (ctx, next) => {
+export const changeParticipantUrlMiddleware = (dir) => async (ctx, next) => {
   const fromIFrame = ctx.header['sec-fetch-dest'] === 'iframe';
 
   await next();

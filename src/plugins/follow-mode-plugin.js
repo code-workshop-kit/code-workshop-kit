@@ -4,14 +4,14 @@ export function followModePlugin(port) {
   // port works because we replace it later by the actual value of port
   const scriptsToInsert = () => {
     window.__cwkFollowModeWs = new WebSocket(`ws://localhost:${port}`);
-    const allCookies = document.cookie.split(';').map(cookie => {
+    const allCookies = document.cookie.split(';').map((cookie) => {
       if (cookie) {
         return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
       }
       return {};
     });
     let participantName = null;
-    const participantCookie = allCookies.find(cookie => cookie.participant_name);
+    const participantCookie = allCookies.find((cookie) => cookie.participant_name);
     if (participantCookie) {
       participantName = participantCookie.participant_name;
     }
@@ -29,7 +29,7 @@ export function followModePlugin(port) {
       }
     });
 
-    window.__cwkFollowModeWs.addEventListener('message', e => {
+    window.__cwkFollowModeWs.addEventListener('message', (e) => {
       const { type, data, byAdmin } = JSON.parse(e.data);
       // Guard against initiator of follow mode's url getting changed. It should not happen, but just in case
       if (type === 'update-url' && byAdmin !== participantName) {

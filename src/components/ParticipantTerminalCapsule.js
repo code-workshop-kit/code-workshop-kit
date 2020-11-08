@@ -104,7 +104,7 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
       );
     });
 
-    this.ws.addEventListener('message', e => {
+    this.ws.addEventListener('message', (e) => {
       const parsedData = JSON.parse(e.data);
       const { type } = parsedData;
       if (type.startsWith('terminal-process')) {
@@ -180,8 +180,8 @@ class ParticipantTerminalCapsule extends ParticipantCapsule {
   clearTerminal() {
     const container = this.shadowRoot.querySelector('.participant-terminal-entries');
     Array.from(container.children)
-      .filter(child => child.classList.contains('entry'))
-      .forEach(child => child.remove());
+      .filter((child) => child.classList.contains('entry'))
+      .forEach((child) => child.remove());
   }
 
   rerunScript() {

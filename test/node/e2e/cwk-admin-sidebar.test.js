@@ -107,8 +107,8 @@ describe('e2e: Admin UI Sidebar', () => {
         ],
       }));
 
-      wss.on('connection', ws => {
-        ws.on('message', message => {
+      wss.on('connection', (ws) => {
+        ws.on('message', (message) => {
           lastWsMsg = JSON.parse(message);
         });
       });
@@ -126,7 +126,7 @@ describe('e2e: Admin UI Sidebar', () => {
         { expiresIn: '12h' },
       );
 
-      timestamp = await page.evaluate(tok => {
+      timestamp = await page.evaluate((tok) => {
         document.cookie = `participant_name=Joren;path=/`;
         document.cookie = `cwk_auth_token=${tok};path=/`;
         return document.getElementById('unixTimestamp').innerText;

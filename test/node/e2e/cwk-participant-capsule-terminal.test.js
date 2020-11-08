@@ -243,7 +243,7 @@ describe('e2e: Participant Capsule Terminal', () => {
             document
               .querySelector('cwk-participant-terminal-capsule')
               .shadowRoot.querySelectorAll('.entry'),
-          ).map(entry => entry.innerText),
+          ).map((entry) => entry.innerText),
         };
       });
 

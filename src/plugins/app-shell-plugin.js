@@ -1,6 +1,6 @@
 import path from 'path';
 
-const findBrowserPath = dir => {
+const findBrowserPath = (dir) => {
   const absolutePath = require.resolve('code-workshop-kit/dist/components/AppShell.js');
 
   // Subtract working directory and resolve to root of the @web/dev-server

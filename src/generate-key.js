@@ -4,7 +4,7 @@ import path from 'path';
 import { generateAppKey } from './app-key/generateAppKey.js';
 
 export const generateKey = (opts = {}) => {
-  const logger = str => {
+  const logger = (str) => {
     if (opts.logStartup !== false) {
       // eslint-disable-next-line no-console
       console.log(str);

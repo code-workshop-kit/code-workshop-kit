@@ -38,7 +38,7 @@ describe('websocket server', () => {
       ws = new WebSocket(wsHost);
 
       let wsResolve;
-      const wsComplete = new Promise(resolve => {
+      const wsComplete = new Promise((resolve) => {
         wsResolve = resolve;
       });
 
@@ -46,7 +46,7 @@ describe('websocket server', () => {
         ws.send(JSON.stringify({ type: 'config-init' }));
       });
 
-      ws.on('message', data => {
+      ws.on('message', (data) => {
         wsResolve(JSON.parse(data));
       });
 
@@ -60,7 +60,7 @@ describe('websocket server', () => {
       ws = new WebSocket(wsHost);
 
       let wsResolve;
-      const wsComplete = new Promise(resolve => {
+      const wsComplete = new Promise((resolve) => {
         wsResolve = resolve;
       });
 
@@ -68,7 +68,7 @@ describe('websocket server', () => {
         ws.send(JSON.stringify({ type: 'authenticate', username: 'Joren' }));
       });
 
-      ws.on('message', data => {
+      ws.on('message', (data) => {
         wsResolve(JSON.parse(data));
       });
 
@@ -81,7 +81,7 @@ describe('websocket server', () => {
       ws = new WebSocket(wsHost);
 
       let wsResolve;
-      const wsComplete = new Promise(resolve => {
+      const wsComplete = new Promise((resolve) => {
         wsResolve = resolve;
       });
 
@@ -89,7 +89,7 @@ describe('websocket server', () => {
         ws.send(JSON.stringify({ type: 'config-updated', config: { enableCaching: true } }));
       });
 
-      ws.on('message', data => {
+      ws.on('message', (data) => {
         wsResolve(JSON.parse(data));
       });
 

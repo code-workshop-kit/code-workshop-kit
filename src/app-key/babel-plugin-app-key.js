@@ -15,7 +15,7 @@ module.exports = ({ types: t }) => ({
     ExportDefaultDeclaration(path, state) {
       if (path.node.declaration) {
         const existingAppKeyPropIndex = path.node.declaration.properties.findIndex(
-          prop => prop.key.name === 'appKey',
+          (prop) => prop.key.name === 'appKey',
         );
 
         let existingAppKey;

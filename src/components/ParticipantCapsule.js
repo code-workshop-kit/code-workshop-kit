@@ -105,7 +105,7 @@ export class ParticipantCapsule extends LitElement {
 
   // eslint-disable-next-line class-methods-use-this
   _getParticipantCookie() {
-    const allCookies = document.cookie.split(';').map(cookie => {
+    const allCookies = document.cookie.split(';').map((cookie) => {
       if (cookie) {
         return { [cookie.split('=')[0].trim()]: cookie.split('=')[1].trim() };
       }
@@ -113,7 +113,7 @@ export class ParticipantCapsule extends LitElement {
     });
 
     let participantName = null;
-    const participantCookie = allCookies.find(cookie => cookie.participant_name);
+    const participantCookie = allCookies.find((cookie) => cookie.participant_name);
     if (participantCookie) {
       participantName = participantCookie.participant_name;
     }

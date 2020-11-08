@@ -5,7 +5,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-rl.question('Where do you live? ', country => {
+rl.question('Where do you live? ', (country) => {
   console.log(`You are a citizen of ${country}`);
   rl.close();
 });

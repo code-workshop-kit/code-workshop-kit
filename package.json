@@ -1,14 +1,14 @@
 {
   "name": "code-workshop-kit",
-  "version": "0.13.3",
-  "description": "",
+  "version": "1.0.0",
+  "description": "The future of remote code workshops & training",
   "repository": "https://github.com/code-workshop-kit/cwk-frontend",
   "main": "./dist/index.js",
   "bin": {
     "cwk": "./dist/cli.js"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=12.0.0"
   },
   "scripts": {
     "build": "rimraf dist && babel src --out-dir dist --copy-files",
@@ -38,7 +38,7 @@
   "keywords": [
     "workshop",
     "dev server",
-    "scaffolder",
+    "scaffold",
     "hot module reload"
   ],
   "files": [
@@ -96,7 +96,7 @@
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
-    "arrowParens": "avoid",
+    "arrowParens": "always",
     "trailingComma": "all"
   },
   "husky": {

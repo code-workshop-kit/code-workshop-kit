@@ -69,9 +69,9 @@ fontChunks.push(
 );
 
 const loadFonts = async () => {
-  const fontChunksPromises = fontChunks.map(font => font.load());
+  const fontChunksPromises = fontChunks.map((font) => font.load());
   await Promise.all(fontChunksPromises);
-  fontChunks.forEach(font => document.fonts.add(font));
+  fontChunks.forEach((font) => document.fonts.add(font));
   document.body.style.fontFamily = 'Dank Mono, sans-serif';
 };
 loadFonts();

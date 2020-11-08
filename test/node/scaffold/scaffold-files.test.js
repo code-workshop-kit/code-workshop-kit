@@ -5,7 +5,7 @@ import rimraf from 'rimraf';
 import { scaffoldFiles } from '../../../src/scaffold-files.js';
 
 const timeout = 500;
-const aTimeout = t => new Promise(resolve => setTimeout(() => resolve(), t));
+const aTimeout = (t) => new Promise((resolve) => setTimeout(() => resolve(), t));
 const workshopMockPath = './test/test-utils/workshop-mock';
 
 describe('scaffoldFiles', () => {
@@ -35,7 +35,7 @@ describe('scaffoldFiles', () => {
     });
     await aTimeout(timeout);
 
-    ['Joren', 'Felix', 'Alex'].forEach(participant => {
+    ['Joren', 'Felix', 'Alex'].forEach((participant) => {
       const folder = fs.statSync(
         path.resolve(process.cwd(), `${workshopMockPath}/participants/${participant}`),
       );

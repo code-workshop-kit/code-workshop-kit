@@ -83,10 +83,10 @@ class SelectCookie extends LitElement {
   constructor() {
     super();
     this.dialogLoading = true;
-    this.fetchConfigComplete = new Promise(resolve => {
+    this.fetchConfigComplete = new Promise((resolve) => {
       this.fetchConfigResolve = resolve;
     });
-    this.fetchDialogComplete = new Promise(resolve => {
+    this.fetchDialogComplete = new Promise((resolve) => {
       this.fetchDialogResolve = resolve;
     });
   }
@@ -106,7 +106,7 @@ class SelectCookie extends LitElement {
   }
 
   animateDone() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const checkmark = this.shadowRoot.querySelector('svg');
       checkmark.style.display = 'block';
       setTimeout(() => {
@@ -143,14 +143,14 @@ class SelectCookie extends LitElement {
       const confirmDialog = this.shadowRoot.querySelector('cwk-dialog');
       confirmDialog.opened = true;
 
-      const receivePw = pwEvent => {
+      const receivePw = (pwEvent) => {
         pwEvent.stopPropagation();
         this.resolvePwPromise(pwEvent.detail);
         this.removeEventListener('cwk-confirm-pw', receivePw);
       };
       this.addEventListener('cwk-confirm-pw', receivePw);
 
-      providedPw = await new Promise(resolve => {
+      providedPw = await new Promise((resolve) => {
         this.resolvePwPromise = resolve;
       });
     }
@@ -199,7 +199,7 @@ class SelectCookie extends LitElement {
         <ul class="name__list">
           ${this.participants
             ? this.participants.map(
-                name => html`<li class="name__item" @click=${this.setCookie}>${name}</li>`,
+                (name) => html`<li class="name__item" @click=${this.setCookie}>${name}</li>`,
               )
             : html``}
         </ul>

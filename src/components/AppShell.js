@@ -107,7 +107,7 @@ class AppShell extends LitElement {
     this.mode = 'iframe';
     this.target = 'frontend';
     setCustomCSSProps();
-    this.fetchConfigComplete = new Promise(resolve => {
+    this.fetchConfigComplete = new Promise((resolve) => {
       this.fetchConfigResolve = resolve;
     });
   }
@@ -154,7 +154,7 @@ class AppShell extends LitElement {
             <div>
               <div class="participants-container">
                 ${this.participants
-                  ? this.participants.map(name =>
+                  ? this.participants.map((name) =>
                       this.target === 'terminal'
                         ? html`<cwk-participant-terminal-capsule
                             .name="${name}"

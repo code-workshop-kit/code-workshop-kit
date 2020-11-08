@@ -11,7 +11,7 @@ import path from 'path';
 function processTemplate(_fileContent, data = {}) {
   let fileContent = _fileContent;
 
-  Object.keys(data).forEach(key => {
+  Object.keys(data).forEach((key) => {
     let replacement = data[key];
     if (typeof data[key] === 'function') {
       replacement = data[key]();
@@ -23,10 +23,10 @@ function processTemplate(_fileContent, data = {}) {
 
 // Fork from @open-wc/create
 function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     glob(fromGlob, { dot: true }, (err, files) => {
       const copiedFiles = [];
-      files.forEach(filePath => {
+      files.forEach((filePath) => {
         if (!fs.lstatSync(filePath).isDirectory()) {
           const fileContent = readFileFromPath(filePath);
           if (fileContent !== false) {
@@ -46,8 +46,8 @@ function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
   });
 }
 
-export const scaffold = async opts => {
-  const logger = str => {
+export const scaffold = async (opts) => {
+  const logger = (str) => {
     if (opts.logStartup !== false) {
       // eslint-disable-next-line no-console
       console.log(str);
@@ -76,7 +76,7 @@ export const scaffold = async opts => {
 
     const { participants, templateData } = workshop;
 
-    participants.forEach(name => {
+    participants.forEach((name) => {
       logger(`${chalk.white('Scaffolding for:')} ${chalk.cyanBright(name)}`);
       copyTemplates(
         path.resolve(process.cwd(), `${pathToInputDir}/**/*`),
@@ -85,8 +85,8 @@ export const scaffold = async opts => {
           participantName: name,
           ...templateData,
         },
-      ).then(files => {
-        files.forEach(file => {
+      ).then((files) => {
+        files.forEach((file) => {
           writeFileToPathOnDisk(file.toPath, file.processed, {
             override: opts.force,
             ask: false,

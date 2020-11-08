@@ -37,7 +37,7 @@ const getAdminUIDefaults = () => {
   };
 };
 
-const sendAdminConfig = ws => {
+const sendAdminConfig = (ws) => {
   ws.send(
     JSON.stringify({
       type: 'config-init',
@@ -59,8 +59,8 @@ const getWsConnection = (participantName, feature, all = false) => {
 
   if (all) {
     return Array.from(cwkState.state.wsConnections[feature].entries())
-      .filter(entry => entry[0].endsWith(participantName))
-      .map(entry => entry[1]);
+      .filter((entry) => entry[0].endsWith(participantName))
+      .map((entry) => entry[1]);
   }
 
   if (cwkState.state.wsConnections && cwkState.state.wsConnections[feature]) {
@@ -103,7 +103,7 @@ const runScriptForParticipant = async (participantName, cfg, opts) => {
     state.terminalScripts = new Map();
   }
   let closeResolve;
-  const hasClosed = new Promise(resolve => {
+  const hasClosed = new Promise((resolve) => {
     closeResolve = resolve;
   });
   state.terminalScripts.set(participantName, { script, closeResolve, hasClosed });
@@ -121,7 +121,7 @@ const runScriptForParticipant = async (participantName, cfg, opts) => {
   // Open terminal input on the frontend
   const connections = getWsConnection(participantName, 'terminal-process', true);
   if (connections) {
-    connections.forEach(connection => {
+    connections.forEach((connection) => {
       if (connection) {
         connection.send(JSON.stringify({ type: 'terminal-input-enable' }));
       }
@@ -139,17 +139,17 @@ const runScriptForParticipant = async (participantName, cfg, opts) => {
     // Check connections again, as they may have changed since checking at the start of running the script
     const _connections = getWsConnection(participantName, 'terminal-process', true);
     if (_connections) {
-      _connections.forEach(connection =>
+      _connections.forEach((connection) =>
         connection.send(JSON.stringify({ type: `terminal-process-${type}`, data })),
       );
     }
   };
 
-  processEmitter.on('out', data => {
+  processEmitter.on('out', (data) => {
     sendData(data, 'output');
   });
 
-  processEmitter.on('err', data => {
+  processEmitter.on('err', (data) => {
     sendData(data, 'error');
   });
 
@@ -195,7 +195,7 @@ const handleWsMessage = (message, ws, opts) => {
       if (cwkState.state.terminalScripts) {
         const scriptData = cwkState.state.terminalScripts.get(participantName);
         if (scriptData && scriptData.script) {
-          scriptData.script.stdin.write(`${input}\n`, err => {
+          scriptData.script.stdin.write(`${input}\n`, (err) => {
             if (err) {
               throw new Error(`stdin error: ${err}`);
             }
@@ -259,7 +259,7 @@ const addPluginsAndMiddleware = (wdsConfig, cwkConfig) => {
   return newWdsConfig;
 };
 
-const getCwkConfig = opts => {
+const getCwkConfig = (opts) => {
   // cwk defaults
   let cwkConfig = {
     dir: '/',
@@ -335,13 +335,13 @@ const getWdsConfig = (opts, cwkConfig, port) => {
   return wdsConfig;
 };
 
-const setupParticipantWatcher = absoluteDir => {
+const setupParticipantWatcher = (absoluteDir) => {
   return chokidar.watch(path.resolve(absoluteDir, 'participants'));
 };
 
 const setupWatcherForTerminalProcess = (watcher, cfg, opts) => {
   if (cfg.targetOptions.autoReload) {
-    watcher.on('change', filePath => {
+    watcher.on('change', (filePath) => {
       // Get participant name from file path
       // Cancel out the participant folder from the filepath (Bob/index.js or Bob/nested/style.css),
       // and get the top most dir name
@@ -351,14 +351,14 @@ const setupWatcherForTerminalProcess = (watcher, cfg, opts) => {
       const excludeFilesArr = [
         ...new Set(
           cfg.targetOptions.excludeFromWatch
-            .map(pattern =>
+            .map((pattern) =>
               glob.sync(pattern, {
                 cwd: path.resolve(cfg.absoluteDir, 'participants', participantName),
                 dot: true,
               }),
             )
             .flat(Infinity)
-            .map(file => path.resolve(cfg.absoluteDir, 'participants', participantName, file)),
+            .map((file) => path.resolve(cfg.absoluteDir, 'participants', participantName, file)),
         ),
       ];
 
@@ -371,7 +371,7 @@ const setupWatcherForTerminalProcess = (watcher, cfg, opts) => {
 };
 
 const setupHMR = (watcher, absoluteDir) => {
-  watcher.on('change', filePath => {
+  watcher.on('change', (filePath) => {
     // Get participant name from file path
     // Cancel out the participant folder from the filepath (Bob/index.js or Bob/nested/style.css),
     // and get the top most dir name
@@ -388,7 +388,7 @@ const setupHMR = (watcher, absoluteDir) => {
     cwkState.state = state;
 
     if (connections) {
-      connections.forEach(connection => {
+      connections.forEach((connection) => {
         if (connection) {
           // Send module-changed message to all participants for the folder that changed
           connection.send(
@@ -404,7 +404,7 @@ const setupHMR = (watcher, absoluteDir) => {
   });
 };
 
-const getPort = async opts => {
+const getPort = async (opts) => {
   /**
    * Pre-determine the port, since we have to pass it to our middleware and plugins before
    * the dev server is instantiated. We either take the CLI flag port, the Node API's port
@@ -452,8 +452,8 @@ export const startServer = async (opts = {}) => {
   });
 
   const wss = server.webSockets.webSocketServer;
-  wss.on('connection', ws => {
-    ws.on('message', message => handleWsMessage(message, ws, opts));
+  wss.on('connection', (ws) => {
+    ws.on('message', (message) => handleWsMessage(message, ws, opts));
   });
 
   cwkState.state = { wss, cwkConfig };
@@ -473,11 +473,11 @@ export const startServer = async (opts = {}) => {
     logger('', opts);
   }
 
-  ['exit', 'SIGINT'].forEach(event => {
+  ['exit', 'SIGINT'].forEach((event) => {
     process.on(event, () => {
       // ensure that when we close CWK, terminal script subchildren are killed off too
       if (cwkState.state.terminalScripts) {
-        cwkState.state.terminalScripts.forEach(script => {
+        cwkState.state.terminalScripts.forEach((script) => {
           if (script && script.script && script.script.pid) {
             try {
               process.kill(-script.script.pid);

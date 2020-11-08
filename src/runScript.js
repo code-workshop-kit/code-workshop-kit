@@ -22,11 +22,11 @@ export const runScript = ({
     detached: true,
   });
 
-  script.stdout.on('data', data => {
+  script.stdout.on('data', (data) => {
     processEmitter.emit('out', `${data}`);
   });
 
-  script.stderr.on('data', data => {
+  script.stderr.on('data', (data) => {
     processEmitter.emit('err', `${data}`);
   });
 

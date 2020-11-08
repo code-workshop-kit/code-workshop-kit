@@ -19,7 +19,7 @@ export const generateAppKey = (dir, len = 28) => {
   return key;
 };
 
-export const clearAppKey = dir => {
+export const clearAppKey = (dir) => {
   const workshopCfg = `${dir}/cwk.config.js`;
   if (fs.existsSync(workshopCfg)) {
     const cfgCode = fs.readFileSync(workshopCfg, 'utf8');

@@ -165,7 +165,7 @@ class AdminSidebar extends LitElement {
     // gets replaced by CWK server
     this.ws = new WebSocket(`ws://localhost:${this.websocketPort || '%websocketport%'}`);
 
-    this.websocketOpen = new Promise(resolve => {
+    this.websocketOpen = new Promise((resolve) => {
       this.resolveWebsocketOpen = resolve;
     });
 
@@ -174,7 +174,7 @@ class AdminSidebar extends LitElement {
       this.ws.send(JSON.stringify({ type: 'config-init' }));
     });
 
-    this.ws.addEventListener('message', e => {
+    this.ws.addEventListener('message', (e) => {
       const { type, config } = JSON.parse(e.data);
       if (type === 'config-init') {
         this.options = {
@@ -254,7 +254,7 @@ class AdminSidebar extends LitElement {
                     </svg>
                     ${this.options
                       ? html`
-                          ${Object.entries(this.options).map(key => {
+                          ${Object.entries(this.options).map((key) => {
                             return html`
                               <div class="cwk-checkbox-wrapper">
                                 <input
