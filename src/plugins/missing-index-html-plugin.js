@@ -32,7 +32,7 @@ export function missingIndexHtmlPlugin(dir, target, mode) {
           path.posix.resolve(`${dir.split(process.cwd())[1]}/`, 'participants') ===
           path.dirname(path.dirname(normalizedPath))
         ) {
-          const participantFolder = path.basename(path.dirname(normalizedPath));
+          const participantFolder = path.basename(path.dirname(decodeURI(normalizedPath)));
 
           /**
            * For basic frontend with iframes, don't insert anything.

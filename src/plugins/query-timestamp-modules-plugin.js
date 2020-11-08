@@ -13,7 +13,12 @@ export function queryTimestampModulesPlugin(dir) {
         cwkState.state.queryTimestamps &&
         context.cookies.get('participant_name')
       ) {
-        const timestamp = cwkState.state.queryTimestamps[context.cookies.get('participant_name')];
+        // Get participant name from browser path
+        const normalizedPath = context.path.endsWith('/')
+          ? `${context.path}index.html`
+          : context.path;
+        const participantName = path.basename(path.dirname(decodeURI(normalizedPath)));
+        const timestamp = cwkState.state.queryTimestamps[participantName];
 
         if (timestamp) {
           try {
@@ -49,7 +54,7 @@ export function queryTimestampModulesPlugin(dir) {
                       },
                     },
                   }),
-                  { url: context.url },
+                  { url: decodeURI(context.url) },
                 ],
               ],
             }).code;
