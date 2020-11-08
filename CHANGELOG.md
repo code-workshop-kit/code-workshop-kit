@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.4](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.3...1.0.4) (2020-11-08)
+
+
+### Bug Fixes
+
+* app shell browser path logic simplified ([a12026c](https://github.com/code-workshop-kit/cwk-frontend/commit/a12026cc39dfa02982d68e92cdabb252313ca6ac))
+
 ### [1.0.3](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.2...1.0.3) (2020-11-08)
 
 ### [1.0.2](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.1...1.0.2) (2020-11-08)
