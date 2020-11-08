@@ -330,20 +330,7 @@ const getWdsConfig = (opts, cwkConfig, port) => {
     ...opts,
   };
 
-  wdsConfig.port =
-    commandLineArgs(
-      // Forking this from WDS for now, since it's not exposed.. and we need it, to pass to some plugins
-      // This has to happen before instantiating the server, so we can't grab the port from the server instance either
-      [
-        {
-          name: 'port',
-          alias: 'p',
-          description: 'Port to bind the server to.',
-          type: Number,
-        },
-      ],
-      { argv: opts.argv, partial: true },
-    ).port || port;
+  wdsConfig.port = port;
   wdsConfig = addPluginsAndMiddleware(wdsConfig, cwkConfig);
   return wdsConfig;
 };
@@ -417,11 +404,34 @@ const setupHMR = (watcher, absoluteDir) => {
   });
 };
 
-export const startServer = async (opts = {}) => {
-  const cwkConfig = getCwkConfig(opts);
+const getPort = async opts => {
+  /**
+   * Pre-determine the port, since we have to pass it to our middleware and plugins before
+   * the dev server is instantiated. We either take the CLI flag port, the Node API's port
+   * property, or as a fallback, portfinder's default first found port.
+   */
   const defaultPort = await portfinder.getPortPromise();
-  const port = opts.port || defaultPort;
+  const port =
+    commandLineArgs(
+      [
+        {
+          name: 'port',
+          alias: 'p',
+          description: 'Port to bind the server to.',
+          type: Number,
+        },
+      ],
+      { argv: opts.argv, partial: true },
+    ).port ||
+    opts.port ||
+    defaultPort;
 
+  return port;
+};
+
+export const startServer = async (opts = {}) => {
+  const port = await getPort(opts);
+  const cwkConfig = getCwkConfig(opts);
   const wdsConfig = getWdsConfig(opts, cwkConfig, port);
 
   const watcher = setupParticipantWatcher(cwkConfig.absoluteDir);
