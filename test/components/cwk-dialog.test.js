@@ -22,6 +22,7 @@ describe('App Shell Component', () => {
 
     el._overlayContentNode.shadowRoot.querySelector('.cancel-btn').click();
     await el.updateComplete;
+    await el._overlayCtrl._showComplete;
     expect(el.opened).to.be.false;
   });
 
@@ -59,6 +60,7 @@ describe('App Shell Component', () => {
 
     el._overlayContentNode.shadowRoot.querySelector('.confirm-btn').click();
     await el.updateComplete;
+    await el._overlayCtrl._showComplete;
     expect(el.opened).to.be.false;
     expect(spy.calledOnce).to.be.true;
   });
