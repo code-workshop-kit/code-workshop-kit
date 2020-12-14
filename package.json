@@ -47,8 +47,8 @@
   "author": "Joren Broekema <joren.broekema@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@babel/core": "^7.12.3",
-    "@lion/dialog": "~0.9.1",
+    "@babel/core": "^7.12.7",
+    "@lion/dialog": "~0.9.7",
     "@open-wc/create": "~0.37.0",
     "@web/dev-server": "~0.0.24",
     "chalk": "^4.1.0",
@@ -84,7 +84,7 @@
     "puppeteer": "^3.2.0",
     "rimraf": "^3.0.2",
     "sinon": "^9.0.2",
-    "standard-version": "^8.0.2",
+    "standard-version": "^9.0.0",
     "ws": "^7.3.0"
   },
   "eslintConfig": {
