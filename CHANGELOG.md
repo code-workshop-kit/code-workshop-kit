@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.6...1.1.0) (2021-03-09)
+
+
+### Features
+
+* export scaffold functions, avoid wildcard re-export ([aa4a3c5](https://github.com/code-workshop-kit/cwk-frontend/commit/aa4a3c5b3599ce405463791227db0a7a6f99c4b1))
+
 ### [1.0.6](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.5...1.0.6) (2020-12-14)
 
 ### [1.0.5](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.4...1.0.5) (2020-12-14)
