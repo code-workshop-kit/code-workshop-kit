@@ -22,7 +22,7 @@ function processTemplate(_fileContent, data = {}) {
 }
 
 // Fork from @open-wc/create
-function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
+export function copyTemplates(fromGlob, toDir = process.cwd(), data = {}) {
   return new Promise((resolve) => {
     glob(fromGlob, { dot: true }, (err, files) => {
       const copiedFiles = [];
