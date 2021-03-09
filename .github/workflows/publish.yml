@@ -20,19 +20,25 @@ jobs:
       with:
         node-version: 12.x
         registry-url: 'https://registry.npmjs.org'
+
     - name: Install dependencies
-      run: yarn --frozen-lockfile
+      run: npm ci
+
     - name: Set local git config
       run: |
         git config --local user.email "joren.broekema@gmail.com"
         git config --local user.name "Joren Broekema"
+
     - name: Release
-      run: yarn release
+      run: npm run release
+
     - name: Build
-      run: yarn build
+      run: npm run build
+
     - name: Publish to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      run: yarn publish
+      run: npm run publish
+
     - name: Push tags to GitHub
       run: git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --follow-tags

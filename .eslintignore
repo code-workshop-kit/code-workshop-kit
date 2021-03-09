@@ -4,3 +4,7 @@ dist/
 demo/
 
 test/utils/fixtures
+
+**/*.d.ts
+**/*/participants/
+**/*/cwk.config.js

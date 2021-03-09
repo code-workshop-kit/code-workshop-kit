@@ -20,7 +20,7 @@ export default {
 You can generate an app key which places it automatically for you.
 
 ```sh
-yarn cwk generate-key
+npx cwk generate-key
 ```
 
 ## Advanced server config
