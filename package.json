@@ -11,28 +11,30 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "build": "rimraf dist && babel src --out-dir dist --copy-files",
-    "start": "yarn build && ./copy-components && node dist/cli.js run --dir ./demo/spa",
-    "start:basic": "yarn build && ./copy-components && node dist/cli.js run --dir ./demo/basic",
-    "start:java": "yarn build && ./copy-components && node dist/cli.js run --dir ./demo/java",
-    "scaffold": "yarn build && node dist/cli.js scaffold --dir ./demo/spa",
-    "scaffold:force": "yarn build && node dist/cli.js scaffold --dir ./demo/spa --force",
-    "scaffold:basic": "yarn build && node dist/cli.js scaffold --dir ./demo/basic",
-    "scaffold:basic:force": "yarn build && node dist/cli.js scaffold --dir ./demo/basic --force",
-    "scaffold:java": "yarn build && node dist/cli.js scaffold --dir ./demo/java",
-    "scaffold:java:force": "yarn build && node dist/cli.js scaffold --dir ./demo/java --force",
-    "generate-key": "yarn build && node dist/cli.js generate-key --dir ./demo",
-    "test": "yarn test:node && yarn test:browser:coverage",
-    "test:node": "yarn build && ./copy-components && mocha \"test/node/**/*.test.js\" --require @babel/register",
-    "test:node:watch": "yarn build && ./copy-components && mocha \"test/node/**/*.test.js\" --watch --require @babel/register",
-    "test:browser": "wtr test/components/*.test.js",
-    "test:browser:coverage": "wtr test/components/*.test.js --coverage",
-    "lint:eslint": "eslint --ext .js,.html .",
-    "format:eslint": "eslint --ext .js,.html . --fix",
-    "lint:prettier": "prettier \"**/*.js\" --check",
-    "format:prettier": "prettier \"**/*.js\" --write",
-    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "build": "rimraf dist && tsc -p tsconfig.node.json && tsc -p tsconfig.browser.json && ./copy-components",
+    "build:watch": "rimraf dist && concurrently \"tsc -p tsconfig.node.json --watch\" \"tsc -p tsconfig.browser.json --watch\"",
+    "start": "node dist/cli.js run --dir ./demo/spa",
+    "start:basic": "node dist/cli.js run --dir ./demo/basic",
+    "start:java": "node dist/cli.js run --dir ./demo/java",
+    "scaffold": "node dist/cli.js scaffold --dir ./demo/spa",
+    "scaffold:force": "node dist/cli.js scaffold --dir ./demo/spa --force",
+    "scaffold:basic": "node dist/cli.js scaffold --dir ./demo/basic",
+    "scaffold:basic:force": "node dist/cli.js scaffold --dir ./demo/basic --force",
+    "scaffold:java": "node dist/cli.js scaffold --dir ./demo/java",
+    "scaffold:java:force": "node dist/cli.js scaffold --dir ./demo/java --force",
+    "generate-key": "node dist/cli.js generate-key --dir ./demo",
+    "test": "npm run test:node && npm run test:browser:coverage",
+    "test:node": "mocha \"test/node/**/*.test.ts\" --require ts-node/register",
+    "test:node:watch": "mocha \"test/node/**/*.test.ts\" --watch --require ts-node/register",
+    "test:browser": "wtr test/components/*.test.ts",
+    "test:browser:coverage": "wtr test/components/*.test.ts --coverage",
+    "lint": "npm run lint:eslint && npm run lint:prettier && npm run lint:types",
+    "lint:eslint": "eslint --ext .html,.ts .",
+    "lint:prettier": "prettier \"**/*.ts\" --check",
+    "lint:types": "tsc",
     "format": "npm run format:eslint && npm run format:prettier",
+    "format:eslint": "eslint --ext .html,.ts . --fix",
+    "format:prettier": "prettier \"**/*.ts\" --write",
     "release": "standard-version --tag-prefix="
   },
   "keywords": [
@@ -42,15 +44,19 @@
     "hot module reload"
   ],
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "author": "Joren Broekema <joren.broekema@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.12.7",
+    "@babel/traverse": "^7.13.0",
+    "@babel/types": "^7.13.0",
     "@lion/dialog": "~0.9.7",
-    "@open-wc/create": "~0.37.0",
-    "@web/dev-server": "~0.0.24",
+    "@open-wc/create": "^0.37.0",
+    "@web/dev-server": "^0.1.8",
+    "@web/dev-server-core": "^0.3.7",
     "chalk": "^4.1.0",
     "chokidar": "^3.4.3",
     "command-line-args": "^5.1.1",
@@ -60,24 +66,43 @@
     "glob": "^7.1.6",
     "is-plain-object": "^3.0.1",
     "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.1",
     "lit-element": "^2.2.1",
     "lit-html": "^1.2.1",
-    "portfinder": "^1.0.26"
+    "portfinder": "^1.0.26",
+    "ws": "^7.4.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/preset-env": "^7.9.0",
+    "@babel/preset-typescript": "^7.13.0",
     "@babel/register": "^7.9.0",
-    "@open-wc/eslint-config": "^2.0.0",
+    "@open-wc/eslint-config": "^4.2.0",
     "@open-wc/testing": "^2.5.16",
     "@open-wc/testing-helpers": "^1.8.2",
-    "@web/test-runner": "^0.7.2",
-    "@web/test-runner-puppeteer": "^0.6.1",
+    "@types/babel__core": "^7.1.12",
+    "@types/command-line-args": "^5.0.0",
+    "@types/css-font-loading-module": "^0.0.4",
+    "@types/esm": "^3.2.0",
+    "@types/glob": "^7.1.3",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/koa": "^2.13.1",
+    "@types/node": "^14.14.33",
+    "@types/node-fetch": "^2.5.8",
+    "@types/puppeteer": "^5.4.3",
+    "@types/rimraf": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.17.0",
+    "@typescript-eslint/parser": "^4.17.0",
+    "@web/dev-server-esbuild": "^0.2.11",
+    "@web/test-runner": "^0.12.17",
+    "@web/test-runner-puppeteer": "^0.9.3",
     "chai": "^4.2.0",
-    "eslint": "^6.1.0",
-    "eslint-config-prettier": "^6.11.0",
+    "concurrently": "^6.0.0",
+    "eslint": "^7.22.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-chai-friendly": "^0.6.0",
     "husky": "^1.0.0",
-    "lint-staged": "^8.0.0",
+    "lint-staged": "^10.5.4",
     "mocha": "^7.1.2",
     "node-fetch": "^2.6.0",
     "prettier": "^2.0.5",
@@ -85,13 +110,8 @@
     "rimraf": "^3.0.2",
     "sinon": "^9.0.2",
     "standard-version": "^9.0.0",
-    "ws": "^7.3.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@open-wc/eslint-config",
-      "eslint-config-prettier"
-    ]
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   },
   "prettier": {
     "printWidth": 100,
@@ -107,8 +127,7 @@
   "lint-staged": {
     "*.js": [
       "eslint --fix",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   }
 }

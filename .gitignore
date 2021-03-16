@@ -12,8 +12,8 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-# we do prefer yarn.lock so we do not want npms version of it
-/package-lock.json
+# we do prefer package-lock.json so we do not want yarns version of it
+/yarn.lock
 
 ## build artifacts
 /lib/

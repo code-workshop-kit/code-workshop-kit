@@ -16,11 +16,18 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: Install dependencies
-      run: yarn --frozen-lockfile
+      run: npm ci
+
+    - name: Compile
+      run: npm run build
+
     - name: Lint
-      run: yarn lint
+      run: npm run lint
+
     - name: Test node
-      run: yarn test:node
+      run: npm run test:node
+
     - name: Test browser
-      run: yarn test:browser
+      run: npm run test:browser
