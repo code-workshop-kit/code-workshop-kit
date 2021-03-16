@@ -3,7 +3,7 @@ name: Publish NPM
 on:
   push:
     branches:
-      - master
+      - master_disable
 
 jobs:
   publish:
@@ -38,7 +38,7 @@ jobs:
     - name: Publish to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      run: npm run publish
+      run: npm publish
 
     - name: Push tags to GitHub
       run: git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} --follow-tags

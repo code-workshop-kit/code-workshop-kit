@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/code-workshop-kit/cwk-frontend/compare/1.1.0...2.0.0) (2021-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* The main part about this which is breaking is that types are strict for people extending CWK through NodeJS. For the normal end user (workshop host) not much should have changed.
+
+### Features
+
+* migrate the entire project to TypeScript ([774a102](https://github.com/code-workshop-kit/cwk-frontend/commit/774a10201ce74bfb704a2b4f81b196c9002b00cf))
+
 ## [1.1.0](https://github.com/code-workshop-kit/cwk-frontend/compare/1.0.6...1.1.0) (2021-03-09)
 
 
