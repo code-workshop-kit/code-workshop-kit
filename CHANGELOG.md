@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/code-workshop-kit/cwk-frontend/compare/2.0.0...2.0.1) (2021-03-16)
+
+
+### Bug Fixes
+
+* allow path relative to server to be empty string ([d7f70c3](https://github.com/code-workshop-kit/cwk-frontend/commit/d7f70c387feb317ae6ee5ab0778b5b2dcedef135))
+
 ## [2.0.0](https://github.com/code-workshop-kit/cwk-frontend/compare/1.1.0...2.0.0) (2021-03-16)
 
 
