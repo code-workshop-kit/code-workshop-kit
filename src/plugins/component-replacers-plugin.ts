@@ -10,7 +10,7 @@ export function componentReplacersPlugin(cfg: WorkshopConfig): Plugin {
     name: 'component-replacers',
     transform(context: Context) {
       let rewrittenBody = context.body as string;
-      if (context.status === 200 && pathRelativeToServer) {
+      if (context.status === 200) {
         if (
           context.path === '/node_modules/code-workshop-kit/dist/components/SelectCookie.js' ||
           context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js'
