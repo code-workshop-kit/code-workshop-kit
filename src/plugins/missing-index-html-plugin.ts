@@ -44,7 +44,8 @@ export function missingIndexHtmlPlugin(cfg: WorkshopConfig): Plugin {
            * Checking for 404 status won't work, as this plugin is ran before static file middleware
            */
           if (
-            !(cfg.target === 'frontend' && cfg.targetOptions?.mode === 'iframe') &&
+            cfg.target === 'frontend' &&
+            cfg.targetOptions?.mode === 'iframe' &&
             !fs.existsSync(
               path.resolve(cfg.absoluteDir, 'participants', participantFolder, 'index.html'),
             )
