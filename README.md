@@ -34,7 +34,7 @@ Or with yarn
 yarn add code-workshop-kit
 ```
 
-It may make sense to install it globally, so you can run it in any project without needing a `package.json`!
+The package needs to be installed as a local dependency of your project.
 
 ### Run it
 
