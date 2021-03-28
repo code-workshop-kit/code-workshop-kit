@@ -13,7 +13,9 @@ export function componentReplacersPlugin(cfg: WorkshopConfig): Plugin {
       if (context.status === 200) {
         if (
           context.path === '/node_modules/code-workshop-kit/dist/components/SelectCookie.js' ||
-          context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js'
+          context.path === '/dist/components/SelectCookie.js' ||
+          context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js' ||
+          context.path === '/dist/components/AppShell.js'
         ) {
           rewrittenBody = rewrittenBody.replace(
             new RegExp('placeholder-import.js', 'g'),
@@ -24,9 +26,13 @@ export function componentReplacersPlugin(cfg: WorkshopConfig): Plugin {
         if (
           context.path ===
             '/node_modules/code-workshop-kit/dist/components/ParticipantFrontendCapsule.js' ||
+          context.path === '/dist/components/ParticipantFrontendCapsule.js' ||
           context.path ===
             '/node_modules/code-workshop-kit/dist/components/ParticipantTerminalCapsule.js' ||
-          context.path === '/node_modules/code-workshop-kit/dist/components/ParticipantCapsule.js'
+          context.path === '/dist/components/ParticipantCapsule.js' ||
+          context.path ===
+            '/node_modules/code-workshop-kit/dist/components/ParticipantCapsule.js' ||
+          context.path === '/dist/components/ParticipantCapsule.js'
         ) {
           let replacement = `${path.posix.resolve('/', pathRelativeToServer)}`;
           // remove trailing slash
@@ -36,7 +42,10 @@ export function componentReplacersPlugin(cfg: WorkshopConfig): Plugin {
           rewrittenBody = rewrittenBody.replace(new RegExp('%dir%', 'g'), replacement);
         }
 
-        if (context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js') {
+        if (
+          context.path === '/node_modules/code-workshop-kit/dist/components/AppShell.js' ||
+          context.path === '/dist/components/AppShell.js'
+        ) {
           rewrittenBody = rewrittenBody.replace(
             new RegExp("this.mode = 'iframe';", 'g'),
             `this.mode = '${cfg.targetOptions?.mode || 'iframe'}';`,

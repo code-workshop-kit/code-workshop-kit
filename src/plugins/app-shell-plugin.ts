@@ -16,7 +16,7 @@ export function appShellPlugin(cfg: WorkshopConfig): Plugin {
           context.url === `${pathRelativeToServer}/` ||
           context.url === `${pathRelativeToServer}/index.html`
         ) {
-          const browserPath = require.resolve('code-workshop-kit/dist/components/cwk-app-shell.js');
+          const browserPath = require.resolve('code-workshop-kit/cwk-app-shell-define');
           const appShellScript = `
             <script type="module">
               import '${browserPath}';

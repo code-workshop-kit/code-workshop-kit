@@ -8,10 +8,13 @@ export function wsPortPlugin(port: number): Plugin {
       let rewrittenBody = context.body as string;
       if (
         context.path === '/node_modules/code-workshop-kit/dist/components/AdminSidebar.js' ||
+        context.path === '/dist/components/AdminSidebar.js' ||
         context.path ===
           '/node_modules/code-workshop-kit/dist/components/ParticipantFrontendCapsule.js' ||
+        context.path === '/dist/components/ParticipantFrontendCapsule.js' ||
         context.path ===
-          '/node_modules/code-workshop-kit/dist/components/ParticipantTerminalCapsule.js'
+          '/node_modules/code-workshop-kit/dist/components/ParticipantTerminalCapsule.js' ||
+        context.path === '/dist/components/ParticipantTerminalCapsule.js'
       ) {
         rewrittenBody = rewrittenBody.replace(new RegExp('%websocketport%', 'g'), `${port}`);
       }

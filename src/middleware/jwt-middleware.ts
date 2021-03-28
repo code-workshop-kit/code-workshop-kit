@@ -1,12 +1,10 @@
 import { Middleware } from 'koa';
 import _esmRequire from 'esm';
 import jwt from 'jsonwebtoken';
-import * as _module from 'module';
 import { WorkshopConfig } from '../types/CwkConfig';
 
 export const jwtMiddleware = (dir: string): Middleware => {
-  const _mod = (_module as unknown) as NodeModule;
-  const esmRequire = _esmRequire(_mod);
+  const esmRequire = _esmRequire(module);
   const workshop: WorkshopConfig = esmRequire(`${dir}/cwk.config.js`).default;
 
   return async (ctx, next) => {

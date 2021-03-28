@@ -4,7 +4,6 @@ import commandLineArgs from 'command-line-args';
 import _esmRequire from 'esm';
 import fs from 'fs';
 import glob from 'glob';
-import * as _module from 'module';
 import path from 'path';
 import { WorkshopConfig } from './types/CwkConfig';
 
@@ -101,8 +100,7 @@ export const scaffold = async (_opts: ScaffoldOptions): Promise<void> => {
       ({ workshop } = opts);
     } else {
       // We know we are in NodeJS so force module typecast to NodeModule
-      const _mod = (_module as unknown) as NodeModule;
-      const esmRequire = _esmRequire(_mod);
+      const esmRequire = _esmRequire(module);
       workshop = esmRequire(pathToWorkshop).default;
     }
 
