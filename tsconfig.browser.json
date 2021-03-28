@@ -6,6 +6,6 @@
     "rootDir": "./src",
     "outDir": "dist"
   },
-  "include": ["src/components/**/*.ts"],
+  "include": ["src/components/**/*.ts", "src/index_esm.ts"],
   "exclude": []
 }

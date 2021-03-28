@@ -1,4 +1,3 @@
-export { setCapsule } from './components/setCapsule';
 export { generateKey } from './generate-key';
 export {
   noCacheMiddleware,

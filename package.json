@@ -10,6 +10,16 @@
   "engines": {
     "node": ">=12.0.0"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/index_esm.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.node.json && tsc -p tsconfig.browser.json && ./copy-components",
     "build:watch": "rimraf dist && concurrently \"tsc -p tsconfig.node.json --watch\" \"tsc -p tsconfig.browser.json --watch\"",
@@ -42,10 +52,6 @@
     "dev server",
     "scaffold",
     "hot module reload"
-  ],
-  "files": [
-    "dist",
-    "src"
   ],
   "author": "Joren Broekema <joren.broekema@gmail.com>",
   "license": "MIT",
