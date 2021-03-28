@@ -60,7 +60,7 @@ export function missingIndexHtmlPlugin(cfg: WorkshopConfig): Plugin {
               </head>
               <body>
                 <script type="module">
-                  import { setCapsule } from 'code-workshop-kit/dist/components/setCapsule.js';
+                  import { setCapsule } from 'code-workshop-kit';
                   setCapsule('${participantFolder}', { target: '${cfg.target}' });
                 </script>
               </body>

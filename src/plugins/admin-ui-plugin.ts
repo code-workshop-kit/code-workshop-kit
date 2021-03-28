@@ -7,7 +7,10 @@ export function adminUIPlugin(dir: string): Plugin {
     name: 'admin-ui',
     transform(context: Context) {
       let rewrittenBody = context.body as string;
-      if (context.path === '/node_modules/code-workshop-kit/dist/components/cwk-admin-sidebar.js') {
+      if (
+        context.path === '/node_modules/code-workshop-kit/dist/components/cwk-admin-sidebar.js' ||
+        context.path === '/dist/components/cwk-admin-sidebar.js'
+      ) {
         const authToken = context.cookies.get('cwk_auth_token');
         if (!authToken || !verifyJWT(dir, authToken, context)) {
           rewrittenBody = '';

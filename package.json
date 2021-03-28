@@ -14,7 +14,14 @@
     ".": {
       "import": "./dist/index_esm.js",
       "require": "./dist/index.js"
-    }
+    },
+    "./cwk-app-shell-define": "./dist/components/cwk-app-shell.js",
+    "./cwk-admin-sidebar-define": "./dist/components/cwk-admin-sidebar.js",
+    "./cwk-dialog-content-define": "./dist/components/cwk-dialog-content.js",
+    "./cwk-dialog-define": "./dist/components/cwk-dialog.js",
+    "./cwk-participant-frontend-capsule-define": "./dist/components/cwk-participant-frontend-capsule.js",
+    "./cwk-participant-backend-capsule-define": "./dist/components/cwk-participant-backend-capsule.js",
+    "./cwk-select-cookie-define": "./dist/components/cwk-select-cookie.js"
   },
   "files": [
     "dist",
