@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.5](https://github.com/code-workshop-kit/cwk-frontend/compare/2.0.4...2.0.5) (2021-05-08)
+
+
+### Bug Fixes
+
+* bump hosted-git-info from 2.8.8 to 2.8.9 ([#119](https://github.com/code-workshop-kit/cwk-frontend/issues/119)) ([9184cff](https://github.com/code-workshop-kit/cwk-frontend/commit/9184cfff5f7c7cbcb5486d1d9092008fab81f930))
+
 ### [2.0.4](https://github.com/code-workshop-kit/cwk-frontend/compare/2.0.3...2.0.4) (2021-05-08)
 
 
