@@ -384,7 +384,7 @@ const setupWatcherForTerminalProcess = (
       const participantFolder = path.join(cfg.absoluteDir, 'participants/');
       const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
 
-      if (participantName) {
+      if (participantName && participantName !== '_cwk_disconnected') {
         const excludeFilesArr = [
           ...new Set(
             cfg.targetOptions?.excludeFromWatch
@@ -417,7 +417,7 @@ const setupHMR = (watcher: chokidar.FSWatcher, absoluteDir: string) => {
     const participantFolder = path.join(absoluteDir, 'participants/');
     const participantName = filePath.split(participantFolder)[1].split(path.sep).shift();
 
-    if (participantName) {
+    if (participantName && participantName !== '_cwk_disconnected') {
       const connections = getWsConnection(participantName, 'reload-module', true);
       const queryTimestamp = Date.now();
       const { state } = cwkState;
