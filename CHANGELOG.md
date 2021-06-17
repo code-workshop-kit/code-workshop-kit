@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.7](https://github.com/code-workshop-kit/cwk-frontend/compare/2.0.5...2.0.7) (2021-06-17)
+
+
+### Bug Fixes
+
+* update to latest dependencies ([76b3203](https://github.com/code-workshop-kit/cwk-frontend/commit/76b3203bd8f6e159c6a1c899374e1446730155e7))
+
 ### [2.0.6](https://github.com/code-workshop-kit/cwk-frontend/compare/2.0.5...2.0.6) (2021-06-17)
 
 ### Bug Fixes
