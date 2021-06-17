@@ -142,10 +142,12 @@ describe('e2e: Admin UI Sidebar', () => {
       await page.reload();
 
       timestamp = await page.evaluate(() => {
-        (document
-          .querySelector('cwk-app-shell')
-          ?.shadowRoot?.querySelector('cwk-admin-sidebar')
-          ?.shadowRoot?.querySelector('.open-button') as HTMLElement).click();
+        (
+          document
+            .querySelector('cwk-app-shell')
+            ?.shadowRoot?.querySelector('cwk-admin-sidebar')
+            ?.shadowRoot?.querySelector('.open-button') as HTMLElement
+        ).click();
 
         return document.getElementById('unixTimestamp')?.innerText;
       });
@@ -155,10 +157,12 @@ describe('e2e: Admin UI Sidebar', () => {
       await aTimeout(50);
 
       await page.evaluate(() => {
-        (document
-          .querySelector('cwk-app-shell')
-          ?.shadowRoot?.querySelector('cwk-admin-sidebar')
-          ?.shadowRoot?.querySelector('#enableCaching') as HTMLElement).click();
+        (
+          document
+            .querySelector('cwk-app-shell')
+            ?.shadowRoot?.querySelector('cwk-admin-sidebar')
+            ?.shadowRoot?.querySelector('#enableCaching') as HTMLElement
+        ).click();
       });
 
       // Websocket message takes some time

@@ -215,8 +215,12 @@ export class SelectCookie extends LitElement {
   // So that we don't load them unnecessarily if component is loaded but not rendered,
   // and don't make it block first paint..
   async fetchDialogComponents(): Promise<void> {
+    // TODO: Look into TSC to see if we can make these paths somehow
+    // resolvable
+    /* eslint-disable import/no-unresolved */
     await import('./cwk-dialog-content.js');
     await import('./cwk-dialog.js');
+    /* eslint-enable import/no-unresolved */
 
     this.dialogLoading = false;
     await this.updateComplete;

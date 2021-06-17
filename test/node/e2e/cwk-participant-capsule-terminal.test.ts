@@ -114,9 +114,11 @@ describe('e2e: Participant Capsule Terminal', () => {
       await aTimeout(500);
 
       const { entry } = await page.evaluate(() => ({
-        entry: (document
-          .querySelector('cwk-participant-terminal-capsule')
-          ?.shadowRoot?.querySelector('.entry') as HTMLElement).innerText,
+        entry: (
+          document
+            .querySelector('cwk-participant-terminal-capsule')
+            ?.shadowRoot?.querySelector('.entry') as HTMLElement
+        ).innerText,
       }));
 
       expect(entry).to.equal('Joren\n');
@@ -166,9 +168,11 @@ describe('e2e: Participant Capsule Terminal', () => {
       await aTimeout(500);
 
       const { entry } = await page.evaluate(() => ({
-        entry: (document
-          .querySelector('cwk-participant-terminal-capsule')
-          ?.shadowRoot?.querySelector('.entry') as HTMLElement).innerText,
+        entry: (
+          document
+            .querySelector('cwk-participant-terminal-capsule')
+            ?.shadowRoot?.querySelector('.entry') as HTMLElement
+        ).innerText,
       }));
 
       expect(entry).to.equal('Foo\n');
@@ -194,9 +198,11 @@ describe('e2e: Participant Capsule Terminal', () => {
           .querySelector('cwk-app-shell')
           ?.shadowRoot?.querySelector('cwk-select-cookie');
 
-        (Array.from(
-          cookieElem?.shadowRoot?.querySelectorAll('.name__item') || [],
-        )[1] as HTMLElement).click();
+        (
+          Array.from(
+            cookieElem?.shadowRoot?.querySelectorAll('.name__item') || [],
+          )[1] as HTMLElement
+        ).click();
       });
 
       await page.goto(

@@ -8,8 +8,8 @@ export default {
     reportDir: 'test-coverage',
     threshold: {
       statements: 80,
-      branches: 70,
-      functions: 85,
+      branches: 60,
+      functions: 70,
       lines: 85,
     },
   },
